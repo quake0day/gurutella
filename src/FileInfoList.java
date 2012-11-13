@@ -20,6 +20,7 @@ public class FileInfoList {
 	 * 			5.FileInfoList().clear()
 	 * 			6.FileInfoList().getFileNum()
 	 * 			7.FileInfoList().getFileSize()
+	 * add something
 	 **/
 	public String getParentPath(){
 		String parentPath = null;
