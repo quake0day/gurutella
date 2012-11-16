@@ -37,7 +37,7 @@ public class Share extends Thread{
 			if (_dir.isFile())
 			{
 				_fileList.addFile(_dir);
-				_fileList.setParentPath(_dir.getAbsolutePath());
+				_fileList.setAbsolutePath(_dir.getAbsolutePath());
 				_fileList.setFileNum(1);
 				_fileList.setFileSize(_dir.length());
 				System.out.println("Shared a file: " + _dir.getName());
@@ -69,7 +69,7 @@ public class Share extends Thread{
 		if (_dir.list().length == 0)
 		{
 			_fileList.addFile(_dir);
-			_fileList.setParentPath(_dir.getAbsolutePath());
+			_fileList.setAbsolutePath(_dir.getAbsolutePath());
 			_fileList.setFileNum(0);
 			_fileList.setFileSize(0.0);
 			System.out.println("Shared an EMPTY folder: " + _dir.getName());
@@ -82,7 +82,7 @@ public class Share extends Thread{
 				_fileList.addFile(tempList[i]);
 				size += (double)tempList[i].length();
 			}
-			_fileList.setParentPath(_dir.getAbsolutePath());
+			_fileList.setAbsolutePath(_dir.getAbsolutePath());
 			_fileList.setFileNum(tempList.length);
 			_fileList.setFileSize(size);
 			System.out.println("Shared files in folder: " + _dir.getName());
@@ -95,6 +95,7 @@ public class Share extends Thread{
 		Scanner input = new Scanner(System.in);
 		if ((input.next().equals("y") || input.next().equals("Y")) && !input.hasNext())
 		{
+			input.close();
 			System.out.println("Creating...");
 			_dir.mkdirs();
 			System.out.println("Created!");
@@ -102,10 +103,12 @@ public class Share extends Thread{
 		}
 		else if ((input.next().equals("n") || input.next().equals("N")) && !input.hasNext())
 		{
+			input.close();
 			return;
 		}
 		else 
 		{
+			input.close();
 			System.out.println("Invalid input! Try again.");
 			this.sharePerform();
 		}		

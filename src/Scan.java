@@ -28,8 +28,8 @@ public class Scan extends Thread{
 			System.out.println("Please appoint shared directory first!");
 			return;
 		}
-		System.out.println("Scanning " + _fileList.getParentPath() + " for files...");
-		_dir = new File(_fileList.getParentPath());
+		System.out.println("Scanning " + _fileList.getAbsolutePath() + " for files...");
+		_dir = new File(_fileList.getAbsolutePath());
 		_fileList.clear();
 		tempList = _dir.listFiles();
 		this.scanRefresh();
@@ -43,7 +43,7 @@ public class Scan extends Thread{
 		if (tempList.length == 0)
 		{
 			_fileList.addFile(_dir);
-			_fileList.setParentPath(_dir.getAbsolutePath());
+			_fileList.setAbsolutePath(_dir.getAbsolutePath());
 			_fileList.setFileNum(0);
 			_fileList.setFileSize(0.0);
 		}
@@ -54,7 +54,7 @@ public class Scan extends Thread{
 				_fileList.addFile(tempList[i]);
 				size += (double)tempList[i].length();
 			}
-			_fileList.setParentPath(_dir.getAbsolutePath());
+			_fileList.setAbsolutePath(_dir.getAbsolutePath());
 			_fileList.setFileNum(tempList.length);
 			_fileList.setFileSize(size);
 		}

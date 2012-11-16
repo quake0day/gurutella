@@ -1,7 +1,8 @@
 import java.io.File;
+import java.util.ArrayList;
 
 /**
- * 
+ * @author Tianmiao
  */
 
 /**
@@ -22,35 +23,81 @@ public class FileInfoList {
 	 * 			7.FileInfoList().getFileSize()
 	 * add something
 	 **/
-	public String getParentPath(){
-		String parentPath = null;
-		return parentPath;
+	private int fileNum;
+	private double fileSize;
+	private String absolutePath = null;
+	private ArrayList <File> _sharedFile;
+	
+	public FileInfoList()
+	{
+		_sharedFile = new ArrayList <File>();
 	}
-	public boolean setParentPath(String path){
-		return true;
-	}
-	public boolean setFileNum(int fileNum){
-		return true;
-	}
-	public boolean setFileSize(double filesize){
-		return true;
-	}
-	public void clear(){
-		
-	}
-	public int getFileNum(){
-		int fileNum =0 ;
-		return fileNum;
-	}
-	public double getFileSize(){
-		double fileSize = 0;
-		return fileSize;
-	}
-	public boolean addFile(File file){
-		return true;
-	}
+	
 	public String getAbsolutePath(){
-		String absolutePath=null;
 		return absolutePath;
 	}
+	
+	public void setAbsolutePath(String path){
+		File temp = new File(path).getAbsoluteFile();
+		absolutePath = temp.getAbsolutePath();
+	}
+	
+	public void setFileNum(int fileNum){
+		this.fileNum = fileNum;
+	}
+	
+	public void setFileSize(double filesize){
+		fileSize = filesize;
+	}
+	
+	public void setFileSize(long filesize)
+	{
+		fileSize = (double)filesize;
+	}
+	
+	public void clear(){
+		fileNum = 0;
+		fileSize = 0.0;
+		absolutePath = null;
+		_sharedFile.clear();
+	}
+	
+	public int getFileNum(){
+		return fileNum;
+	}
+	
+	public double getFileSize(){
+		return fileSize;
+	}
+	
+	public boolean addFile(File file){
+		 if (_sharedFile.add(file))
+			 return true;
+		 else
+		 {
+			System.out.println("File " + file.getName() + " failed to share...");
+			return false;
+		 }
+	}
+	
+	public File[] getFile(String filename)	//Should ONLY input LEGAL parameter
+	{
+		String[] rqstField = filename.split(" ");
+		ArrayList <File> matchList = new ArrayList <File>();
+		for(int i = 0; i < _sharedFile.size(); i++)
+		{
+			String[] field = _sharedFile.get(i).getName().split(" ");
+			for(int j = 0; j < rqstField.length; j++)
+				for(int k = 0; k < field.length; k++)
+				{
+					if (rqstField[j].equals(field[k]))
+					{
+						matchList.add(_sharedFile.get(i));
+					}
+				}
+		}
+		return (File[])matchList.toArray();
+	}
+	
+
 }
