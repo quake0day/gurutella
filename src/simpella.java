@@ -7,20 +7,20 @@ import java.util.concurrent.Executors;
 
 
 /**
- * 
+ * @author Tianmiao
  */
 
 /**
  * @author quake0day
  *
  */
-public class simpella extends Thread{
+public class simpella /*extends Thread*/{
 	// define the max thread num in a threadpool
 	private static int MAX_THREAD_NUM = 9;
 	private static int tcpPort1 = 6346;
 	private static int tcpPort2 = 6745;
 	public static ArrayList<Socket> clients = new ArrayList<Socket>();
-
+	public static FileInfoList _fileList;
 	/**
 	 * @param args
 	 */
@@ -52,7 +52,8 @@ public class simpella extends Thread{
 		 Thread server = new Thread(new server(new echoer()));
 		 */
 		// echoer echoer = new echoer();
-		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients));
+		 //threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients));
+		new Monitor(tcpPort1, tcpPort2, clients, _fileList);
 //	 Thread quake1 = new Thread(new Justtest());
 		}
 

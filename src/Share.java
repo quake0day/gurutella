@@ -8,6 +8,9 @@
  * 			8.FileInfoList().setFileSize(double)
  * */
 
+/**
+ * @author Tianmiao
+ */
 
 import java.io.File;
 import java.util.Scanner;

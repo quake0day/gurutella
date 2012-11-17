@@ -7,27 +7,31 @@ import java.util.ArrayList;
 
 
 /**
- * 
+ * @author Tianmiao
  */
 
 /**
  * @author quake0day
  *
  */
-public class Monitor extends Thread{
+public class Monitor /*extends Thread*/{
 
 	/**
 	 * @param args
 	 */
 	private int tcpPort1,tcpPort2;
 	private ArrayList<Socket> client;
-	public Monitor (int port1, int port2, ArrayList<Socket> clients){
+	private FileInfoList _fileList;
+	
+	public Monitor (int port1, int port2, ArrayList<Socket> clients, FileInfoList fl){
 		   this.tcpPort1 = port1;
 		   this.tcpPort2 = port2;
 		   this.client = clients;
-	}
+		   this._fileList = fl;
+		   
+	//}
 	
-	 public void run(){
+	 //public void run(){
 	     PrintWriter out = null;
 	     BufferedReader in = null;
 	     BufferedReader stdIn = new BufferedReader(
@@ -57,6 +61,18 @@ public class Monitor extends Thread{
 			 	    Thread scan = new Thread(new Scan(f));
 			 	   
 			    }
+			    else if (userInput.equals("share")) /*haven't finished*/
+			    {
+			    	if(command.length > 1)
+			    	{
+			    				
+				    	/*else*/ if (command[1].equals("-i") && command.length ==2)
+				    	{
+				    		new Share(_fileList).shareInfo();
+				    	}
+			    	}
+
+			    }
 			    else{ // for unknown command.
 			    	System.out.println("no such command:"+userInput);
 			    }
@@ -65,12 +81,12 @@ public class Monitor extends Thread{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		    try {
-				currentThread().sleep(50);
-			} catch (InterruptedException e) {
+		    //try {
+			//	currentThread().sleep(50);
+			//} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		//		e.printStackTrace();
+		//	}
 		 }
 	 }
 	
