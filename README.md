@@ -10,13 +10,3 @@ A "Guru" version of Simpella for CSE 589 Project Phase 2
 Si Chen
 
 Tianmiao Du
-
-## Update log
-11/15 By Tianmiao Du
--Add attributes:	FileInfoList
--Refresh methods:	FileInfoList
--Refresh class:		Share & Scan (about get/set path method)
-
-11/17 By Tianmiao Du
--Thread change:		simpella, Monitor
--Share method:		Monitor

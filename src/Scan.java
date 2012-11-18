@@ -15,28 +15,28 @@
 
 import java.io.File;
 
-public class Scan extends Thread{
+public class Scan {
 	private FileInfoList _fileList;
 	private File _dir;
 	File[] tempList;
 	
 	public Scan(FileInfoList f)
 	{
-		if (f != null)	//Check if file list is null
+		_fileList = f;
+		if (_fileList.isNull())	//Check if file list is null
 		{
-			_fileList = f;
+			System.out.println("Please appoint shared directory first!");
+			return;			
 		}
 		else
 		{
-			System.out.println("Please appoint shared directory first!");
-			return;
+			System.out.println("Scanning " + _fileList.getAbsolutePath() + " for files...");
+			_dir = new File(_fileList.getAbsolutePath());
+			_fileList.clear();
+			tempList = _dir.listFiles();
+			this.scanRefresh();
+			System.out.println("Scanned " + _fileList.getFileNum() + " files and " + _fileList.getFileSize() + " bytes.");
 		}
-		System.out.println("Scanning " + _fileList.getAbsolutePath() + " for files...");
-		_dir = new File(_fileList.getAbsolutePath());
-		_fileList.clear();
-		tempList = _dir.listFiles();
-		this.scanRefresh();
-		System.out.println("Scanned " + _fileList.getFileNum() + " files and " + _fileList.getFileSize() + " bytes.");
 	}
 	
 	

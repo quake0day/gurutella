@@ -53,6 +53,7 @@ public class simpella /*extends Thread*/{
 		 */
 		// echoer echoer = new echoer();
 		 //threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients));
+		_fileList = new FileInfoList();
 		new Monitor(tcpPort1, tcpPort2, clients, _fileList);
 //	 Thread quake1 = new Thread(new Justtest());
 		}

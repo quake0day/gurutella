@@ -24,8 +24,8 @@ public class FileInfoList {
 	 * 			7.FileInfoList().getFileSize()
 	 * add something
 	 **/
-	private int fileNum;
-	private double fileSize;
+	private int fileNum = 0;
+	private double fileSize = 0.0;
 	private String absolutePath = null;
 	private ArrayList <File> _sharedFile;
 	
@@ -55,14 +55,7 @@ public class FileInfoList {
 	{
 		fileSize = (double)filesize;
 	}
-	
-	public void clear(){
-		fileNum = 0;
-		fileSize = 0.0;
-		absolutePath = null;
-		_sharedFile.clear();
-	}
-	
+
 	public int getFileNum(){
 		return fileNum;
 	}
@@ -98,7 +91,24 @@ public class FileInfoList {
 				}
 		}
 		return (File[])matchList.toArray();
+	}	
+	
+	public void clear(){
+		if (!this.isNull())
+		{
+			fileNum = 0;
+			fileSize = 0.0;
+			absolutePath = null;
+			_sharedFile.clear();
+		}
 	}
 	
+	public boolean isNull()
+	{
+		if (fileNum == 0 && fileSize == 0.0 && absolutePath ==null && _sharedFile.isEmpty())
+			return true;
+		else 
+			return false;
+	}
 
 }

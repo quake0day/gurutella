@@ -12,10 +12,12 @@
  * @author Tianmiao
  */
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.Scanner;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
-public class Share extends Thread{
+public class Share{
 	private File _dir;
 	private FileInfoList _fileList; // reference to whole variable
 	
@@ -33,7 +35,7 @@ public class Share extends Thread{
 		_dir = new File(path);
 	}
 	
-	public void sharePerform()	//the perform function, open to call
+	public void sharePerform() throws IOException	//the perform function, open to call
 	{			
 		if (_dir.exists())
 		{
@@ -60,7 +62,7 @@ public class Share extends Thread{
 	
 	public void shareInfo()	//the share info function, open to call
 	{
-		if (_fileList != null)
+		if (!_fileList.isNull())
 			System.out.println("sharing " + _fileList.getAbsolutePath());
 		else
 			System.out.println("No files are shared currently!");
@@ -92,28 +94,26 @@ public class Share extends Thread{
 		}
 	}
 	
-	private void unknownDirectory()	//Private method
+	private void unknownDirectory() throws IOException	//Private method
 	{
 		System.out.print("Directory(File) doesn't exist, create it as a shared folder now?(y/n): ");
-		Scanner input = new Scanner(System.in);
-		if ((input.next().equals("y") || input.next().equals("Y")) && !input.hasNext())
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		String ans = input.readLine();
+		if ((ans.equals("y") || ans.equals("Y")))
 		{
-			input.close();
 			System.out.println("Creating...");
 			_dir.mkdirs();
 			System.out.println("Created!");
 			this.sharePerform();
 		}
-		else if ((input.next().equals("n") || input.next().equals("N")) && !input.hasNext())
-		{
-			input.close();
+		else if ((ans.equals("n") || ans.equals("N")))
+		{//Do nothing
 			return;
 		}
 		else 
 		{
-			input.close();
 			System.out.println("Invalid input! Try again.");
-			this.sharePerform();
+			this.unknownDirectory();
 		}		
 	}
 }

@@ -37,7 +37,6 @@ public class Monitor /*extends Thread*/{
 	     BufferedReader stdIn = new BufferedReader(
                  new InputStreamReader(System.in));
 	     String userInput;
-	     FileInfoList f = null;
 	     
 		 while(true)
 		 { 
@@ -49,30 +48,107 @@ public class Monitor /*extends Thread*/{
 			    // split user input by space and save it to an matrix
 			    String[] command = userInput.split(" "); 
 			    // the first character should be a command
-			    userInput = command[0];   
-			    if (userInput.equals("quit"))
+			    //userInput = command[0]; this statement would lead to OutOfBoundsExcetion in 'share'
+/////////////////quit command//////////////////////			   
+			    if (command[0].equalsIgnoreCase("quit"))
 			    {
 			        System.exit(1);
 			    }
-			    else if (userInput.equals("scan"))
+/////////////////scan command//////////////////////
+			    else if (command[0].equalsIgnoreCase("scan"))
 			    {
 			    	// create new thread info to handle this request
 			    	// see Info.java for more detail
-			 	    Thread scan = new Thread(new Scan(f));
-			 	   
+			 	    new Scan(_fileList);			 	   
 			    }
-			    else if (userInput.equals("share")) /*haven't finished*/
+/////////////////Share command/////////////////////		    
+			    else if (command[0].equalsIgnoreCase("share")) /*haven't finished*/
 			    {
-			    	if(command.length > 1)
-			    	{
+			    	if(command.length > 1)	//command legality detect
+			    	{			   
+			    		String[] temp = userInput.split(" ", 2);
+			    		String dir = temp[1];		
+			    		
+			    		if (!dir.startsWith(" ")) //Blank start check
+			    		{				    		
+			    			//Check illegal characters
+			    			if (dir.contains("|") || dir.contains("*") || dir.contains("?") || dir.contains("\"") ||dir.contains("<") || dir.contains(">"))
+			    			{
+			    				System.out.println("Illegal character(s)(|, *, ?, \", <, >) appeared in input path");			 
+			    			}
+			    			else if (dir.contains("/") && dir.contains("\\"))
+			    			{
+			    				System.out.println("Character(s) '\\' and '/' cannot appear in the same path");			    			
+			    			}
+			    			else
+			    			{			    			
+			    				boolean flag = false;
+			    				if (dir.contains("/"))	//Blank pathname head check
+			    				{
+			    					String[] field = dir.split("/");
+			    	   				for (int i = 0; i < field.length; i++)
+				    				{
+				    					if(field[i].startsWith(" "))
+				    					{
+				    						System.out.println("Please do not insert space to the start of a child directory");
+				    						flag = true;
+				    						break;
+				    					}
+				    					if(i > 0 && field[i].contains(":"))
+				    					{
+				    						System.out.println("Illegal character ':' appeared in input path");
+				    						flag = true;
+				    						break;
+				    					}
+				    				}
+			    				}
 			    				
-				    	/*else*/ if (command[1].equals("-i") && command.length ==2)
-				    	{
-				    		new Share(_fileList).shareInfo();
-				    	}
+			    				else if (dir.contains("\\"))
+			    				{
+			    					String[] field = dir.split("\\\\");
+				    				for (int i = 0; i < field.length; i++)
+				    				{
+				    					if(field[i].startsWith(" "))
+				    					{
+				    						System.out.println("Please do not insert space to the start of a child directory");
+				    						flag = true;
+				    						break;
+				    					}
+				    					if(i > 0 && field[i].contains(":"))
+				    					{
+				    						System.out.println("Illegal character ':' appeared in input path");
+				    						flag = true;
+				    						break;
+				    					}
+				    				}
+			    				}
+			    				
+			    				if (flag)
+			    				{//Do nothing
+			    				}
+			    				
+			    				//Share command call
+			    				else if (command[1].equals("-i") && command.length ==2)
+						    	{
+						    		new Share(_fileList).shareInfo();
+						    		
+						    	}
+						    	else
+						    	{
+						    		new Share(dir, _fileList).sharePerform();
+						    	}
+			    			}
+			    		}
+			    		
+			    	}
+			    	else
+			    	{
+			    		System.out.println("Please input a parameter: <pathname|-i>");
 			    	}
 
 			    }
+
+/////////////////Unknown Handler//////////////////////////			    
 			    else{ // for unknown command.
 			    	System.out.println("no such command:"+userInput);
 			    }
