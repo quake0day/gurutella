@@ -23,19 +23,26 @@ public class Scan {
 	public Scan(FileInfoList f)
 	{
 		_fileList = f;
-		if (_fileList.isNull())	//Check if file list is null
+		if (!_fileList.isNull())
 		{
-			System.out.println("Please appoint shared directory first!");
-			return;			
+			if (new File(_fileList.getAbsolutePath()).exists())	//Check if file list is null
+			{
+				System.out.println("Scanning " + _fileList.getAbsolutePath() + " for files...");
+				_dir = new File(_fileList.getAbsolutePath());
+				_fileList.clear();
+				tempList = _dir.listFiles();
+				this.scanRefresh();
+				System.out.println("Scanned " + _fileList.getFileNum() + " files and " + _fileList.getFileSize() + " bytes.");
+			}
+			else
+			{
+				_fileList.clear();
+				System.out.println("Please appoint shared directory first!");
+			}
 		}
 		else
-		{
-			System.out.println("Scanning " + _fileList.getAbsolutePath() + " for files...");
-			_dir = new File(_fileList.getAbsolutePath());
-			_fileList.clear();
-			tempList = _dir.listFiles();
-			this.scanRefresh();
-			System.out.println("Scanned " + _fileList.getFileNum() + " files and " + _fileList.getFileSize() + " bytes.");
+		{	
+			System.out.println("Please appoint shared directory first!");
 		}
 	}
 	

@@ -31,14 +31,14 @@ public class Share{
 	{
 		//This constructor used for share
 		_fileList = f;
-		_fileList.clear();	//when share is invoked the second time, overrides the old one
 		_dir = new File(path);
 	}
 	
 	public void sharePerform() throws IOException	//the perform function, open to call
 	{			
 		if (_dir.exists())
-		{
+		{		
+			_fileList.clear();	//when share is invoked the second time, overrides the old one
 			if (_dir.isFile())
 			{
 				_fileList.addFile(_dir);
@@ -63,9 +63,21 @@ public class Share{
 	public void shareInfo()	//the share info function, open to call
 	{
 		if (!_fileList.isNull())
-			System.out.println("sharing " + _fileList.getAbsolutePath());
+		{
+			if (new File(_fileList.getAbsolutePath()).exists())
+			{
+					System.out.println("sharing " + _fileList.getAbsolutePath());
+			}
+			else
+			{
+				_fileList.clear();
+				System.out.println("No files are shared currently!");
+			}
+		}
 		else
+		{
 			System.out.println("No files are shared currently!");
+		}
 	}
 	
 	private void shareDirectory()	//Private method
@@ -90,7 +102,10 @@ public class Share{
 			_fileList.setAbsolutePath(_dir.getAbsolutePath());
 			_fileList.setFileNum(tempList.length);
 			_fileList.setFileSize(size);
-			System.out.println("Shared files in folder: " + _dir.getName());
+			if (_dir.getName().length() == 0)
+				System.out.println("Shared files in hard disk " + _dir.getPath());
+			else
+				System.out.println("Shared files in folder: " + _dir.getName());
 		}
 	}
 	
@@ -101,6 +116,7 @@ public class Share{
 		String ans = input.readLine();
 		if ((ans.equals("y") || ans.equals("Y")))
 		{
+			_fileList.clear();	//overrides the old one
 			System.out.println("Creating...");
 			_dir.mkdirs();
 			System.out.println("Created!");
