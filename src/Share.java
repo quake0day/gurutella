@@ -17,6 +17,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * @author Tianmiao
+ * 
+ */
+
 public class Share{
 	private File _dir;
 	private FileInfoList _fileList; // reference to whole variable

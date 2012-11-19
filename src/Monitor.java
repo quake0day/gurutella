@@ -7,13 +7,14 @@ import java.util.ArrayList;
 
 
 /**
- * @author Tianmiao
+ * 
  */
 
 /**
  * @author quake0day
- *
+ * @author Tianmiao
  */
+
 public class Monitor /*extends Thread*/{
 
 	/**

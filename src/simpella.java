@@ -6,13 +6,14 @@ import java.util.concurrent.Executors;
 
 
 
+
 /**
- * @author Tianmiao
+ * 
  */
 
 /**
  * @author quake0day
- *
+ * @author Tianmiao
  */
 public class simpella /*extends Thread*/{
 	// define the max thread num in a threadpool

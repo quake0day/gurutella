@@ -15,6 +15,11 @@
 
 import java.io.File;
 
+/**
+ * @author Tianmiao
+ * 
+ */
+
 public class Scan {
 	private FileInfoList _fileList;
 	private File _dir;
