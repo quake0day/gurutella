@@ -4,6 +4,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+
 
 
 /**
@@ -15,7 +19,7 @@ import java.util.ArrayList;
  * @author Tianmiao
  */
 
-public class Monitor /*extends Thread*/{
+public class Monitor extends Thread{
 
 	/**
 	 * @param args
@@ -23,21 +27,27 @@ public class Monitor /*extends Thread*/{
 	private int tcpPort1,tcpPort2;
 	private ArrayList<Socket> client;
 	private FileInfoList _fileList;
-	
-	public Monitor (int port1, int port2, ArrayList<Socket> clients, FileInfoList fl){
+	private static int MAX_THREAD_NUM = 9;
+
+	public Monitor (int port1, int port2, ArrayList<Socket> clients, FileInfoList fl) throws IOException, InterruptedException{
 		   this.tcpPort1 = port1;
 		   this.tcpPort2 = port2;
 		   this.client = clients;
 		   this._fileList = fl;
+		  // ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREAD_NUM);		
+
 		   
-	//}
+	}
 	
-	 //public void run(){
+	public void run(){
 	     PrintWriter out = null;
 	     BufferedReader in = null;
 	     BufferedReader stdIn = new BufferedReader(
                  new InputStreamReader(System.in));
 	     String userInput;
+		// Thread tcpserver = 
+		 
+
 	     
 		 while(true)
 		 { 
@@ -61,6 +71,24 @@ public class Monitor /*extends Thread*/{
 			    	// create new thread info to handle this request
 			    	// see Info.java for more detail
 			 	    new Scan(_fileList);			 	   
+			    }
+/////////////////open command//////////////////////
+			    else if (command[0].equalsIgnoreCase("open"))
+			    {
+			    	// create new thread info to handle this request
+			    	// see Connect.java for more detail
+			    	// for connect command, a user should provide 3 parameter
+			    	if(command.length != 2){
+			    		System.out.println("Usage:open <ip-address>:<tcp-port>");
+			    	}
+			    	else{		
+			    	String targetIPAddress = command[1].split(":")[0];
+			    	String targetTCPPort = command[1].split(":")[1];
+			    	// create new thread connect to handle this request
+			    	// see Connect.java for more detail
+			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));	
+			    	Thread open = new Connect(targetIPAddress,targetTCPPort,new simpella());
+			    	}
 			    }
 /////////////////Share command/////////////////////		    
 			    else if (command[0].equalsIgnoreCase("share")) /*haven't finished*/
@@ -158,12 +186,12 @@ public class Monitor /*extends Thread*/{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		    //try {
-			//	currentThread().sleep(50);
-			//} catch (InterruptedException e) {
+		    try {
+				currentThread().sleep(50);
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-		//		e.printStackTrace();
-		//	}
+				e.printStackTrace();
+			}
 		 }
 	 }
 	

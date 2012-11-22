@@ -1,6 +1,11 @@
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,10 +27,13 @@ public class simpella /*extends Thread*/{
 	private static int tcpPort2 = 6745;
 	public static ArrayList<Socket> clients = new ArrayList<Socket>();
 	public static FileInfoList _fileList;
+	
 	/**
 	 * @param args
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 		ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREAD_NUM);		
 		if (args.length > 0){
@@ -45,18 +53,50 @@ public class simpella /*extends Thread*/{
 			System.out.println("Usage: java Echoer <tcp-port> <udp-port>");
 			//System.exit(1);  for test only
 		}
+		showWelcomeInfo(tcpPort1,tcpPort2);
 		 /*
 		 Thread thread = new Thread(new Monitor(tcpport,udpport,clients));
 		 thread.start();
-		 
-		 Thread udpserver = new Thread(new Udpserver(10029));
-		 Thread server = new Thread(new server(new echoer()));
 		 */
-		// echoer echoer = new echoer();
-		 //threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients));
-		_fileList = new FileInfoList();
-		new Monitor(tcpPort1, tcpPort2, clients, _fileList);
-//	 Thread quake1 = new Thread(new Justtest());
+		 simpella Simpella = new simpella();
+		 _fileList = new FileInfoList();
+		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients, _fileList));
+		 Thread tcp1 = new Thread(new Tcpserver(10025,Simpella));
+		 //Thread tcp2 = new Thread(new Tcpserver(10025,clients));
+		//_fileList = new FileInfoList();
+		//new Monitor(tcpPort1, tcpPort2, clients, _fileList);
 		}
+	public static void showWelcomeInfo(int tcpPort1,int tcpPort2){
+		InetAddress IP = null;
+		boolean usePublicDNS = false;
+		try {
+			DatagramSocket udpSocket = null;
+			udpSocket = new DatagramSocket();
+			udpSocket.connect(InetAddress.getByName("8.8.8.8"), 53); // Using public DNS google
+			IP = udpSocket.getLocalAddress();
+			udpSocket.close();
+			usePublicDNS = true;
+		} catch (SocketException e1) {
+			System.out.println("cannot get IP address through 8.8.8.8");
+		}
+		catch (UnknownHostException e1) {
+			System.out.println("cannot get IP address through 8.8.8.8");
+		}
+		if(!usePublicDNS){ // no internet connection or goolge 8.8.8.8 down
+			try {
+				IP = InetAddress.getLocalHost();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		String delimiter = "/";
+		String localIP = IP.toString().split(delimiter)[1];
+		System.out.println("Local IP:"+localIP);
+		System.out.println("Simpella Net Port: "+tcpPort1);
+		System.out.println("Downloading Port : "+tcpPort2);
+		System.out.println("simpella version 0.6 (c) 2012-2013 CS,DTM");	
+		System.out.println(" ");
+	}
 
 }
