@@ -25,7 +25,7 @@ public class simpella /*extends Thread*/{
 	private static int MAX_THREAD_NUM = 9;
 	private static int tcpPort1 = 6346;
 	private static int tcpPort2 = 6745;
-	public static ArrayList<Socket> clients = new ArrayList<Socket>();
+	public static ClientInfoList _clientList;
 	public static FileInfoList _fileList;
 	
 	/**
@@ -58,10 +58,10 @@ public class simpella /*extends Thread*/{
 		 Thread thread = new Thread(new Monitor(tcpport,udpport,clients));
 		 thread.start();
 		 */
-		 simpella Simpella = new simpella();
 		 _fileList = new FileInfoList();
-		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients, _fileList));
-		 Thread tcp1 = new Thread(new Tcpserver(10025,Simpella));
+		 _clientList = new ClientInfoList();
+		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,_clientList, _fileList));
+		 Thread tcp1 = new Thread(new Tcpserver(10023,_clientList));
 		 //Thread tcp2 = new Thread(new Tcpserver(10025,clients));
 		//_fileList = new FileInfoList();
 		//new Monitor(tcpPort1, tcpPort2, clients, _fileList);

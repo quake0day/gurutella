@@ -23,23 +23,18 @@ import java.lang.Object;
 public class Tcpserver extends Thread
 { 
 
- private static final long TIMEOUT = 3000;
-private SocketChannel clientSocketChannel;
- private Selector selector;
  protected Socket clientSocket;
 
  public static int count = 0;
  public int maxsize = 8;
  public Socket[] socketArray;
- public ArrayList<Socket> clients = null;
- private simpella Simpella;
- private int bufSize;
+ private ClientInfoList clients;
  private int port;
- public Tcpserver (int tcpport,simpella Simpella) throws IOException, InterruptedException
+ public Tcpserver (int tcpport,ClientInfoList clients) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
-	 this.Simpella = Simpella;
+	 this.clients = clients;
 	 ServerSocket serverSocket = null; 
 	 socketArray = new Socket[maxsize];
 	 ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
@@ -59,7 +54,7 @@ private SocketChannel clientSocketChannel;
  private Tcpserver (Socket clientSoc) throws IOException
  {
      clientSocket = clientSoc;
-     Simpella.clients.add(clientSoc);
+     clients.add(clientSoc);
      System.out.println("get Conn. request from "+
 			 clientSoc.getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
      start();
@@ -67,8 +62,8 @@ private SocketChannel clientSocketChannel;
  public void run()
    {
 	PrintWriter outServer = null;
-	int index = Simpella.clients.size()-1;
-	Socket listenSocket = Simpella.clients.get(index);
+	int index = clients.size()-1;
+	Socket listenSocket = clients.get(index);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
                                       true); 

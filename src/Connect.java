@@ -18,11 +18,11 @@ public class Connect extends Thread{
 	private int tcpport;
 	public int maxsize = 50;
 	private Socket newEstablishedSocket = null;
-	private simpella Simpella;
-	public Connect (String targetIPAddressr, String tcp, simpella Simpella) throws IOException{
+	private ClientInfoList clients;
+	public Connect (String targetIPAddressr, String tcp, ClientInfoList clients) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
-		this.Simpella = Simpella;
+		this.clients = clients;
 		//this.echo = echo;
         ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
         boolean isAbleToConnect = true;
@@ -42,7 +42,7 @@ public class Connect extends Thread{
 			isAbleToConnect = false;
 		}
 		
-		Iterator<Socket> iter = Simpella.clients.iterator();
+		Iterator<Socket> iter = clients.iterator();
 		//  duplicate?
 		while(iter.hasNext()){
 			if(targetIPAddress.equals(iter.next().getInetAddress().toString().split("/")[1])){
@@ -71,7 +71,7 @@ public class Connect extends Thread{
 	public Connect(Socket socket) {
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
-		Simpella.clients.add(socket);	
+		clients.addSocket(socket);	
 		start();
 	}
 
@@ -79,6 +79,7 @@ public class Connect extends Thread{
         PrintWriter out = null;
         BufferedReader in = null;
         String inputLine;
+        int i = 0;
         boolean waitForReply = true;
 		try {
 			in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
@@ -89,22 +90,10 @@ public class Connect extends Thread{
 		}
 		//The connection initiator sends a string (case-sensitive)
 		while(waitForReply){
+			if (i % 2 == 5){
+				waitForReply = false;
+			}
 			out.print("SIMPELLA CONNECT/0.6\r\n");
-			try {
-				Thread.sleep(3);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				if((inputLine = in.readLine()) != null){
-					System.out.print(inputLine);
-					waitForReply = false;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		
 		while(true){

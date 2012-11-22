@@ -25,14 +25,14 @@ public class Monitor extends Thread{
 	 * @param args
 	 */
 	private int tcpPort1,tcpPort2;
-	private ArrayList<Socket> client;
+	public ClientInfoList clients;
 	private FileInfoList _fileList;
 	private static int MAX_THREAD_NUM = 9;
 
-	public Monitor (int port1, int port2, ArrayList<Socket> clients, FileInfoList fl) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl) throws IOException, InterruptedException{
 		   this.tcpPort1 = port1;
 		   this.tcpPort2 = port2;
-		   this.client = clients;
+		   this.clients = clients;
 		   this._fileList = fl;
 		  // ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREAD_NUM);		
 
@@ -46,9 +46,7 @@ public class Monitor extends Thread{
                  new InputStreamReader(System.in));
 	     String userInput;
 		// Thread tcpserver = 
-		 
-
-	     
+		 	     
 		 while(true)
 		 { 
 			 
@@ -87,7 +85,7 @@ public class Monitor extends Thread{
 			    	// create new thread connect to handle this request
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));	
-			    	Thread open = new Connect(targetIPAddress,targetTCPPort,new simpella());
+			    	Thread open = new Connect(targetIPAddress,targetTCPPort,clients);
 			    	}
 			    }
 /////////////////Share command/////////////////////		    
