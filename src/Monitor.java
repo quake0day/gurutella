@@ -25,11 +25,12 @@ public class Monitor extends Thread{
 	 * @param args
 	 */
 	private int tcpPort1,tcpPort2;
-	private ArrayList<Socket> client;
+	//private ArrayList<Socket> client;
+	private ClientInfoList client;
 	private FileInfoList _fileList;
 	private static int MAX_THREAD_NUM = 9;
 
-	public Monitor (int port1, int port2, ArrayList<Socket> clients, FileInfoList fl) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl) throws IOException, InterruptedException{
 		   this.tcpPort1 = port1;
 		   this.tcpPort2 = port2;
 		   this.client = clients;
