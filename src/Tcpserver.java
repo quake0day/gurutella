@@ -28,7 +28,7 @@ public class Tcpserver extends Thread
  public static int count = 0;
  public int maxsize = 8;
  public Socket[] socketArray;
- private ClientInfoList clients;
+ public ClientInfoList clients;
  private int port;
  public Tcpserver (int tcpport,ClientInfoList clients) throws IOException, InterruptedException
    {
@@ -46,12 +46,13 @@ public class Tcpserver extends Thread
 	 }
 	// System.out.println ("Connection Socket Created");
      while(true){
-    	 threadPool.submit(new Tcpserver(serverSocket.accept()));
+    	 threadPool.submit(new Tcpserver(serverSocket.accept(),clients));
+    	 
      }
      
    }
 
- private Tcpserver (Socket clientSoc) throws IOException
+ private Tcpserver (Socket clientSoc,ClientInfoList clients) throws IOException
  {
      clientSocket = clientSoc;
      clients.add(clientSoc);
