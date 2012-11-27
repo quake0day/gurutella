@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -77,41 +76,19 @@ public class Connect extends Thread{
 	}
 
 	public void run(){
-        PrintWriter out = null;
         BufferedReader in = null;
         String inputLine;
-        boolean waitForReply = true;
 		try {
 			in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
-	        out = new PrintWriter(newEstablishedSocket.getOutputStream(), true); 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		//The connection initiator sends a string (case-sensitive)
-		while(waitForReply){
-			out.print("SIMPELLA CONNECT/0.6\r\n");
-			try {
-				Thread.sleep(3);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				if((inputLine = in.readLine()) != null){
-					System.out.print(inputLine);
-					waitForReply = false;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		
 		while(true){
 			try {
 				while((inputLine = in.readLine()) != null){
-					System.out.println("Server:"+inputLine);
+					System.out.println("Received:"+inputLine);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

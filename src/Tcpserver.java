@@ -94,13 +94,11 @@ private SocketChannel clientSocketChannel;
             	 outServer.println(acceptString);
              }
              else{
-            	 /*
+            	
               System.out.println ("		echoing: " + inputLine); 
               System.out.println ("		to: IP = "+listenSocket.getInetAddress().toString());
               System.out.println ("		type = tcp");
               outServer.println(inputLine); 
-              */
-            	 System.out.println("not equal");
              }
          } 
          outServer.close(); 
