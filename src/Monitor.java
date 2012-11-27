@@ -90,7 +90,7 @@ public class Monitor extends Thread{
 			    	// create new thread connect to handle this request
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));	
-/*inapproprate*/   	Thread open = new Connect(targetIPAddress,targetTCPPort,new simpella());
+/*inapproprate*/   	Thread open = new Connect(targetIPAddress,targetTCPPort,client);
 			    	}
 			    }
 /////////////////Share command/////////////////////		    

@@ -18,11 +18,12 @@ public class Connect extends Thread{
 	private int tcpport;
 	public int maxsize = 50;
 	private Socket newEstablishedSocket = null;
-	private simpella Simpella;
-	public Connect (String targetIPAddressr, String tcp, simpella Simpella) throws IOException{
+	//private simpella Simpella;
+	private ClientInfoList clients;
+	public Connect (String targetIPAddressr, String tcp, ClientInfoList client) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
-		this.Simpella = Simpella;
+		this.clients = client;
 		//this.echo = echo;
         ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
         boolean isAbleToConnect = true;
@@ -42,7 +43,7 @@ public class Connect extends Thread{
 			isAbleToConnect = false;
 		}
 		
-		Iterator<Socket> iter = Simpella.clients.iterator();
+		Iterator<Socket> iter = clients.iterator();
 		//  duplicate?
 		while(iter.hasNext()){
 			if(targetIPAddress.equals(iter.next().getInetAddress().toString().split("/")[1])){
@@ -52,7 +53,7 @@ public class Connect extends Thread{
         if(isAbleToConnect){
 		try {
 			//newEstablishedSocket = new Socket(targetIPAddress, tcpport);
-			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport)));
+			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients));
 			System.out.println("Info: The connection between this machine and "+targetIPAddress+" "+tcpport +" is successfully estabilshed");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -68,11 +69,11 @@ public class Connect extends Thread{
 
 	    
 	}
-	public Connect(Socket socket) {
+	public Connect(Socket socket,ClientInfoList clients) {
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
-		Simpella.clients.add(socket);	
-		start();
+		clients.add(socket);	
+		//start();
 	}
 
 	public void run(){

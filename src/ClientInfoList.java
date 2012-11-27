@@ -1,6 +1,7 @@
 import java.io.File;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 
@@ -47,6 +48,14 @@ public class ClientInfoList {
 	public Socket get(int index) {
 		// TODO Auto-generated method stub
 		return _clients.get(index);
+	}
+
+	/**
+	 * @return
+	 */
+	public Iterator<Socket> iterator() {
+		// TODO Auto-generated method stub
+		return _clients.iterator();
 	}
 
 }

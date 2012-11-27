@@ -51,22 +51,16 @@ public class simpella /*extends Thread*/{
 		else
 		{
 			System.out.println("Usage: java Echoer <tcp-port> <udp-port>");
-			//System.exit(1);  for test only
 		}
 		showWelcomeInfo(tcpPort1,tcpPort2);
-		 /*
-		 Thread thread = new Thread(new Monitor(tcpport,udpport,clients));
-		 thread.start();
-		 */
-		 //simpella Simpella = new simpella();
+
 		 ClientInfoList _clients = new ClientInfoList();
 		 _fileList = new FileInfoList();
 		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,_clients, _fileList));
 		 threadPool.submit(new Tcpserver(10025,_clients));
-		 //Thread tcp1 = new Thread(new Tcpserver(10025,_clients));
-		 //Thread tcp2 = new Thread(new Tcpserver(10025,clients));
-		//_fileList = new FileInfoList();
-		//new Monitor(tcpPort1, tcpPort2, clients, _fileList);
+		 // download port
+		 //threadPool.submit(new Tcpserver(tcpPort2,_clients));
+
 		}
 	public static void showWelcomeInfo(int tcpPort1,int tcpPort2){
 		InetAddress IP = null;
@@ -89,7 +83,7 @@ public class simpella /*extends Thread*/{
 				IP = InetAddress.getLocalHost();
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Cannot obtain local IP address");
 			}
 		}
 		String delimiter = "/";
