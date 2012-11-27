@@ -59,9 +59,10 @@ public class simpella /*extends Thread*/{
 		 thread.start();
 		 */
 		 simpella Simpella = new simpella();
+		 ClientInfoList _clients = new ClientInfoList();
 		 _fileList = new FileInfoList();
 		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,clients, _fileList));
-		 Thread tcp1 = new Thread(new Tcpserver(10025,Simpella));
+		 Thread tcp1 = new Thread(new Tcpserver(10025,_clients));
 		 //Thread tcp2 = new Thread(new Tcpserver(10025,clients));
 		//_fileList = new FileInfoList();
 		//new Monitor(tcpPort1, tcpPort2, clients, _fileList);
