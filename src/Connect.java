@@ -3,7 +3,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -15,23 +14,19 @@ public class Connect extends Thread{
 	
 	private String targetIPAddress;
 	private int tcpport;
-	public int maxsize = 50;
 	private Socket newEstablishedSocket = null;
-	//private simpella Simpella;
 	private ClientInfoList clients;
 	public Connect (String targetIPAddressr, String tcp, ClientInfoList client) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
 		this.clients = client;
-		//this.echo = echo;
-        ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
+        ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
         boolean isAbleToConnect = true;
-        //System.out.println(targetIPAddress.toString().equals("127.0.0.1"));
         InetAddress addr = null;
         String localIPAddr = null;
         addr = InetAddress.getLocalHost();
         localIPAddr = addr.getHostAddress().toString();
-        if(targetIPAddress.toString().equals("127.0.0.1") || targetIPAddress.toString().equals("localhost") || targetIPAddress.toString().equals(localIPAddr)){
+        if(targetIPAddress.toString().equals(MyConstants.localIPNum) || targetIPAddress.toString().equals(MyConstants.localHost) || targetIPAddress.toString().equals(localIPAddr)){
         	isAbleToConnect = true;
         }
         // judge hostname
@@ -51,7 +46,6 @@ public class Connect extends Thread{
 		}
         if(isAbleToConnect){
 		try {
-			//newEstablishedSocket = new Socket(targetIPAddress, tcpport);
 			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients));
 			System.out.println("Info: The connection between this machine and "+targetIPAddress+" "+tcpport +" is successfully estabilshed");
 		} catch (UnknownHostException e) {
@@ -72,7 +66,6 @@ public class Connect extends Thread{
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
 		clients.add(socket);	
-		//start();
 	}
 
 	public void run(){

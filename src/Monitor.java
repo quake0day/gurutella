@@ -1,11 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 
@@ -24,32 +19,23 @@ public class Monitor extends Thread{
 	/**
 	 * @param args
 	 */
-	private int tcpPort1,tcpPort2;
-	//private ArrayList<Socket> client;
-	private ClientInfoList client;
+	private static int tcpPort1,tcpPort2;
+	private ClientInfoList _client;
 	private FileInfoList _fileList;
-	private static int MAX_THREAD_NUM = 9;
 
 	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl) throws IOException, InterruptedException{
 		   this.tcpPort1 = port1;
 		   this.tcpPort2 = port2;
-		   this.client = clients;
+		   this._client = clients;
 		   this._fileList = fl;
-		  // ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREAD_NUM);		
-
 		   
 	}
 	
 	public void run(){
-	     PrintWriter out = null;
-	     BufferedReader in = null;
 	     BufferedReader stdIn = new BufferedReader(
                  new InputStreamReader(System.in));
 	     String userInput;
-		// Thread tcpserver = 
-		 
-
-	     
+		 	     
 		 while(true)
 		 { 
 			 
@@ -90,7 +76,7 @@ public class Monitor extends Thread{
 			    	// create new thread connect to handle this request
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));	
-/*Inappropriate*/   	Thread open = new Connect(targetIPAddress,targetTCPPort,client);
+/*Inappropriate*/   Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client));
 			    	}
 			    }
 /////////////////Share command/////////////////////		    
@@ -190,7 +176,8 @@ public class Monitor extends Thread{
 			e1.printStackTrace();
 		}
 		    try {
-				currentThread().sleep(50);
+				currentThread();
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

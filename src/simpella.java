@@ -1,15 +1,10 @@
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-
 
 
 /**
@@ -21,12 +16,11 @@ import java.util.concurrent.Executors;
  * @author Tianmiao
  */
 public class simpella /*extends Thread*/{
-	// define the max thread num in a threadpool
-	private static int MAX_THREAD_NUM = 9;
+	// define the max thread number in a thread-pool
 	private static int tcpPort1 = 6346;
 	private static int tcpPort2 = 6745;
-	public static ArrayList<Socket> clients = new ArrayList<Socket>();
 	public static FileInfoList _fileList;
+	public static ClientInfoList _clients;
 	
 	/**
 	 * @param args
@@ -35,7 +29,7 @@ public class simpella /*extends Thread*/{
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-		ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREAD_NUM);		
+		ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);		
 		if (args.length > 0){
 			tcpPort1 = Integer.parseInt(args[0]);
 			tcpPort2 = Integer.parseInt(args[1]);
@@ -52,9 +46,10 @@ public class simpella /*extends Thread*/{
 		{
 			System.out.println("Usage: java Echoer <tcp-port> <udp-port>");
 		}
+		
 		showWelcomeInfo(tcpPort1,tcpPort2);
 
-		 ClientInfoList _clients = new ClientInfoList();
+		 _clients = new ClientInfoList();
 		 _fileList = new FileInfoList();
 		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,_clients, _fileList));
 		 threadPool.submit(new Tcpserver(10025,_clients));
