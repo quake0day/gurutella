@@ -58,23 +58,33 @@ public class Tcpserver extends Thread
      clients.add(clientSoc);
      System.out.println("get Conn. request from "+
 			 clientSoc.getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
-     start();
+     //start();
  }
  public void run()
    {
 	PrintWriter outServer = null;
 	int index = clients.size()-1;
 	Socket listenSocket = clients.get(index);
-    try { 
+    System.out.println("hihihihi");
+
+   }
+/*
+ *     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
                                       true); 
          BufferedReader inServer = new BufferedReader( 
                  new InputStreamReader(listenSocket.getInputStream())); 
-
+    }
+    catch (IOException e) 
+    { 
+     System.err.println("Problem with Communication Server");
+     System.exit(1); 
+    } 
          String inputLine; 
          
          while ((inputLine = inServer.readLine()) != null) 
          { 
+
         	 String inputMessage=null;
         	 try{
         		 inputMessage = inputLine.split(" ")[1];
@@ -90,12 +100,12 @@ public class Tcpserver extends Thread
             	 outServer.println(acceptString);
              }
              else{
-            	 /*
+            	
               System.out.println ("		echoing: " + inputLine); 
               System.out.println ("		to: IP = "+listenSocket.getInetAddress().toString());
               System.out.println ("		type = tcp");
               outServer.println(inputLine); 
-              */
+            
             	 System.out.println("not equal");
              }
          } 
@@ -108,6 +118,7 @@ public class Tcpserver extends Thread
          System.err.println("Problem with Communication Server");
          System.exit(1); 
         } 
-    }
+    }*/
+    
 }
 

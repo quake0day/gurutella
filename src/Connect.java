@@ -72,7 +72,7 @@ public class Connect extends Thread{
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
 		clients.addSocket(socket);	
-		start();
+		//start();
 	}
 
 	public void run(){
@@ -81,14 +81,18 @@ public class Connect extends Thread{
         String inputLine;
         int i = 0;
         boolean waitForReply = true;
-		try {
+        System.out.println("hihihihi");
+
+
+		//The connection initiator sends a string (case-sensitive)
+		/*
+		 * 		try {
 			in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
 	        out = new PrintWriter(newEstablishedSocket.getOutputStream(), true); 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//The connection initiator sends a string (case-sensitive)
 		while(waitForReply){
 			if (i % 2 == 5){
 				waitForReply = false;
@@ -107,7 +111,7 @@ public class Connect extends Thread{
 			}
 			
 		}
-		
+		*/
 	}
 	
 }
