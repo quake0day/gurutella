@@ -31,15 +31,15 @@ private SocketChannel clientSocketChannel;
  public static int count = 0;
  public int maxsize = 8;
  public Socket[] socketArray;
- public ArrayList<Socket> clients = null;
- private simpella Simpella;
+ //public ArrayList<Socket> clients = null;
+ private ClientInfoList clients;
  private int bufSize;
  private int port;
- public Tcpserver (int tcpport,simpella Simpella) throws IOException, InterruptedException
+ public Tcpserver (int tcpport,ClientInfoList client) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
-	 this.Simpella = Simpella;
+	 this.clients = client;
 	 ServerSocket serverSocket = null; 
 	 socketArray = new Socket[maxsize];
 	 ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
@@ -51,24 +51,24 @@ private SocketChannel clientSocketChannel;
 	 }
 	// System.out.println ("Connection Socket Created");
      while(true){
-    	 threadPool.submit(new Tcpserver(serverSocket.accept()));
+    	 threadPool.submit(new Tcpserver(serverSocket.accept(), clients));
      }
      
    }
 
- private Tcpserver (Socket clientSoc) throws IOException
+ private Tcpserver (Socket clientSoc, ClientInfoList clients) throws IOException
  {
      clientSocket = clientSoc;
-     Simpella.clients.add(clientSoc);
+     clients.add(clientSoc);
      System.out.println("get Conn. request from "+
 			 clientSoc.getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
-     start();
+    // start();
  }
  public void run()
    {
 	PrintWriter outServer = null;
-	int index = Simpella.clients.size()-1;
-	Socket listenSocket = Simpella.clients.get(index);
+	int index = clients.size()-1;
+	Socket listenSocket = clients.get(index);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
                                       true); 
