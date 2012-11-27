@@ -17,10 +17,6 @@ public class ClientInfoList {
 	 * @param args
 	 */
 	private ArrayList<Socket> _clients;
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public ClientInfoList(){
 		 _clients = new ArrayList <Socket>();
@@ -28,7 +24,7 @@ public class ClientInfoList {
 	/**
 	 * @param clientSoc
 	 */
-	public void add(Socket clientSoc) {
+	public synchronized void add(Socket clientSoc) {
 		// TODO Auto-generated method stub
 		_clients.add(clientSoc);
 	}
@@ -36,7 +32,7 @@ public class ClientInfoList {
 	/**
 	 * @return
 	 */
-	public int size() {
+	public synchronized int size() {
 		// TODO Auto-generated method stub
 		return _clients.size();
 	}
@@ -45,7 +41,7 @@ public class ClientInfoList {
 	 * @param index
 	 * @return
 	 */
-	public Socket get(int index) {
+	public synchronized Socket get(int index) {
 		// TODO Auto-generated method stub
 		return _clients.get(index);
 	}
@@ -53,7 +49,7 @@ public class ClientInfoList {
 	/**
 	 * @return
 	 */
-	public Iterator<Socket> iterator() {
+	public synchronized Iterator<Socket> iterator() {
 		// TODO Auto-generated method stub
 		return _clients.iterator();
 	}
