@@ -59,7 +59,7 @@ public class Monitor extends Thread{
 			    // split user input by space and save it to an matrix
 			    String[] command = userInput.split(" "); 
 			    // the first character should be a command
-			    //userInput = command[0]; this statement would lead to OutOfBoundsExcetion in 'share'
+			    //userInput = command[0]; this statement would lead to OutOfBoundsException in 'share'
 /////////////////quit command//////////////////////			   
 			    if (command[0].equalsIgnoreCase("quit"))
 			    {
@@ -83,11 +83,13 @@ public class Monitor extends Thread{
 			    	}
 			    	else{		
 			    	String targetIPAddress = command[1].split(":")[0];
+			    	targetIPAddress.trim();
 			    	String targetTCPPort = command[1].split(":")[1];
+			    	targetIPAddress.trim();
 			    	// create new thread connect to handle this request
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));	
-			    	Thread open = new Connect(targetIPAddress,targetTCPPort,new simpella());
+/*inapproprate*/   	Thread open = new Connect(targetIPAddress,targetTCPPort,new simpella());
 			    	}
 			    }
 /////////////////Share command/////////////////////		    

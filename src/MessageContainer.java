@@ -47,9 +47,13 @@ public class MessageContainer {
 		this.payload = payload;
 	}
 	
-	public boolean setID(int[] num)
-	{
+	public boolean setID(int[] num, MessageIDList idList)	//used when random assignment
+	{														//for sender
 		if (num.length != 14)	//ID length legality check
+		{
+			return false;
+		}
+		else if (!idList.checkID(num))
 		{
 			return false;
 		}
@@ -57,36 +61,30 @@ public class MessageContainer {
 		{
 			for(int i = 0, j = 0; i < num.length; i++, j++)	
 			{
-				if (num[i] > 255 || num[i] < 0)	//Number range legality check
-				{
-					return false;
-				}
-				else
-				{
 					mID[j] = new Integer(num[i]).byteValue();
 					if (j == 7)
 					{
 						j++;
 					}
-				}
-			}	
+			}
+			idList.addID(mID);
 			return true;
 		}
 	}
 	
-	public int[] getID()
+	public boolean getID(MessageIDList idList)	//for receiver, read to UI
 	{
-		int[] num = new int[mID.length - 2];
-		for(int i = 0, j = 0; i < mID.length - 1; i++, j++)	
+		if (!idList.checkID(mID))
 		{
-				num[j] = mID[i] & 0xFF;	//Get unsigned integer
-				if (i == 7)
-				{
-					i++;
-				}
+			return false;
 		}
-		return num;
+		else
+		{
+			idList.addID(mID);
+			return true;
+		}
 	}
+	
 	
 	public boolean setType(int type) //1.Ping 2.Pong 3.Query 4.Query Hit
 	{

@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 
 /**
- * TO BE FINISHED:
- * This List should store all used global MessageID number. 
+ * Version 1: Stores all used global MessageID number. ($3.2 in project assignment)
  */
 
 /**
@@ -10,20 +9,41 @@ import java.util.ArrayList;
  *
  */
 public class MessageIDList {
-	private ArrayList <int[]> _IDList;
+	private ArrayList <byte[]> _IDList;
 	
 	public MessageIDList()
 	{
-		ArrayList<int[]> _IDList = new ArrayList<int[]>(); 
+		_IDList = new ArrayList<byte[]>(); 
 	}
 	
-	public void addID(int[] id)
+	public void addID(byte[] id)
 	{
 		_IDList.add(id); 
 	}
 	
-	public boolean checkID()
+	public boolean checkID(int[] id)	//ok=true, bad=false
 	{
-		return false;
+		byte[] idNo = new byte[id.length];
+		for(int i = 0; i < id.length; i++)	
+		{
+			if (id[i] > 255 || id[i] < 0)	//Number range legality check
+			{
+				return false;
+			}
+			else
+			{
+				idNo[i] = new Integer(id[i]).byteValue();	
+			}
+		}
+		return this.checkID(idNo);
+	}
+	
+	public boolean checkID(byte[] id)
+	{
+		if (_IDList.contains(id))
+		{
+			return true;
+		}
+		else return false;
 	}
 }
