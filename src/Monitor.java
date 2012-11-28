@@ -75,10 +75,39 @@ public class Monitor extends Thread{
 			    	targetIPAddress.trim();
 			    	// create new thread connect to handle this request
 			    	// see Connect.java for more detail
-			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));	
+			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
 /*Inappropriate*/   Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client));
 			    	}
 			    }
+			    else if (command[0].equals("send"))
+			    {
+			    	String message = null;
+			    	int connid = 0;
+			    	// for send command, a user should provide at least 3 parameters
+			    	if(command.length < 3){
+			    		System.out.println("Usage:send <conn-id> <message>");
+			    	}
+			    	else{		
+			    		try{
+			    			connid = Integer.parseInt(command[1]);
+			    		} catch(NumberFormatException e){
+			    			System.out.println("The conn-id you input is not a valid one ");
+			    		}
+			    	for(int i=2; i < command.length; i++){
+			    		if(message == null){
+			    			message = command[i];
+			    		}
+			    		else{
+			    			message = message +" "+ command[i] ;
+			    		}
+			    	}
+			    	}
+			    	Thread send = new Thread(new SendMessage(connid,message,_client));	
+			    	send.start();
+			    }
+			    	
+			    	
+			    	
 /////////////////Share command/////////////////////		    
 			    else if (command[0].equalsIgnoreCase("share")) /*haven't finished*/
 			    {
