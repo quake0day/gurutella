@@ -10,6 +10,7 @@ public class SendMessage extends Thread {
 		this.clients = client;
 		this.id = connid;
 		this.messageToSend = message;
+
 	}
 	
 	public void run(){

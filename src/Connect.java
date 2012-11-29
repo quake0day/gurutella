@@ -3,6 +3,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -65,19 +66,21 @@ public class Connect extends Thread{
 	public Connect(Socket socket,ClientInfoList clients) {
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
-		clients.add(socket);	
+		clients.add_outgoing(socket);	
 	}
 
 	public void run(){
         BufferedReader in = null;
+        PrintWriter outServer = null;
         String inputLine;
 		try {
 			in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
+			outServer = new PrintWriter(newEstablishedSocket.getOutputStream(), 
+			        true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		while(true){
 			try {
 				while((inputLine = in.readLine()) != null){
