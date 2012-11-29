@@ -58,7 +58,6 @@ public class Tcpserver extends Thread
  
  public void run()
    {
-	 System.out.println("here you are");
 	PrintWriter outServer = null;
 	//Create a server socket for every accepted connection
 	try {
@@ -89,7 +88,7 @@ public class Tcpserver extends Thread
               // hand shake
               if(inputLine.equals("SIMPELLA CONNECT/0.6")){
             	  if(index >= 0 && index <= MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
-            	  outServer.println(MyConstants.STATUS_200);
+            		  outServer.println(MyConstants.STATUS_200);
             	  }
             	  else{ // We cannot accept
             		  outServer.println(MyConstants.STATUS_503);
