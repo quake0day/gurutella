@@ -1,31 +1,14 @@
 
 import java.net.*; 
-import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.*; 
-import java.lang.Object;
+
 
 //import com.sun.corba.se.impl.orbutil.closure.Future;
 
 public class Tcpserver extends Thread
 { 
-
- private static final long TIMEOUT = 3000;
- private SocketChannel clientSocketChannel;
- private Selector selector;
  //protected Socket clientSocket;
  private ServerSocket _serverSK;
 
@@ -34,7 +17,6 @@ public class Tcpserver extends Thread
  public Socket[] socketArray;
  //public ArrayList<Socket> clients = null;
  private ClientInfoList clients;
- private int bufSize;
  private int port;
  private ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
  
@@ -99,10 +81,20 @@ public class Tcpserver extends Thread
          while ((inputLine = inServer.readLine()) != null) 
          { 
         	 
-            	
+            /*
               System.out.println ("		echoing: " + inputLine); 
               System.out.println ("		to: IP = "+listenSocket.getInetAddress().toString());
               System.out.println ("		type = tcp");
+              */
+              // hand shake
+              if(inputLine.equals("SIMPELLA CONNECT/0.6")){
+            	  if(index >= 0 && index <= MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
+            	  outServer.println(MyConstants.STATUS_200);
+            	  }
+            	  else{ // We cannot accept
+            		  outServer.println(MyConstants.STATUS_503);
+            	  }
+              }
                        
          } 
          outServer.close(); 
