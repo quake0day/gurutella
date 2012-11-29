@@ -66,7 +66,7 @@ public class Connect extends Thread{
 	public Connect(Socket socket,ClientInfoList clients) {
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
-		clients.add(socket);	
+		clients.add_outgoing(socket);	
 	}
 
 	public void run(){
