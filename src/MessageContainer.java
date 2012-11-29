@@ -58,6 +58,7 @@ public class MessageContainer {
 		byte[] Message = new byte[messageLength];
 		//System.arraycopy(mID, 0, Message, 0, 16);
 		Message[8] = mID[8]; 
+		aa
 		Message[15] = mID[15]; 
 		Message[16] = mType;
 		Message[17] = TTL;
