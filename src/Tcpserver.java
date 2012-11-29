@@ -87,11 +87,12 @@ public class Tcpserver extends Thread
               */
               // hand shake
               if(inputLine.equals("SIMPELLA CONNECT/0.6")){
-            	  if(index >= 0 && index <= MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
+            	  if(index >= 0 && index < MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
             		  outServer.println(MyConstants.STATUS_200);
             	  }
             	  else{ // We cannot accept
             		  outServer.println(MyConstants.STATUS_503);
+            		  
             	  }
               }
                        
