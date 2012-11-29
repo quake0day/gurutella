@@ -16,7 +16,7 @@
 public class MessageContainer {	
 	private
 		byte[] mID = new byte[16];
-		byte mType;
+		byte mType = (byte)0x00;
 		byte TTL;
 		byte Hops;
 		byte[] pLength = new byte[4];
@@ -25,10 +25,13 @@ public class MessageContainer {
 	public MessageContainer() {
 		//Constructor1
 		//Message format initialization
+		// TODO: other bytes should have a highly random values
+		byte[] newPacketLength={0x00,0x00,0x00,0x00};
 		mID[8] = (byte)0xff;
 		mID[15] = (byte)0x00;
 		TTL = new Integer(7).byteValue();
 		Hops = (byte)0x00;
+		pLength = newPacketLength;
 	}
 	
 	public MessageContainer(byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload)
@@ -47,6 +50,26 @@ public class MessageContainer {
 		this.payload = payload;
 	}
 	
+	public byte[] convertToByte(){
+		int messageLength = 23;
+		if(payload != null){
+			messageLength = messageLength + payload.length;
+		}
+		byte[] Message = new byte[messageLength];
+		//System.arraycopy(mID, 0, Message, 0, 16);
+		Message[8] = mID[8]; 
+		Message[15] = mID[15]; 
+		Message[16] = mType;
+		Message[17] = TTL;
+		Message[18] = Hops;
+		System.arraycopy(pLength, 0, Message, 19, 4);
+		if(payload != null){
+			if(payload.length > 0){
+				System.arraycopy(payload, 0, Message, 23, payload.length);
+			}
+		}
+		return Message;
+	}
 	public boolean setID(int[] num, MessageIDList idList)	//used when random assignment
 	{														//for sender
 		if (num.length != 14)	//ID length legality check

@@ -91,6 +91,8 @@ public class Tcpserver extends Thread
             	  if(tempClientIndex >= -1 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM - 1){ // We can accpet
             		  outServer.println(MyConstants.STATUS_200);
             		  clients.add_incoming(listenSocket);
+					  Thread update = new Thread(new Update(clients));
+					  update.start();
 
             	  }
             	  else{ // We cannot accept

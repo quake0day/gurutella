@@ -66,6 +66,7 @@ public class Connect extends Thread{
 	}
 	public Connect(Socket socket,ClientInfoList clients) {
 		// TODO Auto-generated constructor stub
+		this.clients = clients;
 		newEstablishedSocket = socket;
 		tempClientIndex = clients.size(0) - 1;
 	}
@@ -94,6 +95,9 @@ public class Connect extends Thread{
 						// Print out <string>
 						System.out.println(inputLine.split("200 ")[1]);
 						clients.add_outgoing(newEstablishedSocket);	
+						Thread update = new Thread(new Update(clients));
+						update.start();
+						//System.out.println(clients.size(0));
 					}
 					else if(inputLine.equals(MyConstants.STATUS_503_REC)){
 						// Print out <string>

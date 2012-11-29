@@ -82,6 +82,11 @@ public class Monitor {
 			    	}
 			    	}
 			    }
+			    else if (command[0].equalsIgnoreCase("update")){
+			    	// send PING to all neighbors
+					Thread update = new Thread(new Update(_client));
+					update.start();
+			    }
 			    else if (command[0].equals("send"))
 			    {
 			    	String message = null;
