@@ -76,8 +76,6 @@ public class Monitor {
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
 			    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
 /*Inappropriate*/   Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client));
-					Thread send = new Thread(new SendMessage(_client.size(0)-1,"SIMPELLA CONNECT/0.6\r\n",1,_client));	
-					send.start();
 			    	}
 			    	else{
 			    		

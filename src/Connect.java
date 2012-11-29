@@ -81,11 +81,14 @@ public class Connect extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// Do handshake
+		outServer.println("SIMPELLA CONNECT/0.6\r\n");
+		
 		while(true){
 			try {
 				while((inputLine = in.readLine()) != null){
-					System.out.println("Received:"+inputLine);
-					// hand shake
+					//System.out.println("Received:"+inputLine);
+					// Get hand shake reply
 					if(inputLine.equals(MyConstants.STATUS_200_REC)){
 						// Print out <string>
 						System.out.println(inputLine.split("200 ")[1]);
