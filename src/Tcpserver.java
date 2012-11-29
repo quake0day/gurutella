@@ -59,16 +59,17 @@ public class Tcpserver extends Thread
  public void run()
    {
 	PrintWriter outServer = null;
+	Socket listenSocket = null;
 	//Create a server socket for every accepted connection
 	try {
-		clients.add_incoming(_serverSK.accept());
+		listenSocket = _serverSK.accept();
 	} catch (IOException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
 	
 	int tempClientIndex = clients.size(1) - 1;
-	Socket listenSocket = clients.get(1,tempClientIndex);
+	//Socket listenSocket = clients.get(1,tempClientIndex);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
                                       true); 
@@ -87,12 +88,14 @@ public class Tcpserver extends Thread
               */
               // hand shake
               if(inputLine.equals("SIMPELLA CONNECT/0.6")){
-            	  if(tempClientIndex >= 0 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
+            	  if(tempClientIndex >= -1 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM - 1){ // We can accpet
             		  outServer.println(MyConstants.STATUS_200);
+            		  clients.add_incoming(listenSocket);
+
             	  }
             	  else{ // We cannot accept
             		  outServer.println(MyConstants.STATUS_503);
-					  new Disconnect(tempClientIndex,1,clients);
+					  //new Disconnect(tempClientIndex,1,clients);
             	  }
               }
                        

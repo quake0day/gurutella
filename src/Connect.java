@@ -49,7 +49,7 @@ public class Connect extends Thread{
         if(isAbleToConnect){
 		try {
 			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients));
-			System.out.println("Info: The connection between this machine and "+targetIPAddress+" "+tcpport +" is successfully estabilshed");
+			System.out.println("The connection between this machine and "+targetIPAddress+" "+tcpport +" is successfully estabilshed");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			System.out.println("cannot connect to this Host. Connection refused");
@@ -67,7 +67,6 @@ public class Connect extends Thread{
 	public Connect(Socket socket,ClientInfoList clients) {
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
-		clients.add_outgoing(socket);	
 		tempClientIndex = clients.size(0) - 1;
 	}
 
@@ -94,11 +93,11 @@ public class Connect extends Thread{
 					if(inputLine.equals(MyConstants.STATUS_200_REC)){
 						// Print out <string>
 						System.out.println(inputLine.split("200 ")[1]);
+						clients.add_outgoing(newEstablishedSocket);	
 					}
 					else if(inputLine.equals(MyConstants.STATUS_503_REC)){
 						// Print out <string>
 						System.out.println(inputLine.split("503 ")[1]);
-						new Disconnect(tempClientIndex,0,clients);
 					}
 				}
 			} catch (IOException e) {
