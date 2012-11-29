@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class simpella /*extends Thread*/{
 	// define the max thread number in a thread-pool
 	private static int tcpPort1 = 6346;
-	private static int tcpPort2 = 6745;
+	private static int tcpPort2 = 5635;
 	public static FileInfoList _fileList;
 	public static ClientInfoList _clients;
 	
@@ -29,8 +29,8 @@ public class simpella /*extends Thread*/{
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-		ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);		
-		if (args.length > 0){
+		//ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);		
+		if (args.length == 2){
 			tcpPort1 = Integer.parseInt(args[0]);
 			tcpPort2 = Integer.parseInt(args[1]);
 			if(tcpPort1 < 0 && tcpPort1 > 60000 && tcpPort2 < 0 && tcpPort2 > 60000){
@@ -51,11 +51,13 @@ public class simpella /*extends Thread*/{
 
 		 _clients = new ClientInfoList();
 		 _fileList = new FileInfoList();
-		 threadPool.submit(new Monitor(tcpPort1,tcpPort2,_clients, _fileList));
-		 threadPool.submit(new Tcpserver(10025,_clients));
+		 //TCPServer thread start
+		 Tcpserver _tcpServer = new Tcpserver(10025, _clients);
+		 _tcpServer.start();
+		 new Monitor(tcpPort1,tcpPort2,_clients, _fileList);
+		 //threadPool.submit(new Tcpserver(10025,_clients));
 		 // download port
 		 //threadPool.submit(new Tcpserver(tcpPort2,_clients));
-
 		}
 	public static void showWelcomeInfo(int tcpPort1,int tcpPort2){
 		InetAddress IP = null;

@@ -24,9 +24,10 @@ public class Tcpserver extends Thread
 { 
 
  private static final long TIMEOUT = 3000;
-private SocketChannel clientSocketChannel;
+ private SocketChannel clientSocketChannel;
  private Selector selector;
- protected Socket clientSocket;
+ //protected Socket clientSocket;
+ private ServerSocket _serverSK;
 
  public static int count = 0;
  public int maxsize = 8;
@@ -35,14 +36,16 @@ private SocketChannel clientSocketChannel;
  private ClientInfoList clients;
  private int bufSize;
  private int port;
+ private ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
+ 
  public Tcpserver (int tcpport,ClientInfoList client) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
 	 this.clients = client;
-	 ServerSocket serverSocket = null; 
+	 //ServerSocket serverSocket = null; 
 	 socketArray = new Socket[maxsize];
-	 ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
+	 /*ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
 	 try{
 		 serverSocket = new ServerSocket(port); 
 	 } catch(Exception e){
@@ -52,23 +55,38 @@ private SocketChannel clientSocketChannel;
 	// System.out.println ("Connection Socket Created");
      while(true){
     	 threadPool.submit(new Tcpserver(serverSocket.accept(), clients));
-     }
-     
+     }*/
+	try{
+		_serverSK = new ServerSocket(port);   
+		} catch(Exception e){
+			System.out.println("You're using a port that cannot Establish TCP connection, program halt...");
+			System.exit(1);
+		}
    }
 
- private Tcpserver (Socket clientSoc, ClientInfoList clients) throws IOException
+ private Tcpserver (ServerSocket serverSoc, ClientInfoList clients) throws IOException
  {
-     clientSocket = clientSoc;
-     clients.add(clientSoc);
+     _serverSK = serverSoc;
+     //clients.add(clientSoc);
+     this.clients = clients;
      System.out.println("get Conn. request from "+
-			 clientSoc.getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
+			 _serverSK.accept().getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
     // start();
  }
+ 
  public void run()
    {
 	 System.out.println("here you are");
 	PrintWriter outServer = null;
-	int index = clients.size()-1;
+	//Create a server socket for every accepted connection
+	try {
+		clients.add(_serverSK.accept());
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	
+	int index = clients.size() - 1;
 	Socket listenSocket = clients.get(index);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
@@ -95,7 +113,18 @@ private SocketChannel clientSocketChannel;
         { 
          System.err.println("Problem with Communication Server");
          System.exit(1); 
-        } 
+        }
+	//Create additional threads from ThreadPool 
+	//for the single branch thread of TCPServer declared in class Simpella 
+
+    while(true){
+    	try{
+    		threadPool.submit(new Tcpserver(_serverSK, clients));
+    	}catch (IOException e) {
+    		e.getStackTrace();
+    	}
+    }	
+	//ThreadPool creation finish
     }
 }
 

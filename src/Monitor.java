@@ -14,29 +14,27 @@ import java.io.InputStreamReader;
  * @author Tianmiao
  */
 
-public class Monitor extends Thread{
+public class Monitor {
 
 	/**
 	 * @param args
 	 */
-	private static int tcpPort1,tcpPort2;
+	private int tcpPort1,tcpPort2;
 	private ClientInfoList _client;
 	private FileInfoList _fileList;
+	private boolean isQuit = false;
 
 	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl) throws IOException, InterruptedException{
-		   this.tcpPort1 = port1;
-		   this.tcpPort2 = port2;
-		   this._client = clients;
-		   this._fileList = fl;
-		   
-	}
-	
-	public void run(){
+		 this.tcpPort1 = port1;
+		 this.tcpPort2 = port2;
+		 this._client = clients;
+		 this._fileList = fl;
+		 //System.out.println("test");  
 	     BufferedReader stdIn = new BufferedReader(
                  new InputStreamReader(System.in));
 	     String userInput;
 		 	     
-		 while(true)
+		 while(!isQuit)
 		 { 
 			 
 		 try {
@@ -50,7 +48,7 @@ public class Monitor extends Thread{
 /////////////////quit command//////////////////////			   
 			    if (command[0].equalsIgnoreCase("quit"))
 			    {
-			        System.exit(1);
+			    	isQuit = true;
 			    }
 /////////////////scan command//////////////////////
 			    else if (command[0].equalsIgnoreCase("scan"))
@@ -171,18 +169,12 @@ public class Monitor extends Thread{
 			    	System.out.println("no such command:"+userInput);
 			    }
 				
-		} catch (IOException e1) {
+		 	} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-		    try {
-				currentThread();
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		 	}
 		 }
+		 stdIn.close();
+	     System.exit(1);
 	 }
-	
 }
