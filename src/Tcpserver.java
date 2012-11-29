@@ -66,6 +66,7 @@ private SocketChannel clientSocketChannel;
  }
  public void run()
    {
+	 System.out.println("here you are");
 	PrintWriter outServer = null;
 	int index = clients.size()-1;
 	Socket listenSocket = clients.get(index);
@@ -79,27 +80,12 @@ private SocketChannel clientSocketChannel;
          
          while ((inputLine = inServer.readLine()) != null) 
          { 
-        	 String inputMessage=null;
-        	 try{
-        		 inputMessage = inputLine.split(" ")[1];
-        		 inputMessage = inputMessage.split("/")[0];
-        	 }
-        	 catch(Exception e){
-        		 
-        	 }
-             if (inputMessage.equals("CONNECT")) // Get Connection requestion
-             {
-            	 System.out.println("haha");
-            	 String acceptString ="SIMPELLA/0.6 200 OK\r\n";
-            	 outServer.println(acceptString);
-             }
-             else{
+        	 
             	
               System.out.println ("		echoing: " + inputLine); 
               System.out.println ("		to: IP = "+listenSocket.getInetAddress().toString());
               System.out.println ("		type = tcp");
-              outServer.println(inputLine); 
-             }
+                       
          } 
          outServer.close(); 
          inServer.close(); 
