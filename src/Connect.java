@@ -85,6 +85,15 @@ public class Connect extends Thread{
 			try {
 				while((inputLine = in.readLine()) != null){
 					System.out.println("Received:"+inputLine);
+					// hand shake
+					if(inputLine.equals(MyConstants.STATUS_200_REC)){
+						// Print out <string>
+						System.out.println(inputLine.split("200 ")[1]);
+					}
+					else if(inputLine.equals(MyConstants.STATUS_503_REC)){
+						// Print out <string>
+						System.out.println(inputLine.split("503 ")[1]);
+					}
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
