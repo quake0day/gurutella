@@ -17,6 +17,7 @@ public class Connect extends Thread{
 	private int tcpport;
 	private Socket newEstablishedSocket = null;
 	private ClientInfoList clients;
+	private int tempClientIndex;
 	public Connect (String targetIPAddressr, String tcp, ClientInfoList client) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
@@ -67,6 +68,7 @@ public class Connect extends Thread{
 		// TODO Auto-generated constructor stub
 		newEstablishedSocket = socket;
 		clients.add_outgoing(socket);	
+		tempClientIndex = clients.size(0) - 1;
 	}
 
 	public void run(){
@@ -96,6 +98,7 @@ public class Connect extends Thread{
 					else if(inputLine.equals(MyConstants.STATUS_503_REC)){
 						// Print out <string>
 						System.out.println(inputLine.split("503 ")[1]);
+						new Disconnect(tempClientIndex,0,clients);
 					}
 				}
 			} catch (IOException e) {

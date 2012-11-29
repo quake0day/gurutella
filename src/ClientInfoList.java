@@ -21,7 +21,9 @@ public class ClientInfoList {
 
 
 	public ClientInfoList(){
+		// for type 0 : out going
 		_clients_outgoing = new ArrayList <Socket>();
+		// for type 1 : incoming
 		_clients_incoming = new ArrayList <Socket>();
 
 	}
@@ -39,9 +41,9 @@ public class ClientInfoList {
 	/**
 	 * @return
 	 */
-	public synchronized int size(int i) {
+	public synchronized int size(int type) {
 		// TODO Auto-generated method stub
-		if (i == 0){
+		if (type == 0){
 			return _clients_outgoing.size();
 		}
 		else{
@@ -53,9 +55,9 @@ public class ClientInfoList {
 	 * @param index
 	 * @return
 	 */
-	public synchronized Socket get(int i, int index) {
+	public synchronized Socket get(int type, int index) {
 		// TODO Auto-generated method stub
-		if(i == 0){
+		if(type == 0){
 			return _clients_outgoing.get(index);
 		}
 		else{
@@ -72,5 +74,18 @@ public class ClientInfoList {
 		_clients_all.addAll(_clients_outgoing);
 		_clients_all.addAll(_clients_incoming);
 		return _clients_all.iterator();
+	}
+	/**
+	 * @param type
+	 * @param connectionID
+	 */
+	public void remove(int type, int connectionID) {
+		// TODO Auto-generated method stub
+		if(type == 0){
+			_clients_outgoing.remove(connectionID);
+		}
+		else{
+			_clients_incoming.remove(connectionID);
+		}
 	}
 }

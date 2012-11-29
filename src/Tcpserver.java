@@ -67,8 +67,8 @@ public class Tcpserver extends Thread
 		e1.printStackTrace();
 	}
 	
-	int index = clients.size(1) - 1;
-	Socket listenSocket = clients.get(1,index);
+	int tempClientIndex = clients.size(1) - 1;
+	Socket listenSocket = clients.get(1,tempClientIndex);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
                                       true); 
@@ -87,12 +87,12 @@ public class Tcpserver extends Thread
               */
               // hand shake
               if(inputLine.equals("SIMPELLA CONNECT/0.6")){
-            	  if(index >= 0 && index < MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
+            	  if(tempClientIndex >= 0 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM){ // We can accpet
             		  outServer.println(MyConstants.STATUS_200);
             	  }
             	  else{ // We cannot accept
             		  outServer.println(MyConstants.STATUS_503);
-            		  
+					  new Disconnect(tempClientIndex,1,clients);
             	  }
               }
                        

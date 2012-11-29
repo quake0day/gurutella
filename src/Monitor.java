@@ -75,7 +75,7 @@ public class Monitor {
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
 			    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
-/*Inappropriate*/   Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client));
+/*Inappropriate*/   	Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client));
 			    	}
 			    	else{
 			    		
