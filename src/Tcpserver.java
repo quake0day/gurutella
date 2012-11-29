@@ -58,18 +58,17 @@ public class Tcpserver extends Thread
  
  public void run()
    {
-	 System.out.println("here you are");
 	PrintWriter outServer = null;
 	//Create a server socket for every accepted connection
 	try {
-		clients.add(_serverSK.accept());
+		clients.add_incoming(_serverSK.accept());
 	} catch (IOException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	}
 	
-	int index = clients.size() - 1;
-	Socket listenSocket = clients.get(index);
+	int index = clients.size(1) - 1;
+	Socket listenSocket = clients.get(1,index);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
                                       true); 
