@@ -14,13 +14,12 @@ public class Tcpserver extends Thread
  private ServerSocket _serverSK;
 
  public static int count = 0;
- public int maxsize = 8;
  public Socket[] socketArray;
  //public ArrayList<Socket> clients = null;
  private ClientInfoList clients;
  private MessageIDList _routingTable;
  private int port;
- private ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
+ private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
  
  public Tcpserver (int tcpport,ClientInfoList client,MessageIDList rt) throws IOException, InterruptedException
    {
@@ -29,7 +28,7 @@ public class Tcpserver extends Thread
 	 this.clients = client;
 	 this._routingTable = rt;
 	 //ServerSocket serverSocket = null; 
-	 socketArray = new Socket[maxsize];
+	 socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
 	 /*ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
 	 try{
 		 serverSocket = new ServerSocket(port); 
@@ -59,7 +58,14 @@ public class Tcpserver extends Thread
     // start();
  }
 
-
+public boolean checkMessagePacketValidation(byte[] data){
+	// check if length is larger than 22
+	if(data.length < 22){
+		return false;
+	}
+	return true;
+	
+}
  public void run()
    {
 	PrintWriter outServer = null;
@@ -84,9 +90,10 @@ public class Tcpserver extends Thread
          
          InputStream stream = listenSocket.getInputStream();
          while(true){
-         byte[] data = new byte[100];
-         	int count = stream.read(data);
-         	System.out.println(count);
+            byte[] data = new byte[4096];
+         	int messageLength = stream.read(data);
+         	System.out.println(messageLength);
+         	
          	String recResult = new String(data);
             // hand shake
             if(recResult.trim().equals("SIMPELLA CONNECT/0.6")){
@@ -105,36 +112,37 @@ public class Tcpserver extends Thread
             else{
          	//System.out.println(res);
             	// regular message, judge message type
-            	if((byte)data[16] == 0x00){
-            		System.out.println("PING MESSAGE");
-            		byte[] mID = new byte[16];
-            		System.arraycopy(data, 0, mID, 0, 16);
-            		//Iterator<MessageContainer> iter = _routingTable.iterator();
-            		boolean hasSameMessageID = false;
-            		hasSameMessageID = _routingTable.checkID(mID);
-            		if(hasSameMessageID == false){
-            			_routingTable.addID(mID);
-            			Update sendNext = new Update(clients,listenSocket);
-            			sendNext.start();
-            		}
-
-
-            	}
-            	if((byte)data[16] == 0x01){
-            		System.out.println("PONG MESSAGE");
-            	}
-            	if((byte)data[16] == 0x80){
-            		System.out.println("QUERY MESSAGE");
-            	}
-            	if((byte)data[16] == 0x81){
-            		System.out.println("QUERY HIT MESSAGE");
-            	}
-            	/*
-         	int i = 0;
-         	for(i=0 ; i < data.length ; i++){
-         		System.out.println("i="+i+" value:"+(int)data[i]);
-         	}
-         	*/
+            	if(checkMessagePacketValidation(data)){
+	        		byte[] mID = new byte[16];
+	        		System.arraycopy(data, 0, mID, 0, 16);
+	            	byte messageType = (byte)data[16];
+	            	if(messageType == 0x00){
+	            		System.out.println("PING MESSAGE");
+	            		//Iterator<MessageContainer> iter = _routingTable.iterator();
+	            		boolean hasSameMessageID = false;
+	            		hasSameMessageID = _routingTable.checkID(mID);
+	            		if(hasSameMessageID == false){
+	            			_routingTable.addID(mID);
+	            			Update sendNext = new Update(clients,listenSocket);
+	            			sendNext.start();
+	            		}
+	            	}
+	            	if(messageType == 0x01){
+	            		System.out.println("PONG MESSAGE");
+	            	}
+	            	if(messageType == 0x80){
+	            		System.out.println("QUERY MESSAGE");
+	            	}
+	            	if(messageType == 0x81){
+	            		System.out.println("QUERY HIT MESSAGE");
+	            	}
+	            	/*
+	         	int i = 0;
+	         	for(i=0 ; i < data.length ; i++){
+	         		System.out.println("i="+i+" value:"+(int)data[i]);
+	         	}
+	         	*/
+	            }
             }
          }
          /*
