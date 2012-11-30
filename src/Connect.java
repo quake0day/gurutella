@@ -90,11 +90,9 @@ public class Connect extends Thread{
 	public void run(){
         //BufferedReader in = null;
         PrintWriter outServer = null;
-        String inputLine;
         boolean isAlive = true;
 		try {
-			//in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
-			outServer = new PrintWriter(newEstablishedSocket.getOutputStream(), 
+				outServer = new PrintWriter(newEstablishedSocket.getOutputStream(), 
 			        true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -125,7 +123,7 @@ public class Connect extends Thread{
          		break;
          	}
          	System.out.println("************");
-         	System.out.println(messageLength);
+         	System.out.println("client received" + messageLength);
          	
          	String recResult = new String(data);
          	
@@ -156,7 +154,7 @@ public class Connect extends Thread{
 						            		
 						            	}
 					            	else{
-					            		System.out.println("PONG");
+					            		System.out.println("toclient PONG");
 					            	}
 					            	}
 				

@@ -44,17 +44,15 @@ public class ServerHandler extends Thread{
 	                                      true); 
 	         //BufferedReader inServer = new BufferedReader( 
 	         //        new InputStreamReader(listenSocket.getInputStream())); 
-	
-	         String inputLine; 
 	         
 	         InputStream in2Server = _serverSocThread.getInputStream();
-	         //while(_isAlive){
+	         while(_isAlive){
 	            byte[] conReq = new byte[25];				//Size for connection establishment
 	         	int messageLength = in2Server.read(conReq);	//period(With no message container)
 	         	if(messageLength == -1){ // means a broken socket
 	         		_cInfo.remove(1, _serverSocThread);
-	         //		_isAlive = false;
-	         //		break;
+	         		_isAlive = false;
+	         		break;
 	         	}
 	         	System.out.println(messageLength);
 	         	
@@ -64,8 +62,8 @@ public class ServerHandler extends Thread{
 	          	  if(_tempClientIndex >= 0 && _tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM ){ // We can accpet
 	          		  _out2Client.println(MyConstants.STATUS_200);
 	          		  _cInfo.add_incoming(_serverSocThread);
-					  Thread update = new Update(_cInfo);
-					  update.start();
+					  new Update(_cInfo);
+					  //update.start();
 					  
 			    //Connection Established, start reading header
 					  while (_isAlive)
@@ -78,11 +76,11 @@ public class ServerHandler extends Thread{
 		            	byte messageType = (byte)header[16];
 		            	byte TTL = (byte)header[17];
 		            	byte Hops = (byte)header[18];
-		            	System.out.println("server Received Header");
+		            	//System.out.println("server Received Header");
 		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){
 		            		System.out.println("HereIn");
 			            	if(messageType == (byte) 0x00){
-			            		System.out.println("PING MESSAGE");
+			            		System.out.println("toserver PING MESSAGE");
 			            		//Iterator<MessageContainer> iter = _routingTable.iterator();
 			            		boolean hasSameMessageID = false;
 			            		hasSameMessageID = _idList.checkID(mID);
@@ -108,7 +106,7 @@ public class ServerHandler extends Thread{
 			            	else if(messageType == (byte) 0x01){
 			            		byte[] data = new byte[14];
 								in2Server.read(data);
-			            		System.out.println("PONG MESSAGE");
+			            		System.out.println("server PONG MESSAGE");
 			            	}
 			            	else if(messageType == 0x80){
 			            		System.out.println("QUERY MESSAGE");
@@ -134,37 +132,12 @@ public class ServerHandler extends Thread{
 	            	//if(checkMessagePacketValidation(conReq, messageLength)){
 	
 		         	
-	         /*
-	         while ((inputLine = inServer.readLine()) != null) 
-	         { 
-	        	 
-	            
-	              System.out.println ("		echoing: " + inputLine); 
-	              System.out.println ("		to: IP = "+listenSocket.getInetAddress().toString());
-	              System.out.println ("		type = tcp");
-	             
-	              // hand shake
-	              if(inputLine.equals("SIMPELLA CONNECT/0.6")){
-	            	  if(tempClientIndex >= -1 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM - 1){ // We can accpet
-	            		  outServer.println(MyConstants.STATUS_200);
-	            		  clients.add_incoming(listenSocket);
-						  Thread update = new Thread(new Update(clients));
-						  update.start();
-	
-	            	  }
-	            	  else{ // We cannot accept
-	            		  outServer.println(MyConstants.STATUS_503);
-						  //new Disconnect(tempClientIndex,1,clients);
-	            	  }
-	              }
-	                       
-	         } 
-	         */
 	        // outServer.close(); 
 	        // inServer.close(); 
 	        // listenSocket.close(); 
 	          	  }; 
-	    } catch(IOException e)
+	    } 
+	}catch(IOException e)
 	    {
 	    	e.getStackTrace();
 	    }

@@ -31,19 +31,7 @@ public class Tcpserver extends Thread
 	 this.clients = client;
 	 this._routingTable = rt;
 	 this._fileList = filelist;
-	 //ServerSocket serverSocket = null; 
 	 socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
-	 /*ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
-	 try{
-		 serverSocket = new ServerSocket(port); 
-	 } catch(Exception e){
-		 System.out.println("You're using a port that cannot Establish TCP connection, program halt...");
-		 System.exit(1);
-	 }
-	// System.out.println ("Connection Socket Created");
-     while(true){
-    	 threadPool.submit(new Tcpserver(serverSocket.accept(), clients));
-     }*/
 	try{
 		_serverSK = new ServerSocket(port);   
 		} catch(Exception e){
@@ -51,17 +39,6 @@ public class Tcpserver extends Thread
 			System.exit(1);
 		}
    }
-
- /*private Tcpserver (ServerSocket serverSoc, ClientInfoList clients,MessageIDList routingTable,InetAddress IP, int tcpport,FileInfoList filelist) throws IOException
- {
-     _serverSK = serverSoc;
-     //clients.add(clientSoc);
-     this.clients = clients;
-     System.out.println("get Conn. request from "+
-			 _serverSK.accept().getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
-    // start();
- }*/
-
 
  public void run()
    {
@@ -82,19 +59,5 @@ public class Tcpserver extends Thread
 		}
 	}
    }
- 
-		/*private void serverHandler()
-		{
-			
-		
-		    while(true){
-		    	try{
-		    		threadPool.submit(new Tcpserver(_serverSK, clients,_routingTable,IP,port,_fileList));
-		    	}catch (IOException e) {
-		    		e.getStackTrace();
-		    	}
-		    }	
-			//ThreadPool creation finish
-		   }*/
 }
 
