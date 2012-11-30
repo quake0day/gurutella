@@ -88,4 +88,15 @@ public class ClientInfoList {
 			_clients_incoming.remove(connectionID);
 		}
 	}
+	public void remove(int type, Socket vicSocket){
+		int vic_index;
+		if(type == 0){
+			vic_index = _clients_outgoing.indexOf(vicSocket);
+			_clients_outgoing.remove(vic_index);
+		}
+		else{
+			vic_index = _clients_incoming.indexOf(vicSocket);
+			_clients_incoming.remove(vic_index);
+		}
+	}
 }

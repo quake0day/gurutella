@@ -78,7 +78,7 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 		e1.printStackTrace();
 	}
 	
-	int tempClientIndex = clients.size(1) - 1;
+	int tempClientIndex = clients.size(1);
 	//Socket listenSocket = clients.get(1,tempClientIndex);
     try { 
          outServer = new PrintWriter(listenSocket.getOutputStream(), 
@@ -92,12 +92,15 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
          while(true){
             byte[] data = new byte[4096];
          	int messageLength = stream.read(data);
+         	if(messageLength == -1){ // means a broken socket
+         		clients.remove(1, listenSocket);
+         	}
          	System.out.println(messageLength);
          	
          	String recResult = new String(data);
             // hand shake
             if(recResult.trim().equals("SIMPELLA CONNECT/0.6")){
-          	  if(tempClientIndex >= -1 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM - 1){ // We can accpet
+          	  if(tempClientIndex >= 0 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM ){ // We can accpet
           		  outServer.println(MyConstants.STATUS_200);
 
           		  clients.add_incoming(listenSocket);
