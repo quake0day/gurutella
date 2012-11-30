@@ -55,6 +55,14 @@ public class Tcpserver extends Thread
 			 _serverSK.accept().getInetAddress().toString()+ "\n The TCP connection is successfully estabilshed");
     // start();
  }
+
+
+	public byte[] readMessage(DataInputStream din) throws IOException {
+	  int msgLen = din.readInt();
+	  byte[] msg = new byte[msgLen];
+	  din.readFully(msg);
+	  return msg;
+	}
  
  public void run()
    {
@@ -78,14 +86,58 @@ public class Tcpserver extends Thread
 
          String inputLine; 
          
+         InputStream stream = listenSocket.getInputStream();
+         while(true){
+         byte[] data = new byte[100];
+         	int count = stream.read(data);
+         	System.out.println(count);
+         	String recResult = new String(data);
+            // hand shake
+            if(recResult.trim().equals("SIMPELLA CONNECT/0.6")){
+          	  if(tempClientIndex >= -1 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM - 1){ // We can accpet
+          		  outServer.println(MyConstants.STATUS_200);
+
+          		  clients.add_incoming(listenSocket);
+				  Thread update = new Thread(new Update(clients));
+				  update.start();
+          	  }
+          	  else{ // We cannot accept
+          		  outServer.println(MyConstants.STATUS_503);
+					  //new Disconnect(tempClientIndex,1,clients);
+          	  }
+            }
+            else{
+         	//System.out.println(res);
+            	// regular message, judge message type
+            	if((byte)data[16] == 0x00){
+            		System.out.println("PING MESSAGE");
+            	}
+            	if((byte)data[16] == 0x01){
+            		System.out.println("PONG MESSAGE");
+            	}
+            	if((byte)data[16] == 0x80){
+            		System.out.println("QUERY MESSAGE");
+            	}
+            	if((byte)data[16] == 0x81){
+            		System.out.println("QUERY HIT MESSAGE");
+            	}
+            	/*
+         	int i = 0;
+         	for(i=0 ; i < data.length ; i++){
+         		System.out.println("i="+i+" value:"+(int)data[i]);
+         	}
+         	*/
+            }
+         }
+         /*
          while ((inputLine = inServer.readLine()) != null) 
          { 
         	 
-            /*
+            
               System.out.println ("		echoing: " + inputLine); 
               System.out.println ("		to: IP = "+listenSocket.getInetAddress().toString());
               System.out.println ("		type = tcp");
-              */
+             
               // hand shake
               if(inputLine.equals("SIMPELLA CONNECT/0.6")){
             	  if(tempClientIndex >= -1 && tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM - 1){ // We can accpet
@@ -102,9 +154,10 @@ public class Tcpserver extends Thread
               }
                        
          } 
-         outServer.close(); 
-         inServer.close(); 
-         listenSocket.close(); 
+         */
+        // outServer.close(); 
+        // inServer.close(); 
+        // listenSocket.close(); 
         } 
     catch (IOException e) 
         { 

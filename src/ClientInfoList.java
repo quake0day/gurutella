@@ -70,7 +70,6 @@ public class ClientInfoList {
 	 */
 	public synchronized Iterator<Socket> iterator() {
 		// Combine two array list
-		System.out.println("I'm here");
 		_clients_all = new ArrayList <Socket>();
 		_clients_all.addAll(_clients_outgoing);
 		_clients_all.addAll(_clients_incoming);

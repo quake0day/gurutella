@@ -42,7 +42,6 @@ public class Update extends Thread {
 				System.out.println("Error when sending ping in iterator");
 			}
 			
-			outServer.println("hi sending ping");
 			// send Ping
 			try {
 				outToServer.write(ping);
