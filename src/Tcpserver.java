@@ -120,6 +120,7 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
           	  }
             }
             else{
+
          	//System.out.println(res);
             	// regular message, judge message type
             	if(checkMessagePacketValidation(data,messageLength)){
@@ -135,7 +136,6 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 		            		boolean hasSameMessageID = false;
 		            		
 		            		hasSameMessageID = _routingTable.checkID(mID);
-		            		System.out.println(mID.toString());
 		            		if(hasSameMessageID == false){
 		            			_routingTable.addID(mID,listenSocket);
 		            				
@@ -151,22 +151,22 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 		            		}
 		            		
 		            	}
-		            	if(messageType == 0x01){
+		            	else if(messageType == 0x01){
 		            		System.out.println("PONG MESSAGE");
 		            	}
-		            	if(messageType == 0x80){
+		            	else if(messageType == 0x80){
 		            		System.out.println("QUERY MESSAGE");
 		            	}
-		            	if(messageType == 0x81){
+		            	else if(messageType == 0x81){
 		            		System.out.println("QUERY HIT MESSAGE");
 		            	}
+		            	else{
+
+		            	}
 	            	}
-	            	/*
-	         	int i = 0;
-	         	for(i=0 ; i < data.length ; i++){
-	         		System.out.println("i="+i+" value:"+(int)data[i]);
-	         	}
-	         	*/
+	            	
+
+	         	
 	            }
             }
          }
