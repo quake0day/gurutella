@@ -38,11 +38,11 @@ public class MessageContainer {
 	{
 		//Constructor2, for convenience when RECEIVING data
 		//Message format initialization
+
+		TTL = new Integer(7).byteValue();
+		this.mID = id;		
 		mID[8] = (byte)0xff;
 		mID[15] = (byte)0x00;
-		TTL = new Integer(7).byteValue();
-
-		this.mID = id;
 		this.mType = type;
 		this.TTL = ttl;
 		this.Hops = hops;

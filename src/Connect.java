@@ -25,7 +25,7 @@ public class Connect extends Thread{
 		tcpport = Integer.parseInt(tcp);
 		this.clients = client;
 		this.routingTable = routingTable;
-        ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
+        //ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
         boolean isAbleToConnect = true;
         InetAddress addr = null;
         String localIPAddr = null;
@@ -53,7 +53,8 @@ public class Connect extends Thread{
 		}
         if(isAbleToConnect){
 		try {
-			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients,routingTable));
+			//threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients,routingTable));
+			newEstablishedSocket = new Socket(targetIPAddress,tcpport);
 			System.out.println("The connection between this machine and "+targetIPAddress+" "+tcpport +" is successfully estabilshed");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -69,12 +70,13 @@ public class Connect extends Thread{
 
 	    
 	}
-	public Connect(Socket socket,ClientInfoList clients, MessageIDList routingTable) {
+	/*public Connect(Socket socket,ClientInfoList clients, MessageIDList routingTable) {
 		// TODO Auto-generated constructor stub
 		this.clients = clients;
 		newEstablishedSocket = socket;
 		tempClientIndex = clients.size(0) - 1;
-	}
+		System.out.println("connect thread pool of thread");
+	}*/
 	
 	public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 		// check if length is larger than 22
@@ -86,12 +88,12 @@ public class Connect extends Thread{
 	}
 
 	public void run(){
-        BufferedReader in = null;
+        //BufferedReader in = null;
         PrintWriter outServer = null;
         String inputLine;
         boolean isAlive = true;
 		try {
-			in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
+			//in = new BufferedReader(new InputStreamReader(newEstablishedSocket.getInputStream()));
 			outServer = new PrintWriter(newEstablishedSocket.getOutputStream(), 
 			        true);
 		} catch (IOException e) {
@@ -122,6 +124,7 @@ public class Connect extends Thread{
          		isAlive = false;
          		break;
          	}
+         	System.out.println("************");
          	System.out.println(messageLength);
          	
          	String recResult = new String(data);
@@ -130,7 +133,7 @@ public class Connect extends Thread{
 						// Print out <string>
 						System.out.println(recResult.split("200 ")[1]);
 						clients.add_outgoing(newEstablishedSocket);	
-						Thread update = new Thread(new Update(clients));
+						Thread update = new Update(clients);
 						update.start();
 						//System.out.println(clients.size(0));
 					}

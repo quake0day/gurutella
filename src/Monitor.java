@@ -77,18 +77,21 @@ public class Monitor {
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
 			    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
-/*Inappropriate*/   	Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client,_routingTable));
+			    		Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable);
+			    		connect.start();
 			    	}
 			    	else{
 			    		System.out.println(MyConstants.STATUS_OUTGOING_REACHED_LIMIT);
 			    	}
 			    	}
 			    }
+/////////////////update command////////////////////   
 			    else if (command[0].equalsIgnoreCase("update")){
 			    	// send PING to all neighbors
 					Thread update = new Thread(new Update(_client));
 					update.start();
 			    }
+////////////////send command//////////////////////
 			    else if (command[0].equals("send"))
 			    {
 			    	String message = null;
