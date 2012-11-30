@@ -68,6 +68,7 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 }
  public void run()
    {
+	 boolean isAlive = true;
 	PrintWriter outServer = null;
 	Socket listenSocket = null;
 	//Create a server socket for every accepted connection
@@ -89,11 +90,13 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
          String inputLine; 
          
          InputStream stream = listenSocket.getInputStream();
-         while(true){
+         while(isAlive){
             byte[] data = new byte[4096];
          	int messageLength = stream.read(data);
          	if(messageLength == -1){ // means a broken socket
          		clients.remove(1, listenSocket);
+         		isAlive = false;
+         		break;
          	}
          	System.out.println(messageLength);
          	
