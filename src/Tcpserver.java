@@ -1,5 +1,6 @@
 
 import java.net.*; 
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.*; 
@@ -17,14 +18,16 @@ public class Tcpserver extends Thread
  public Socket[] socketArray;
  //public ArrayList<Socket> clients = null;
  private ClientInfoList clients;
+ private MessageIDList _routingTable;
  private int port;
  private ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
  
- public Tcpserver (int tcpport,ClientInfoList client) throws IOException, InterruptedException
+ public Tcpserver (int tcpport,ClientInfoList client,MessageIDList rt) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
 	 this.clients = client;
+	 this._routingTable = rt;
 	 //ServerSocket serverSocket = null; 
 	 socketArray = new Socket[maxsize];
 	 /*ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
@@ -46,7 +49,7 @@ public class Tcpserver extends Thread
 		}
    }
 
- private Tcpserver (ServerSocket serverSoc, ClientInfoList clients) throws IOException
+ private Tcpserver (ServerSocket serverSoc, ClientInfoList clients,MessageIDList routingTable) throws IOException
  {
      _serverSK = serverSoc;
      //clients.add(clientSoc);
@@ -57,13 +60,6 @@ public class Tcpserver extends Thread
  }
 
 
-	public byte[] readMessage(DataInputStream din) throws IOException {
-	  int msgLen = din.readInt();
-	  byte[] msg = new byte[msgLen];
-	  din.readFully(msg);
-	  return msg;
-	}
- 
  public void run()
    {
 	PrintWriter outServer = null;
@@ -111,6 +107,18 @@ public class Tcpserver extends Thread
             	// regular message, judge message type
             	if((byte)data[16] == 0x00){
             		System.out.println("PING MESSAGE");
+            		byte[] mID = new byte[16];
+            		System.arraycopy(data, 0, mID, 0, 16);
+            		//Iterator<MessageContainer> iter = _routingTable.iterator();
+            		boolean hasSameMessageID = false;
+            		hasSameMessageID = _routingTable.checkID(mID);
+            		if(hasSameMessageID == false){
+            			_routingTable.addID(mID);
+            			Update sendNext = new Update(clients,listenSocket);
+            			sendNext.start();
+            		}
+
+
             	}
             	if((byte)data[16] == 0x01){
             		System.out.println("PONG MESSAGE");
@@ -169,7 +177,7 @@ public class Tcpserver extends Thread
 
     while(true){
     	try{
-    		threadPool.submit(new Tcpserver(_serverSK, clients));
+    		threadPool.submit(new Tcpserver(_serverSK, clients,_routingTable));
     	}catch (IOException e) {
     		e.getStackTrace();
     	}

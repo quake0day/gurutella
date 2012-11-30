@@ -20,6 +20,7 @@ public class simpella /*extends Thread*/{
 	private static int tcpPort2 = 5635;
 	public static FileInfoList _fileList;
 	public static ClientInfoList _clients;
+	public static MessageIDList _routingTable;
 	
 	/**
 	 * @param args
@@ -50,10 +51,11 @@ public class simpella /*extends Thread*/{
 
 		 _clients = new ClientInfoList();
 		 _fileList = new FileInfoList();
+		 _routingTable = new MessageIDList();
 		 //TCPServer thread start
-		 Tcpserver _tcpServer = new Tcpserver(10025, _clients);
+		 Tcpserver _tcpServer = new Tcpserver(10025, _clients,_routingTable);
 		 _tcpServer.start();
-		 new Monitor(tcpPort1,tcpPort2,_clients, _fileList);
+		 new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable);
 		 //threadPool.submit(new Tcpserver(10025,_clients));
 		 // download port
 		 //threadPool.submit(new Tcpserver(tcpPort2,_clients));

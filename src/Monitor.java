@@ -22,13 +22,15 @@ public class Monitor {
 	private int tcpPort1,tcpPort2;
 	private ClientInfoList _client;
 	private FileInfoList _fileList;
+	private MessageIDList _routingTable;
 	private boolean isQuit = false;
 
-	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl, MessageIDList rt) throws IOException, InterruptedException{
 		 this.tcpPort1 = port1;
 		 this.tcpPort2 = port2;
 		 this._client = clients;
 		 this._fileList = fl;
+		 this._routingTable = rt;
 		 //System.out.println("test");  
 	     BufferedReader stdIn = new BufferedReader(
                  new InputStreamReader(System.in));
@@ -75,7 +77,7 @@ public class Monitor {
 			    	// see Connect.java for more detail
 			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
 			    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
-/*Inappropriate*/   	Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client));
+/*Inappropriate*/   	Thread connect = new Thread(new Connect(targetIPAddress,targetTCPPort,_client,_routingTable));
 			    	}
 			    	else{
 			    		System.out.println(MyConstants.STATUS_OUTGOING_REACHED_LIMIT);

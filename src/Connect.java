@@ -17,15 +17,19 @@ public class Connect extends Thread{
 	private int tcpport;
 	private Socket newEstablishedSocket = null;
 	private ClientInfoList clients;
+	private MessageIDList routingTable;
 	private int tempClientIndex;
-	public Connect (String targetIPAddressr, String tcp, ClientInfoList client) throws IOException{
+	public Connect (String targetIPAddressr, String tcp, ClientInfoList client,MessageIDList routingTable) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
 		this.clients = client;
+		this.routingTable = routingTable;
         ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
         boolean isAbleToConnect = true;
         InetAddress addr = null;
         String localIPAddr = null;
+        
+        
         addr = InetAddress.getLocalHost();
         localIPAddr = addr.getHostAddress().toString();
         if(targetIPAddress.toString().equals(MyConstants.localIPNum) || targetIPAddress.toString().equals(MyConstants.localHost) || targetIPAddress.toString().equals(localIPAddr)){
@@ -48,7 +52,7 @@ public class Connect extends Thread{
 		}
         if(isAbleToConnect){
 		try {
-			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients));
+			threadPool.submit(new Connect(new Socket(targetIPAddress,tcpport),clients,routingTable));
 			System.out.println("The connection between this machine and "+targetIPAddress+" "+tcpport +" is successfully estabilshed");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -64,7 +68,7 @@ public class Connect extends Thread{
 
 	    
 	}
-	public Connect(Socket socket,ClientInfoList clients) {
+	public Connect(Socket socket,ClientInfoList clients, MessageIDList routingTable) {
 		// TODO Auto-generated constructor stub
 		this.clients = clients;
 		newEstablishedSocket = socket;
