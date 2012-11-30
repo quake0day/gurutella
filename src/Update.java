@@ -19,6 +19,8 @@ public class Update extends Thread {
 	 */
 	private ClientInfoList clients;
 	private Socket forbiddenSocket = null;
+	private int TTL=7;
+	private int Hops=0;
 	PrintWriter outServer = null;
 	DataOutputStream outToServer = null;
 	
@@ -27,21 +29,35 @@ public class Update extends Thread {
 		this.forbiddenSocket = null;
 	}
 	
-	public Update(ClientInfoList client, Socket forbiddenSocket){
+	public Update(ClientInfoList client, Socket forbiddenSocket,int TTL, int Hops){
 		this.clients = client;
 		this.forbiddenSocket = forbiddenSocket;
+		this.TTL = TTL;
+		this.Hops = Hops;
 	}
 	
 	public void run(){
 		byte[] ping = null;
 		Iterator<Socket> iter =clients.iterator();
-		MessageContainer pingContainer = new MessageContainer();
+		//byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
+		byte[] mID = new byte[16];
+		byte[] newPacketLength={0x00,0x00,0x00,0x00};
+		byte ttl;
+		byte hops;
+		byte[] payload = null;
+		mID[8] = (byte)0xff;
+		mID[15] = (byte)0x00;
+		byte mtype = (byte)0x00; // ping message
+		ttl = new Integer(TTL).byteValue();
+		hops = new Integer(Hops).byteValue();
+		
+	
+		MessageContainer pingContainer = new MessageContainer(mID,mtype,ttl,hops,newPacketLength,payload);
 		ping = pingContainer.convertToByte();
 		while(iter.hasNext()){
 			Socket clientSocket = iter.next();
-			if(forbiddenSocket == null || !clientSocket.equals(forbiddenSocket)){
+			if(!clientSocket.equals(forbiddenSocket)){
 				try {
-					outServer = new PrintWriter(clientSocket.getOutputStream(),true);
 					outToServer = new DataOutputStream(clientSocket.getOutputStream());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

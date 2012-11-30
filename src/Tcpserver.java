@@ -18,15 +18,19 @@ public class Tcpserver extends Thread
  //public ArrayList<Socket> clients = null;
  private ClientInfoList clients;
  private MessageIDList _routingTable;
+ private FileInfoList _fileList;
+ private InetAddress IP;
  private int port;
  private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
  
- public Tcpserver (int tcpport,ClientInfoList client,MessageIDList rt) throws IOException, InterruptedException
+ public Tcpserver (int tcpport,ClientInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
+	 this.IP = IP;
 	 this.clients = client;
 	 this._routingTable = rt;
+	 this._fileList = filelist;
 	 //ServerSocket serverSocket = null; 
 	 socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
 	 /*ExecutorService threadPool = Executors.newFixedThreadPool(maxsize);
@@ -48,7 +52,7 @@ public class Tcpserver extends Thread
 		}
    }
 
- private Tcpserver (ServerSocket serverSoc, ClientInfoList clients,MessageIDList routingTable) throws IOException
+ private Tcpserver (ServerSocket serverSoc, ClientInfoList clients,MessageIDList routingTable,InetAddress IP, int tcpport,FileInfoList filelist) throws IOException
  {
      _serverSK = serverSoc;
      //clients.add(clientSoc);
@@ -122,25 +126,40 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 	        		byte[] mID = new byte[16];
 	        		System.arraycopy(data, 0, mID, 0, 16);
 	            	byte messageType = (byte)data[16];
-	            	if(messageType == 0x00){
-	            		System.out.println("PING MESSAGE");
-	            		//Iterator<MessageContainer> iter = _routingTable.iterator();
-	            		boolean hasSameMessageID = false;
-	            		hasSameMessageID = _routingTable.checkID(mID);
-	            		if(hasSameMessageID == false){
-	            			_routingTable.addID(mID);
-	            			Update sendNext = new Update(clients,listenSocket);
-	            			sendNext.start();
-	            		}
-	            	}
-	            	if(messageType == 0x01){
-	            		System.out.println("PONG MESSAGE");
-	            	}
-	            	if(messageType == 0x80){
-	            		System.out.println("QUERY MESSAGE");
-	            	}
-	            	if(messageType == 0x81){
-	            		System.out.println("QUERY HIT MESSAGE");
+	            	byte TTL = (byte)data[17];
+	            	byte Hops = (byte)data[18];
+	            	if((int)(TTL+Hops) >=7 && (int)(TTL+Hops) <= 15){
+		            	if(messageType == 0x00){
+		            		System.out.println("PING MESSAGE");
+		            		//Iterator<MessageContainer> iter = _routingTable.iterator();
+		            		boolean hasSameMessageID = false;
+		            		
+		            		hasSameMessageID = _routingTable.checkID(mID);
+		            		System.out.println(mID.toString());
+		            		if(hasSameMessageID == false){
+		            			_routingTable.addID(mID,listenSocket);
+		            				
+		            			Update sendNext = new Update(clients,listenSocket,(int)TTL-1,(int)Hops+1);
+		            			sendNext.start();
+		            			
+		            			// reply with PONG
+		            			PongMessage PongMessageContainer = new PongMessage(mID,port,IP,_fileList.getFileNum(),_fileList.getFileSize());
+		            			byte [] pong = new byte[4096];
+		            			pong = PongMessageContainer.convertToByte();
+		    					DataOutputStream outToServer = new DataOutputStream(listenSocket.getOutputStream());
+		    					outToServer.write(pong);
+		            		}
+		            		
+		            	}
+		            	if(messageType == 0x01){
+		            		System.out.println("PONG MESSAGE");
+		            	}
+		            	if(messageType == 0x80){
+		            		System.out.println("QUERY MESSAGE");
+		            	}
+		            	if(messageType == 0x81){
+		            		System.out.println("QUERY HIT MESSAGE");
+		            	}
 	            	}
 	            	/*
 	         	int i = 0;
@@ -191,7 +210,7 @@ public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 
     while(true){
     	try{
-    		threadPool.submit(new Tcpserver(_serverSK, clients,_routingTable));
+    		threadPool.submit(new Tcpserver(_serverSK, clients,_routingTable,IP,port,_fileList));
     	}catch (IOException e) {
     		e.getStackTrace();
     	}

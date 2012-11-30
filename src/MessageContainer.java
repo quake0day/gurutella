@@ -70,6 +70,7 @@ public class MessageContainer {
 		}
 		return Message;
 	}
+	/*
 	public boolean setID(int[] num, MessageIDList idList)	//used when random assignment
 	{														//for sender
 		if (num.length != 14)	//ID length legality check
@@ -107,7 +108,7 @@ public class MessageContainer {
 			return true;
 		}
 	}
-	
+	*/
 	
 	public boolean setType(int type) //1.Ping 2.Pong 3.Query 4.Query Hit
 	{

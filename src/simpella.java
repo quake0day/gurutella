@@ -21,6 +21,8 @@ public class simpella /*extends Thread*/{
 	public static FileInfoList _fileList;
 	public static ClientInfoList _clients;
 	public static MessageIDList _routingTable;
+	private static InetAddress IP = null;
+
 	
 	/**
 	 * @param args
@@ -53,7 +55,7 @@ public class simpella /*extends Thread*/{
 		 _fileList = new FileInfoList();
 		 _routingTable = new MessageIDList();
 		 //TCPServer thread start
-		 Tcpserver _tcpServer = new Tcpserver(10025, _clients,_routingTable);
+		 Tcpserver _tcpServer = new Tcpserver(10025, _clients,_routingTable,IP,_fileList);
 		 _tcpServer.start();
 		 new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable);
 		 //threadPool.submit(new Tcpserver(10025,_clients));
@@ -61,7 +63,6 @@ public class simpella /*extends Thread*/{
 		 //threadPool.submit(new Tcpserver(tcpPort2,_clients));
 		}
 	public static void showWelcomeInfo(int tcpPort1,int tcpPort2){
-		InetAddress IP = null;
 		boolean usePublicDNS = false;
 		try {
 			DatagramSocket udpSocket = null;

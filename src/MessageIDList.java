@@ -1,3 +1,4 @@
+import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -10,15 +11,25 @@ import java.util.ArrayList;
  */
 public class MessageIDList {
 	private ArrayList <byte[]> _IDList;
-	
+	private ArrayList <Socket> _socketList;
 	public MessageIDList()
 	{
 		_IDList = new ArrayList<byte[]>(); 
+		_socketList = new ArrayList<Socket>();
 	}
 	
-	public void addID(byte[] id)
+	public void addID(byte[] id,Socket targetsoc)
 	{
-		_IDList.add(id); 
+		if(_IDList.size() <= 160){
+			_IDList.add(id); 
+			_socketList.add(targetsoc);
+		}
+		else{
+			_IDList.remove(0);
+			_IDList.add(id); 
+			_socketList.remove(0);
+			_socketList.add(targetsoc);
+		}
 	}
 	
 	public boolean checkID(int[] id)	//ok=true, bad=false
