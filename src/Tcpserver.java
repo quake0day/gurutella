@@ -58,9 +58,9 @@ public class Tcpserver extends Thread
     // start();
  }
 
-public boolean checkMessagePacketValidation(byte[] data){
+public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
 	// check if length is larger than 22
-	if(data.length < 22){
+	if(MessageLength < 22){
 		return false;
 	}
 	return true;
@@ -112,7 +112,7 @@ public boolean checkMessagePacketValidation(byte[] data){
             else{
          	//System.out.println(res);
             	// regular message, judge message type
-            	if(checkMessagePacketValidation(data)){
+            	if(checkMessagePacketValidation(data,messageLength)){
 	        		byte[] mID = new byte[16];
 	        		System.arraycopy(data, 0, mID, 0, 16);
 	            	byte messageType = (byte)data[16];

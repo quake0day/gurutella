@@ -53,7 +53,7 @@ public class Update extends Thread {
 				// send Ping
 				try {
 					outToServer.write(ping);
-					outToServer.writeChars("\r\n");
+					//outToServer.writeChars("\r\n");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
