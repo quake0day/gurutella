@@ -1,4 +1,3 @@
-import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -10,41 +9,43 @@ import java.util.ArrayList;
  *
  */
 public class MessageIDList {
-	private ArrayList <byte[]> _IDList;
+	private ArrayList <IDRecorder> _IDList;
+	private ArrayList <byte[]> _InnerList;	//declared for convenience
 	
 	public MessageIDList()
 	{
-		_IDList = new ArrayList<byte[]>(); 
+		_IDList = new ArrayList <IDRecorder> (); 
+		_InnerList = new ArrayList <byte[]> ();
 	}
 	
-	public void addID(byte[] id)
+	public void addRecord(IDRecorder rec)	//add single IDRecord to this List
 	{
-		if(_IDList.size() <= 160){
-			_IDList.add(id); 
-		}
-		else{
-			_IDList.remove(0);
-			_IDList.add(id); 
-		}
-	}
-	
-	public void addID(int[] id)
-	{
-		byte[] idNo = new byte[id.length];
-		for(int i = 0; i < id.length; i++)	
+		if (rec.isValid())
 		{
-			if (id[i] > 255 || id[i] < 0)	//Number range legality check
-			{
-				return;
+			if(_IDList.size() <= 160){
+				_IDList.add(rec); 
+				_InnerList.add(rec.getIDByte());
 			}
-			else
-			{
-				idNo[i] = new Integer(id[i]).byteValue();	
+			else{
+				_IDList.remove(0);
+				_InnerList.remove(0);
+				_IDList.add(rec); 
+				_InnerList.add(rec.getIDByte());
 			}
 		}
 	}
 	
-	public boolean checkID(int[] id)	//ok=true, bad=false
+	public IDRecorder getRecord(int i)
+	{
+		return _IDList.get(i);
+	}
+	
+	public int getSize()
+	{
+		return _IDList.size();
+	}
+	
+	public boolean checkID(int[] id)	//bad=true, ok=false
 	{
 		byte[] idNo = new byte[id.length];
 		for(int i = 0; i < id.length; i++)	
@@ -63,10 +64,9 @@ public class MessageIDList {
 	
 	public boolean checkID(byte[] id)	//Check if contains
 	{
-		if (_IDList.contains(id))
-		{
+		if (_InnerList.contains(id))
 			return true;
-		}
-		else return false;
+		else 
+			return false;
 	}
 }

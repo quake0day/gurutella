@@ -85,7 +85,7 @@ public class ServerHandler extends Thread{
 			            		boolean hasSameMessageID = false;
 			            		hasSameMessageID = _idList.checkID(mID);
 			            		if(hasSameMessageID == false){
-			            			_idList.addID(mID);
+			            			_idList.addRecord(new IDRecorder(mID, _serverSocThread));
 			            				
 			            			Update sendNext = new Update(_cInfo,_serverSocThread
 			            					,(int)TTL-1,(int)Hops+1, _idList);

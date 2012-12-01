@@ -7,12 +7,13 @@ import java.lang.Math;
 import java.util.Date;
 
 /**
- * 
+ * ATTENTION:  THIS class need to check ID Repeat OUTSIDE BEFORE being called!
+ *
  */
 
 /**
  * @author quake0day
- *
+ * 
  */
 public class Update extends Thread {
 
@@ -61,8 +62,9 @@ public class Update extends Thread {
 		{
 			System.out.println("Oops! Message IDs seem to be running out!");
 		}
+		
 		else {
-			
+			_idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
 			byte[] ping = null;
 			Iterator<Socket> iter =clients.iterator();
 			//byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
@@ -76,8 +78,8 @@ public class Update extends Thread {
 			byte mtype = (byte)0x00; // ping message
 			ttl = new Integer(TTL).byteValue();
 			hops = new Integer(Hops).byteValue();
-			
 		
+			
 			MessageContainer pingContainer = new MessageContainer(mID,mtype,ttl,hops,newPacketLength,payload);
 			ping = pingContainer.convertToByte();
 			while(iter.hasNext()){
