@@ -68,21 +68,36 @@ public class Monitor {
 			    	if(command.length != 2){
 			    		System.out.println("Usage:open <ip-address>:<tcp-port>");
 			    	}
-			    	else{		
-			    	String targetIPAddress = command[1].split(":")[0];
-			    	targetIPAddress.trim();
-			    	String targetTCPPort = command[1].split(":")[1];
-			    	targetIPAddress.trim();
-			    	// create new thread connect to handle this request
-			    	// see Connect.java for more detail
-			    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
-			    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
-			    		Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable);
-			    		connect.start();
-			    	}
 			    	else{
-			    		System.out.println(MyConstants.STATUS_OUTGOING_REACHED_LIMIT);
-			    	}
+				    	if (!command[1].contains(":"))
+				    	{
+				    		System.out.println("Usage:open <ip-address>:<tcp-port>");
+				    	}
+				    	else {
+					    	String targetIPAddress = command[1].split(":")[0];
+					    	targetIPAddress.trim();
+					    	if (!new IPFormatChecker(targetIPAddress).checkIPFormat())
+					    		System.out.println("Invalid IP Address!");
+					    	else {
+						    	String targetTCPPort = command[1].split(":")[1];
+						    	targetIPAddress.trim();						 
+						    	if (Integer.parseInt(targetTCPPort) < 0) {
+						    		System.out.println("Invalid TCP Port!");
+						    		}
+						    	else {
+						    		// create new thread connect to handle this request
+							    	// see Connect.java for more detail
+							    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
+							    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
+							    		Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable);
+							    		connect.start();
+							    	}
+							    	else{
+							    		System.out.println(MyConstants.STATUS_OUTGOING_REACHED_LIMIT);
+							    	}
+						    	}
+					    	}
+				    	}
 			    	}
 			    }
 /////////////////update command////////////////////   

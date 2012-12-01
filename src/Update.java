@@ -44,12 +44,12 @@ public class Update extends Thread {
 	}
 	
 	public void run(){
-		long j = 1;
+		double j = 1;
 		for(int i = 0; i < _idNum.length; i++)
 		{
 			_idNum[i] = (int) (Math.random() * 255.0);
 		}
-		while(_idList.checkID(_idNum) && j > 0)	// repeated message ID
+		while(_idList.checkID(_idNum) && j < 4.9E33)	// repeated message ID
 		{
 			j++;
 			for(int i: _idNum)
@@ -57,9 +57,9 @@ public class Update extends Thread {
 				_idNum[i] = (int) (Math.random() * 255.0);
 			}
 		}
-		if (j <= 0)
+		if (j >4.9E33)
 		{
-			System.out.println("Oops! Message IDs are seemed to be used out!");
+			System.out.println("Oops! Message IDs seem to be running out!");
 		}
 		else {
 			
