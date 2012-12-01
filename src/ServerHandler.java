@@ -62,7 +62,7 @@ public class ServerHandler extends Thread{
 	          	  if(_tempClientIndex >= 0 && _tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM ){ // We can accpet
 	          		  _out2Client.println(MyConstants.STATUS_200);
 	          		  _cInfo.add_incoming(_serverSocThread);
-					  new Update(_cInfo);
+					  new Update(_cInfo, _idList);
 					  //update.start();
 					  
 			    //Connection Established, start reading header
@@ -85,9 +85,10 @@ public class ServerHandler extends Thread{
 			            		boolean hasSameMessageID = false;
 			            		hasSameMessageID = _idList.checkID(mID);
 			            		if(hasSameMessageID == false){
-			            			_idList.addID(mID,_serverSocThread);
+			            			_idList.addID(mID);
 			            				
-			            			Update sendNext = new Update(_cInfo,_serverSocThread,(int)TTL-1,(int)Hops+1);
+			            			Update sendNext = new Update(_cInfo,_serverSocThread
+			            					,(int)TTL-1,(int)Hops+1, _idList);
 			            			sendNext.start();
 			            			
 			            			// reply with PONG

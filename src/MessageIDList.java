@@ -11,24 +11,36 @@ import java.util.ArrayList;
  */
 public class MessageIDList {
 	private ArrayList <byte[]> _IDList;
-	private ArrayList <Socket> _socketList;
+	
 	public MessageIDList()
 	{
 		_IDList = new ArrayList<byte[]>(); 
-		_socketList = new ArrayList<Socket>();
 	}
 	
-	public void addID(byte[] id,Socket targetsoc)
+	public void addID(byte[] id)
 	{
 		if(_IDList.size() <= 160){
 			_IDList.add(id); 
-			_socketList.add(targetsoc);
 		}
 		else{
 			_IDList.remove(0);
 			_IDList.add(id); 
-			_socketList.remove(0);
-			_socketList.add(targetsoc);
+		}
+	}
+	
+	public void addID(int[] id)
+	{
+		byte[] idNo = new byte[id.length];
+		for(int i = 0; i < id.length; i++)	
+		{
+			if (id[i] > 255 || id[i] < 0)	//Number range legality check
+			{
+				return;
+			}
+			else
+			{
+				idNo[i] = new Integer(id[i]).byteValue();	
+			}
 		}
 	}
 	
@@ -49,7 +61,7 @@ public class MessageIDList {
 		return this.checkID(idNo);
 	}
 	
-	public boolean checkID(byte[] id)
+	public boolean checkID(byte[] id)	//Check if contains
 	{
 		if (_IDList.contains(id))
 		{

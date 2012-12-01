@@ -88,7 +88,7 @@ public class Monitor {
 /////////////////update command////////////////////   
 			    else if (command[0].equalsIgnoreCase("update")){
 			    	// send PING to all neighbors
-					Thread update = new Thread(new Update(_client));
+					Thread update = new Thread(new Update(_client, rt));
 					update.start();
 			    }
 ////////////////send command//////////////////////

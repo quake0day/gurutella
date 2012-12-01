@@ -118,7 +118,7 @@ public class Connect extends Thread{
 				e1.printStackTrace();
 			}
          	if(messageLength == -1){ // means a broken socket
-         		clients.remove(1, newEstablishedSocket);
+         		clients.remove(0, newEstablishedSocket);
          		isAlive = false;
          		break;
          	}
@@ -131,7 +131,7 @@ public class Connect extends Thread{
 						// Print out <string>
 						System.out.println(recResult.split("200 ")[1]);
 						clients.add_outgoing(newEstablishedSocket);	
-						Thread update = new Update(clients);
+						Thread update = new Update(clients, routingTable);
 						update.start();
 						//System.out.println(clients.size(0));
 					}
