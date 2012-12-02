@@ -30,23 +30,37 @@ public class PongPayload {
 	public PongPayload(int port, InetAddress IP, int fileNum,
 		double fileSize) throws IOException {
 		_port = convertInt2Byte(port);
-		_IPAdress = IP.toString().getBytes();
+		_IPAdress = convertIP2Byte(IP);
 		_NumOfFiles = convertInt2Byte(fileNum);
-		_NumOfSize = convertDouble2Byte(fileSize);	
+		_NumOfSize = convertInt2Byte((int)(fileSize/1000));	
 	}
 		
 	public byte[] getPayLoad(){
 		System.arraycopy(_NumOfSize, 0, _payLoad, 10, 4);
 		System.arraycopy(_NumOfFiles, 0, _payLoad, 6, 4);
 		System.arraycopy(_IPAdress, 0, _payLoad, 2, 4);
-		System.arraycopy(_port, 0, _payLoad, 0, 2);
+		System.arraycopy(_port, 2, _payLoad, 0, 2);
 		return _payLoad;
+	}
+	
+	private byte[] convertIP2Byte(InetAddress IP) throws NumberFormatException, IOException{
+		byte[] b = new byte[4];
+		b = IP.getAddress();
+		return b;
 	}
 	
 	private byte[] convertInt2Byte(int i) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         dos.writeInt(i);
+        byte[] b = baos.toByteArray();
+        return b;
+	}
+	
+	private byte[] convertShort2Byte(int i) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        dos.writeShort(i);
         byte[] b = baos.toByteArray();
         return b;
 	}
