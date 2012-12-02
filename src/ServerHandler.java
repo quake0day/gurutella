@@ -159,6 +159,8 @@ public class ServerHandler extends Thread{
 			            			ArrayList<QueryResultSet> _qrs = _fList.queryFile(nQueryString);
 			            			int _NumberOfHits = _qrs.size();
 			            			
+			            			//Thread queryHit = new QueryHit(n)
+			            			
 			            		}
 			            	}
 			            	else if(messageType == (byte)0x81){
