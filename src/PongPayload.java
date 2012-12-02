@@ -51,15 +51,21 @@ public class PongPayload {
 		return b;
 	}
 	
-	private byte[] convertInt2Byte(int i) throws IOException {
+	private byte[] convertInt2Byte(int i) throws IOException {	//big-endianness
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         dos.writeInt(i);
         byte[] b = baos.toByteArray();
+        for (int k = 0, j = b.length; k < b.length - j; k++, j--)
+        {
+        	byte temp = b[j];
+        	b[j] = b[k];
+        	b[k] = temp;
+        }
         return b;
 	}
 	
-	private byte[] convertShort2Byte(int i) throws IOException {
+	/*private byte[] convertShort2Byte(int i) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         dos.writeShort(i);
@@ -73,5 +79,5 @@ public class PongPayload {
         dos.writeDouble(i);
         byte[] b = baos.toByteArray();
         return b;
-	}
+	}*/
 }

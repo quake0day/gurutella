@@ -117,7 +117,10 @@ public class FileInfoList {
 					}
 				}
 		}
-		return (File[])matchList.toArray();
+		if (matchList.isEmpty()) 
+			return null;
+		else
+			return (File[]) matchList.toArray();
 	}	
 	
 	public void clear(){

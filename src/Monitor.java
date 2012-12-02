@@ -116,14 +116,31 @@ public class Monitor {
 			    	if(command.length < 2){
 			    		System.out.println("Usage:find word1 [word2]");
 			    	}
-			    	String queryString = userInput.substring(command[0].length()+1);
-			    	System.out.println("Query:"+queryString);
+			    	String queryString = userInput.substring(command[0].length());
+			    	queryString.trim();
+			    	//check legality
+			    	if (!queryString.startsWith(" ")) //Blank start check
+		    		{				    		
+		    			//Check illegal characters
+		    			if (queryString.contains("|") || queryString.contains("*") || queryString.contains("?") 
+		    					|| queryString.contains("\"") ||queryString.contains("<") || queryString.contains(">")
+		    					|| queryString.contains("/") || queryString.endsWith("\\"))
+		    			{
+		    				System.out.println("Illegal character(s)(|, *, ?, \", <, >, /, \\) appeared in input path");			 
+		    			}
+		    			else
+		    			{	
+		    				System.out.println("Query:"+queryString);
 			    	
-			    	Thread query = new Thread(new Query(queryString, _client,rt));
-			    	query.start();
-			    	// send Query to all neighbors
-					//Thread update = new Thread(new Update(_client, rt));
-					//update.start();
+		    				Thread query = new Thread(new Query(queryString, _client,rt));
+		    				query.start();
+		    				// send Query to all neighbors
+		    				//Thread update = new Thread(new Update(_client, rt));
+		    				//update.start();
+		    			}
+		    		}
+			    	else
+			    		System.out.println("No blank begin!");
 			    }
 ////////////////send command//////////////////////
 			    else if (command[0].equals("send"))
