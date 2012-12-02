@@ -79,8 +79,11 @@ public class ServerHandler extends Thread{
 		            	byte Hops = (byte)header[18];
 		            	//System.out.println("server Received Header");
 		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){
+		            		
+		            		
 		            		System.out.println("HereIn");
-			            	if(messageType == (byte) 0x00){
+			            	
+		            		if(messageType == (byte) 0x00){
 			            		System.out.println("toserver PING MESSAGE");
 			            		//Iterator<MessageContainer> iter = _routingTable.iterator();
 			            		boolean hasSameMessageID = false;

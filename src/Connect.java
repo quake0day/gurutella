@@ -1,6 +1,7 @@
 
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +9,8 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,12 +22,15 @@ public class Connect extends Thread{
 	private Socket newEstablishedSocket = null;
 	private ClientInfoList clients;
 	private MessageIDList routingTable;
+	private NetworkServerList nsl;
 	private int tempClientIndex;
-	public Connect (String targetIPAddressr, String tcp, ClientInfoList client,MessageIDList routingTable) throws IOException{
+	
+	public Connect (String targetIPAddressr, String tcp, ClientInfoList client,MessageIDList routingTable,NetworkServerList nsl) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
 		this.clients = client;
 		this.routingTable = routingTable;
+		this.nsl = nsl;
         //ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
         boolean isAbleToConnect = true;
         InetAddress addr = null;
@@ -123,7 +129,7 @@ public class Connect extends Thread{
          		break;
          	}
          	System.out.println("************");
-         	System.out.println("client received" + messageLength);
+         	System.out.println("client received: " + messageLength);
          	
          	String recResult = new String(data);
          	
@@ -151,10 +157,58 @@ public class Connect extends Thread{
 					            	byte Hops = (byte)data[18];
 					            	if((int)(TTL+Hops) >=7 && (int)(TTL+Hops) <= 15){
 					            	if(messageType == 0x00){
-						            		
+					            		System.out.println("toclient PING");
 						            	}
 					            	else{
 					            		System.out.println("toclient PONG");
+					            		if(routingTable.checkID(mID) == false){ // I'm the one who send ping initially
+
+						            		byte[] payload = new byte[14];
+						            		System.arraycopy(data,23,payload,0,14);
+						            		System.out.println("copy payload");
+						            		byte[] port = new byte[4];
+						            		byte[] IPaddr = new byte[4];
+						            		byte[] fileNum = new byte[4];
+						            		byte[] fileSize = new byte[4];
+						            		System.arraycopy(payload,0,port,2, 2);
+						            		System.arraycopy(payload,2,IPaddr,0,4);
+						            		System.arraycopy(payload,6,fileNum,0,4);
+						            		System.arraycopy(payload,10,fileSize,0,4);
+						            		/*public ServerInfo(int port, InetAddress IP, int fileNum,
+						            				double fileSize) {*/
+						            		ByteBuffer bb = ByteBuffer.wrap(port);
+						            		IntBuffer ib = bb.asIntBuffer();
+						            		int nPort = ib.get(0);
+						            		InetAddress nIP = null;
+						            		try {
+												nIP = InetAddress.getByAddress(IPaddr);
+												System.out.println(nIP.getHostAddress());
+											} catch (UnknownHostException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+												System.out.println("cannot get IP addr string from PONG");
+											}
+						            		ByteBuffer bc = ByteBuffer.wrap(fileNum);
+						            		int nFileNum = bc.getInt();
+						            		ByteBuffer bd = ByteBuffer.wrap(fileSize);
+						            		int nfileSize = bd.getInt();
+						            		if(nIP != null){
+						            			ServerInfo nServerInfo = new ServerInfo(nPort,nIP,nFileNum,nfileSize);
+						            			nsl.addServer(nServerInfo);
+						            			}
+					            		}
+					            		else{ // I'm the one who send ping when I rec ping from others
+					            			System.out.println("I'm the one who send ping when I rec ping from others");
+					            			IDRecorder idr = routingTable.getRecord(mID);
+					            			Socket preSoc = idr.getSocket();
+					            			try {
+												DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
+												outToServer.write(data); // send data to the prev node
+											} catch (IOException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+					            		}
 					            	}
 					            	}
 				

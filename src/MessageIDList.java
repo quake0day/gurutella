@@ -34,7 +34,17 @@ public class MessageIDList {
 			}
 		}
 	}
-	
+	public IDRecorder getRecord(byte[] id){
+		int i= -1;
+		if (_InnerList.contains(id)){
+			i = _InnerList.indexOf(id);
+		}
+		else
+		{
+			System.out.println("You're trying to get a Record which not exist!");
+		}
+		return _IDList.get(i);
+	}
 	public IDRecorder getRecord(int i)
 	{
 		return _IDList.get(i);
