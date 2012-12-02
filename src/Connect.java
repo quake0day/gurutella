@@ -159,7 +159,14 @@ public class Connect extends Thread{
 					            	if(messageType == 0x00){
 					            		System.out.println("toclient PING");
 						            	}
-					            	else{
+					            	else if(messageType == 0x80){
+					            		System.out.println("toclient Query");
+					            	}
+					            	else if(messageType == 0x81){
+					            		System.out.println("toclient QueryHit");
+					            	}
+					            	
+					            	else if(messageType == 0x01){
 					            		System.out.println("toclient PONG");
 					            		if(routingTable.checkID(mID) == false){ // I'm the one who send ping initially
 
