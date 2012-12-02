@@ -14,7 +14,7 @@ import java.lang.Math;
  * @author quake0day
  * 
  */
-public class Update extends Thread {
+public class Query extends Thread {
 
 	/**
 	 * @param args
@@ -25,17 +25,21 @@ public class Update extends Thread {
 	private int Hops=0;
 	private int[] _idNum = new int[14];	//ID number
 	private MessageIDList _idList;
+	private String queryString;
 	PrintWriter outServer = null;
 	DataOutputStream outToServer = null;
+	private boolean isAbleToQuery = true;
 	
-	public Update(ClientInfoList client, MessageIDList idList){
+	public Query(String queryString, ClientInfoList client, MessageIDList idList){
 		this.clients = client;
 		this.forbiddenSocket = null;
 		this._idList = idList;
+		this.queryString = queryString;
 	}
 	
-	public Update(ClientInfoList client, Socket forbiddenSocket,int TTL
+	public Query(String queryString, ClientInfoList client, Socket forbiddenSocket,int TTL
 			, int Hops, MessageIDList idList){
+		this.queryString = queryString;
 		this.clients = client;
 		this.forbiddenSocket = forbiddenSocket;
 		this.TTL = TTL;
@@ -64,7 +68,7 @@ public class Update extends Thread {
 		
 		else {
 			_idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
-			byte[] ping = null;
+			byte[] query = null;
 			Iterator<Socket> iter =clients.iterator();
 			//byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
 			//byte[] mID = new byte[16];
@@ -77,17 +81,29 @@ public class Update extends Thread {
 			//byte mtype = (byte)0x00; // ping message
 			//ttl = new Integer(TTL).byteValue();
 			//hops = new Integer(Hops).byteValue(); Suggest to not use, SEE below
-		
+			int payloadLength = queryString.length()+3;
+			if(payloadLength > MyConstants.MAX_PAYLOAD_LENGTH || payloadLength > MyConstants.MAX_QUERY_LENGTH){
+				System.out.println("You query string is too long");
+				System.out.println("Try to enter another one");
+				isAbleToQuery = false;
+			}
+			if(isAbleToQuery){
+			byte[] payload = new byte[payloadLength];
+			byte[] minSpeed = {0x00,0x00};
+			byte[] bQueryString = queryString.getBytes();
+			System.arraycopy(minSpeed,0,payload,0,2);
+			System.arraycopy(bQueryString,0,payload,2,bQueryString.length);
+			payload[payloadLength-1] = '\0';
+			//System.arraycopy(src, srcPos, dest, destPos, length)
+			MessageContainer queryContainer = new MessageContainer();//use in this way
+			queryContainer.setID(_idNum);							//would be more readable
+			queryContainer.setPayloadLength(payloadLength);						//see comment in 
+			queryContainer.setTTL(TTL);								//MessageContainer.java
+			queryContainer.setHops(Hops);
+			queryContainer.setType(3);
+			queryContainer.addPayLoad(payload);
 			
-			MessageContainer pingContainer = new MessageContainer();//use in this way
-			pingContainer.setID(_idNum);							//would be more readable
-			pingContainer.setPayloadLength(0);						//see comment in 
-			pingContainer.setTTL(TTL);								//MessageContainer.java
-			pingContainer.setHops(Hops);
-			pingContainer.setType(1);
-			pingContainer.addPayLoad(null);
-			
-			ping = pingContainer.convertToByte();						
+			query = queryContainer.convertToByte();						
 			while(iter.hasNext()){									
 				Socket clientSocket = iter.next();					
 				if(!clientSocket.equals(forbiddenSocket)){
@@ -102,8 +118,8 @@ public class Update extends Thread {
 					
 					// send Ping
 					try {
-						outToServer.write(ping);
-						System.out.print("sent a PingID: ");	//for test use
+						outToServer.write(query);
+						System.out.print("sent a QueryID: ");	//for test use
 						for (int i: _idNum)
 						{
 							System.out.print(i + "\t");
@@ -118,6 +134,7 @@ public class Update extends Thread {
 					}
 					//outServer.close();
 				}
+			}
 			}
 		}
 	}

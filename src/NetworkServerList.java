@@ -23,6 +23,7 @@ public class NetworkServerList {
 	public synchronized void addServer(ServerInfo ser){
 		//System.out.println(ser.getIP().getHostAddress());
 		//System.out.println(ser.getPort());
+		//System.out.println(_networkServerList.size());
 		_networkServerList.add(ser);
 	}
 

@@ -104,9 +104,26 @@ public class Monitor {
 			    }
 /////////////////update command////////////////////   
 			    else if (command[0].equalsIgnoreCase("update")){
+			    	// clear NetworkServerList before update
+			    	nsl.clearAll();
+			    	
 			    	// send PING to all neighbors
 					Thread update = new Thread(new Update(_client, rt));
 					update.start();
+			    }
+/////////////////find command////////////////////   
+			    else if (command[0].equalsIgnoreCase("find")){
+			    	if(command.length < 2){
+			    		System.out.println("Usage:find word1 [word2]");
+			    	}
+			    	String queryString = userInput.substring(command[0].length()+1);
+			    	System.out.println("Query:"+queryString);
+			    	
+			    	Thread query = new Thread(new Query(queryString, _client,rt));
+			    	query.start();
+			    	// send Query to all neighbors
+					//Thread update = new Thread(new Update(_client, rt));
+					//update.start();
 			    }
 ////////////////send command//////////////////////
 			    else if (command[0].equals("send"))
