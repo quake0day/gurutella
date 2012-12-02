@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 /**
  * ServerHandler handling Server responses
@@ -122,6 +125,35 @@ public class ServerHandler extends Thread{
 			            	}
 			            	else if(messageType == (byte)0x80){
 			            		System.out.println("QUERY MESSAGE");
+			            		boolean hasSameMessageID = false;
+			            		hasSameMessageID = _idList.checkID(mID);
+			            		byte[] payload = new byte[4096];
+			            		byte[] minimumSpeed = new byte[2];
+			            		int payloadLength = in2Server.read(payload);
+			            		byte[] queryString = new byte [payloadLength-2];
+			            		System.out.println("PayloadLength:"+payloadLength);
+			            		
+			            		System.arraycopy(payload, 0, minimumSpeed, 0, 2);
+			            		System.arraycopy(payload, 2, queryString, 0, queryString.length);
+			            		//ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
+			            		//IntBuffer ib = bb.asIntBuffer();
+			            		//int nMinSpeed = ib.get(0);
+			            		String nQueryString = new String(queryString, "UTF-8");
+			            		System.out.println(nQueryString);
+			            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
+			 
+			            		//String queryString = 
+			            		if(hasSameMessageID == false){
+			            			_idList.addRecord(new IDRecorder(mID, _serverSocThread));
+			            			Query sendNext = new Query(nQueryString,_cInfo,_serverSocThread
+			            					,(int)TTL-1,(int)Hops+1, _idList);
+			            			sendNext.start();
+			            			
+			            			// reply with Query Hit
+			            			ArrayList<QueryResultSet> _qrs = _fList.queryFile(nQueryString);
+			            			int _NumberOfHits = _qrs.size();
+			            			
+			            		}
 			            	}
 			            	else if(messageType == (byte)0x81){
 			            		System.out.println("QUERY HIT MESSAGE");
@@ -147,7 +179,7 @@ public class ServerHandler extends Thread{
 	        // outServer.close(); 
 	        // inServer.close(); 
 	        // listenSocket.close(); 
-	          	  }; 
+	          	  }
 	    } 
 	}catch(IOException e)
 	    {
