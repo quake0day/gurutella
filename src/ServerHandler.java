@@ -77,7 +77,7 @@ public class ServerHandler extends Thread{
 		            	byte messageType = (byte)header[16];
 		            	byte TTL = (byte)header[17];
 		            	byte Hops = (byte)header[18];
-		            	//System.out.println("server Received Header");
+		            	System.out.println("server Received Header");
 		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){
 		            		
 		            		
@@ -120,10 +120,10 @@ public class ServerHandler extends Thread{
 								in2Server.read(data);
 			            		System.out.println("server PONG MESSAGE");
 			            	}
-			            	else if(messageType == 0x80){
+			            	else if(messageType == (byte)0x80){
 			            		System.out.println("QUERY MESSAGE");
 			            	}
-			            	else if(messageType == 0x81){
+			            	else if(messageType == (byte)0x81){
 			            		System.out.println("QUERY HIT MESSAGE");
 			            	}
 			            	else{

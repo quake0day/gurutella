@@ -46,6 +46,8 @@ public class PongPayload {
 	private byte[] convertIP2Byte(InetAddress IP) throws NumberFormatException, IOException{
 		byte[] b = new byte[4];
 		b = IP.getAddress();
+		InetAddress IPc = InetAddress.getByAddress(b);
+		System.out.println(IPc.getHostAddress());
 		return b;
 	}
 	
