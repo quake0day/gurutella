@@ -116,7 +116,8 @@ public class Monitor {
 			    	if(command.length < 2){
 			    		System.out.println("Usage:find word1 [word2]");
 			    	}
-			    	String queryString = userInput.substring(command[0].length()+1);
+			    	String queryString = userInput.substring(command[0].length());
+			    	queryString.trim();
 			    	System.out.println("Query:"+queryString);
 			    	
 			    	Thread query = new Thread(new Query(queryString, _client,rt));

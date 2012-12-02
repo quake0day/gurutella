@@ -203,7 +203,7 @@ public class MessageContainer {
 		return (Hops & 0xFF);
 	}
 	
-	public boolean setPayloadLength(int pl)
+	public boolean setPayloadLength(int pl)	//big-endian format
 	{
 		if (pl > 4096)
 		{
@@ -222,10 +222,10 @@ public class MessageContainer {
 			{
 				lowBytes = pl;
 			}
-			pLength[0] = new Integer(lowBytes).byteValue();
-			pLength[1] = new Integer(highBytes).byteValue();
-			pLength[2] = (byte)0x00;
 			pLength[3] = (byte)0x00;
+			pLength[2] = (byte)0x00;
+			pLength[1] = new Integer(lowBytes).byteValue();
+			pLength[0] = new Integer(highBytes).byteValue();
 			return true;
 		}
 	}
