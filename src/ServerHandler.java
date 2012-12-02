@@ -176,7 +176,7 @@ public class ServerHandler extends Thread{
 				            			QueryHitPayLoad queryPayLoad = new QueryHitPayLoad(_NumberOfHits,_port,_IP,Speed,qrs, serventID);
 				            			//PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
 				            			queryHitContainer.addPayLoad(queryPayLoad.getPayLoad());
-				            			byte [] queryHit = new byte[4096];
+				            			byte [] queryHit = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
 				            			queryHit = queryHitContainer.convertToByte();
 				    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
 				    					outToServer.write(queryHit);
