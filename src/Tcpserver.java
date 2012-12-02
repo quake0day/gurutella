@@ -1,6 +1,5 @@
 
-import java.net.*; 
-import java.util.Iterator;
+import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.*; 
@@ -21,12 +20,14 @@ public class Tcpserver extends Thread
  private FileInfoList _fileList;
  private InetAddress IP;
  private int port;
+ private int _downPort;
  private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
  
- public Tcpserver (int tcpport,ClientInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist) throws IOException, InterruptedException
+ public Tcpserver (int tcpport,int tcpDown, ClientInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
+	 this._downPort = tcpDown;
 	 this.IP = IP;
 	 this.clients = client;
 	 this._routingTable = rt;
@@ -52,7 +53,7 @@ public class Tcpserver extends Thread
 		try {
 			listenSocket = _serverSK.accept();
 			threadPool.submit(new ServerHandler(listenSocket, clients,
-					_routingTable, port, IP, _fileList));
+					_routingTable, port, _downPort, IP, _fileList));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

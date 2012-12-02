@@ -21,12 +21,13 @@ public class ServerHandler extends Thread{
 			FileInfoList _fList;
 			InetAddress _IP;
 			int _port;
+			int _downPort;
 			int _tempClientIndex;
 			boolean _isAlive = true;
 			
 
 	public ServerHandler(Socket serverSoc, ClientInfoList cInfo, MessageIDList idList,
-			int tcpPort, InetAddress IP, FileInfoList fList)
+			int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList)
 	{
 		_cInfo = cInfo;
 		_serverSocThread = serverSoc;
@@ -91,10 +92,17 @@ public class ServerHandler extends Thread{
 			            					,(int)TTL-1,(int)Hops+1, _idList);
 			            			sendNext.start();
 			            			
-			            			// reply with PONG
-			            			PongMessage PongMessageContainer = new PongMessage(mID,_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+			            			// reply with PONG: REVISED
+			            			MessageContainer pongContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+			            			pongContainer.setType(2);	//Pong Message
+			            			pongContainer.setTTL(7);
+			            			pongContainer.setHops(0);
+			            			pongContainer.setPayloadLength(14);
+			            			PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
+			            			pongContainer.addPayLoad(payload.getPayLoad());
+			            			
 			            			byte [] pong = new byte[4096];
-			            			pong = PongMessageContainer.convertToByte();
+			            			pong = pongContainer.convertToByte();
 			    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
 			    					outToServer.write(pong);
 			            		}

@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Iterator;
 import java.lang.Math;
-import java.util.Date;
 
 /**
  * ATTENTION:  THIS class need to check ID Repeat OUTSIDE BEFORE being called!
@@ -68,22 +67,29 @@ public class Update extends Thread {
 			byte[] ping = null;
 			Iterator<Socket> iter =clients.iterator();
 			//byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
-			byte[] mID = new byte[16];
-			byte[] newPacketLength={0x00,0x00,0x00,0x00};
-			byte ttl;
-			byte hops;
-			byte[] payload = null;
-			mID[8] = (byte)0xff;
-			mID[15] = (byte)0x00;
-			byte mtype = (byte)0x00; // ping message
-			ttl = new Integer(TTL).byteValue();
-			hops = new Integer(Hops).byteValue();
+			//byte[] mID = new byte[16];
+			//byte[] newPacketLength={0x00,0x00,0x00,0x00};
+			//byte ttl;
+			//byte hops;
+			//byte[] payload = null;
+			//mID[8] = (byte)0xff;
+			//mID[15] = (byte)0x00;
+			//byte mtype = (byte)0x00; // ping message
+			//ttl = new Integer(TTL).byteValue();
+			//hops = new Integer(Hops).byteValue(); Suggest to not use, SEE below
 		
 			
-			MessageContainer pingContainer = new MessageContainer(mID,mtype,ttl,hops,newPacketLength,payload);
-			ping = pingContainer.convertToByte();
-			while(iter.hasNext()){
-				Socket clientSocket = iter.next();
+			MessageContainer pingContainer = new MessageContainer();//use in this way
+			pingContainer.setID(_idNum);							//would be more readable
+			pingContainer.setPayloadLength(0);						//see comment in 
+			pingContainer.setTTL(TTL);								//MessageContainer.java
+			pingContainer.setHops(Hops);
+			pingContainer.setType(1);
+			pingContainer.addPayLoad(null);
+			
+			ping = pingContainer.convertToByte();						
+			while(iter.hasNext()){									
+				Socket clientSocket = iter.next();					
 				if(!clientSocket.equals(forbiddenSocket)){
 					try {
 						outToServer = new DataOutputStream(clientSocket.getOutputStream());
@@ -97,7 +103,7 @@ public class Update extends Thread {
 					// send Ping
 					try {
 						outToServer.write(ping);
-						System.out.print("sent a PingID: ");
+						System.out.print("sent a PingID: ");	//for test use
 						for (int i: _idNum)
 						{
 							System.out.print(i + "\t");

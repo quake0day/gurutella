@@ -16,8 +16,8 @@ import java.net.UnknownHostException;
  */
 public class simpella /*extends Thread*/{
 	// define the max thread number in a thread-pool
-	private static int tcpPort1 = 6346;
-	private static int tcpPort2 = 5635;
+	private static int tcpPort1 = 6346;	//Connection
+	private static int tcpPort2 = 5635;	//Download
 	public static FileInfoList _fileList;
 	public static ClientInfoList _clients;
 	public static MessageIDList _routingTable;
@@ -55,7 +55,7 @@ public class simpella /*extends Thread*/{
 		 _fileList = new FileInfoList();
 		 _routingTable = new MessageIDList();
 		 //TCPServer thread start
-		 Tcpserver _tcpServer = new Tcpserver(10025, _clients,_routingTable,IP,_fileList);
+		 Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList);
 		 _tcpServer.start();
 		 new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable);
 		 //threadPool.submit(new Tcpserver(10025,_clients));

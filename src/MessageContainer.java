@@ -13,6 +13,8 @@
  *
  */
 
+//TAKE THIS CLASS AS OMNI-MESSAGE CONTAINER WITH its methods to define various messages
+
 public class MessageContainer {	
 	private
 		byte[] mID = new byte[16];
@@ -34,9 +36,20 @@ public class MessageContainer {
 		pLength = newPacketLength;
 	}
 	
+	public MessageContainer(byte[] id)
+	{
+		byte[] newPacketLength={0x00,0x00,0x00,0x00};
+		this.mID = id;
+		mID[8] = (byte)0xff;
+		mID[15] = (byte)0x00;
+		TTL = new Integer(7).byteValue();
+		Hops = (byte)0x00;
+		pLength = newPacketLength;
+	}
+	
 	public MessageContainer(byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload)
 	{
-		//Constructor2, for convenience when RECEIVING data
+		//Constructor2, for convenience when RECEIVING data from InputStream
 		//Message format initialization
 
 		TTL = new Integer(7).byteValue();
@@ -50,15 +63,15 @@ public class MessageContainer {
 		this.payload = payload;
 	}
 	
-	public byte[] convertToByte(){
+	public byte[] convertToByte(){	//used after packaging
 		int messageLength = 23;
 		if(payload != null){
 			messageLength = messageLength + payload.length;
 		}
 		byte[] Message = new byte[messageLength];
-		//System.arraycopy(mID, 0, Message, 0, 16);
-		Message[8] = mID[8]; 
-		Message[15] = mID[15]; 
+		System.arraycopy(mID, 0, Message, 0, 16);
+		//Message[8] = mID[8]; 
+		//Message[15] = mID[15]; 
 		Message[16] = mType;
 		Message[17] = TTL;
 		Message[18] = Hops;
@@ -70,14 +83,10 @@ public class MessageContainer {
 		}
 		return Message;
 	}
-	/*
-	public boolean setID(int[] num, MessageIDList idList)	//used when random assignment
+	
+	public boolean setID(int[] num)	//used when random assignment
 	{														//for sender
 		if (num.length != 14)	//ID length legality check
-		{
-			return false;
-		}
-		else if (!idList.checkID(num))
 		{
 			return false;
 		}
@@ -91,7 +100,6 @@ public class MessageContainer {
 						j++;
 					}
 			}
-			idList.addID(mID);
 			return true;
 		}
 	}
@@ -104,11 +112,9 @@ public class MessageContainer {
 		}
 		else
 		{
-			idList.addID(mID);
 			return true;
 		}
 	}
-	*/
 	
 	public boolean setType(int type) //1.Ping 2.Pong 3.Query 4.Query Hit
 	{
