@@ -75,7 +75,13 @@ public class ServerHandler extends Thread{
 			    //Connection Established, start reading header
 					  while (_isAlive)
 					  {
-						byte[] header = new byte[23];
+				        if(messageLength == -1){ // means a broken socket
+				        	_cInfo.remove(1, _serverSocThread);
+				        	_isAlive = false;
+				        	break;
+				         }
+				        
+				       	byte[] header = new byte[23];
 						in2Server.read(header);
 						
 					  	byte[] mID = new byte[16];
@@ -89,7 +95,7 @@ public class ServerHandler extends Thread{
 		            		
 		            		System.out.println("HereIn");
 			            	
-		            		if(messageType == (byte) 0x00){
+		            		if (messageType == (byte) 0x00){
 			            		System.out.println("toserver PING MESSAGE");
 			            		//Iterator<MessageContainer> iter = _routingTable.iterator();
 			            		boolean hasSameMessageID = false;
@@ -118,15 +124,16 @@ public class ServerHandler extends Thread{
 			            		else
 			            		{
 			            			_isAlive = false;
+			            			break;
 			            		}
 			            		
 			            	}
-			            	else if(messageType == (byte) 0x01){
+			            	else if (messageType == (byte) 0x01){
 			            		byte[] data = new byte[14];
 								in2Server.read(data);
 			            		System.out.println("server PONG MESSAGE");
 			            	}
-			            	else if(messageType == (byte)0x80){
+			            	else if (messageType == (byte)0x80){
 			            		System.out.println("QUERY MESSAGE");
 			            		boolean hasSameMessageID = false;
 			            		hasSameMessageID = _idList.checkID(mID);
@@ -146,7 +153,7 @@ public class ServerHandler extends Thread{
 			            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
 			 
 			            		//String queryString = 
-			            		if(hasSameMessageID == false){
+			            		if (hasSameMessageID == false){
 			            			_idList.addRecord(new IDRecorder(mID, _serverSocThread));
 			            			Query sendNext = new Query(nQueryString,_cInfo,_serverSocThread
 			            					,(int)TTL-1,(int)Hops+1, _idList);
@@ -177,13 +184,15 @@ public class ServerHandler extends Thread{
 			            			
 			            		}
 			            	}
-			            	else if(messageType == (byte)0x81){
+			            	else if (messageType == (byte)0x81){
 			            		System.out.println("QUERY HIT MESSAGE");
 			            	}
-			            	else{
-			            		_isAlive = false;
-			            	}
+			 
 		            	}
+		            	else{
+			           		_isAlive = false;
+			            	break;
+			            }
 					  }
 	          	  }
 	            }
