@@ -156,17 +156,17 @@ public class Connect extends Thread{
 					            	byte TTL = (byte)data[17];
 					            	byte Hops = (byte)data[18];
 					            	if((int)(TTL+Hops) >=7 && (int)(TTL+Hops) <= 15){
-					            	if(messageType == 0x00){
+					            	if(messageType == (byte)0x00){
 					            		System.out.println("toclient PING");
 						            	}
-					            	else if(messageType == 0x80){
+					            	else if(messageType == (byte)0x80){
 					            		System.out.println("toclient Query");
 					            	}
-					            	else if(messageType == 0x81){
+					            	else if(messageType == (byte)0x81){
 					            		System.out.println("toclient QueryHit");
 					            	}
 					            	
-					            	else if(messageType == 0x01){
+					            	else if(messageType == (byte)0x01){
 					            		System.out.println("toclient PONG");
 					            		if(routingTable.checkID(mID) == false){ // I'm the one who send ping initially
 
