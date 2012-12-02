@@ -29,5 +29,9 @@ public class NetworkServerList {
 	public synchronized Iterator<ServerInfo> iterator() {
 		return _networkServerList.iterator();
 	}
+
+	public synchronized void clearAll(){
+		_networkServerList.clear();
+	}
 	
 }
