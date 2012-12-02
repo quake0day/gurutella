@@ -132,6 +132,12 @@ public class ServerHandler extends Thread{
 			            	else if(messageType == (byte)0x81){
 			            		byte[] data = new byte[payLength];
 			            		in2Server.read(data);
+			            		byte[] minSpeed = new byte[2];
+			            		byte[] searchField = new byte[data.length - 2];
+			            		String keyWords = searchField.toString();
+			            		
+			            	    Thread queryHit = new QueryHit(keyWords, _fList);
+			            	    queryHit.start();
 			            	    
 			            		System.out.println("QUERY HIT MESSAGE");
 			            	}
