@@ -117,7 +117,7 @@ public class Monitor {
 			    		System.out.println("Usage:find word1 [word2]");
 			    	}
 			    	String queryString = userInput.substring(command[0].length());
-			    	queryString.trim();
+			    	queryString = queryString.trim();
 			    	//check legality
 			    	if (!queryString.startsWith(" ")) //Blank start check
 		    		{				    		
