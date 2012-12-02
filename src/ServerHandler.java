@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * ServerHandler handling Server responses
@@ -74,31 +75,20 @@ public class ServerHandler extends Thread{
 			    //Connection Established, start reading header
 					  while (_isAlive)
 					  {
-						  
 						byte[] header = new byte[23];
 						in2Server.read(header);
 						
-			         	if(messageLength == -1){ // means a broken socket
-			         		_cInfo.remove(1, _serverSocThread);
-			         		_isAlive = false;
-			         		break;
-			         	}
-			         	
-					  	byte[] mID = new byte[16];	//read to server
+					  	byte[] mID = new byte[16];
 		        		System.arraycopy(header, 0, mID, 0, 16);
 		            	byte messageType = (byte)header[16];
 		            	byte TTL = (byte)header[17];
 		            	byte Hops = (byte)header[18];
-		            	byte[] pLength = new byte[4];
-		            	System.arraycopy(header, 19, pLength, 0, 4);
-		            	int payLength = (((pLength[0] << 24) & 0xFFFFFFFF) |
-		            			((pLength[1] << 16) & 0xFFFFFF) |
-		            			((pLength[2] << 8) & 0xFFFF) |
-		            			((pLength[0] & 0xFF)));	//big-endianness
-		            	
 		            	System.out.println("server Received Header");
 		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){
-		            		System.out.println("HereIn");			            	
+		            		
+		            		
+		            		System.out.println("HereIn");
+			            	
 		            		if(messageType == (byte) 0x00){
 			            		System.out.println("toserver PING MESSAGE");
 			            		//Iterator<MessageContainer> iter = _routingTable.iterator();
@@ -112,19 +102,24 @@ public class ServerHandler extends Thread{
 			            			sendNext.start();
 			            			
 			            			// reply with PONG: REVISED
-			            			MessageContainer pongContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
-			            			pongContainer.setType(2);	//Pong Message
-			            			pongContainer.setTTL(7);
-			            			pongContainer.setHops(0);
-			            			pongContainer.setPayloadLength(14);
+			            			MessageContainer pongHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+			            			pongHitContainer.setType(2);	//Pong Message
+			            			pongHitContainer.setTTL(7);
+			            			pongHitContainer.setHops(0);
+			            			pongHitContainer.setPayloadLength(14);
 			            			PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
-			            			pongContainer.addPayLoad(payload.getPayLoad());
+			            			pongHitContainer.addPayLoad(payload.getPayLoad());
 			            			
 			            			byte [] pong = new byte[4096];
-			            			pong = pongContainer.convertToByte();
+			            			pong = pongHitContainer.convertToByte();
 			    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
 			    					outToServer.write(pong);
-			            		}			            		
+			            		}
+			            		else
+			            		{
+			            			_isAlive = false;
+			            		}
+			            		
 			            	}
 			            	else if(messageType == (byte) 0x01){
 			            		byte[] data = new byte[14];
@@ -147,7 +142,7 @@ public class ServerHandler extends Thread{
 			            		//IntBuffer ib = bb.asIntBuffer();
 			            		//int nMinSpeed = ib.get(0);
 			            		String nQueryString = new String(queryString, "UTF-8");
-			            		System.out.println(nQueryString);
+			            		System.out.println("Query:"+nQueryString);
 			            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
 			 
 			            		//String queryString = 
@@ -160,21 +155,29 @@ public class ServerHandler extends Thread{
 			            			// reply with Query Hit
 			            			ArrayList<QueryResultSet> _qrs = _fList.queryFile(nQueryString);
 			            			int _NumberOfHits = _qrs.size();
-			            			
-			            			//Thread queryHit = new QueryHit(n)
+			            			Iterator<QueryResultSet> qrsIter = _qrs.iterator();
+			            			while(qrsIter.hasNext()){ // create multiple query hit packet
+			            				QueryResultSet qrs = qrsIter.next();
+				            			MessageContainer queryHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+				            			queryHitContainer.setType(4);	//QueryHit Message
+				            			queryHitContainer.setTTL(Hops+2);
+				            			queryHitContainer.setHops(0);
+				            			int Speed = 10000;
+				            			String serventID = "12j3l2j3ljlasjdfasdf";
+				            			//queryHitContainer.setPayloadLength(14);
+				            			//int numberOfHits, int port, InetAddress IP, int Speed, String serventID
+				            			QueryHitPayLoad queryPayLoad = new QueryHitPayLoad(_NumberOfHits,_port,_IP,Speed,qrs, serventID);
+				            			//PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
+				            			queryHitContainer.addPayLoad(queryPayLoad.getPayLoad());
+				            			byte [] queryHit = new byte[4096];
+				            			queryHit = queryHitContainer.convertToByte();
+				    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
+				    					outToServer.write(queryHit);
+			            			}
 			            			
 			            		}
 			            	}
 			            	else if(messageType == (byte)0x81){
-			            		byte[] data = new byte[payLength];
-			            		in2Server.read(data);
-			            		byte[] minSpeed = new byte[2];
-			            		byte[] searchField = new byte[data.length - 2];
-			            		String keyWords = searchField.toString();
-			            		
-			            	    Thread queryHit = new QueryHit(keyWords, _fList);
-			            	    queryHit.start();
-			            	    
 			            		System.out.println("QUERY HIT MESSAGE");
 			            	}
 			            	else{

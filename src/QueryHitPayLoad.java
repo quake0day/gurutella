@@ -2,6 +2,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 
@@ -13,6 +16,7 @@ import java.net.InetAddress;
  *
  */
 public class QueryHitPayLoad {
+	private static final AbstractList<QueryResultSet> Iter_qrs = null;
 	private
 	byte[] _NumOfHit = new byte[4];
 	byte[] _port = new byte[4];
@@ -20,26 +24,33 @@ public class QueryHitPayLoad {
 	byte[] _Speed = new byte[4];
 	//byte[] _NumOfSize = new byte[4];
 	byte[] _serventID = new byte[16];
-	
-	public QueryHitPayLoad(int numberOfHits, int port, InetAddress IP, int Speed, String serventID) throws IOException {
+	private QueryResultSet _qrs;
+	public QueryHitPayLoad(int numberOfHits, int port, InetAddress IP, int Speed,QueryResultSet qrs, String serventID) throws IOException {
 		// TODO Auto-generated constructor stub
 		this._NumOfHit = convertInt2Byte(numberOfHits);
 		this._port = convertInt2Byte(port);
 		this._IPAdress = convertIP2Byte(IP);
 		this._Speed = convertInt2Byte(Speed);
 		this._serventID = serventID.getBytes();
-		
-	}
-	/*
-	public byte[] getPayLoad(){
-		//System.arraycopy(_NumOfHit, 3, _payLoad, 0, 1);
-		//System.arraycopy(_NumOfFiles, 0, _payLoad, 6, 4);
-		//System.arraycopy(_IPAdress, 0, _payLoad, 2, 4);
-		//System.arraycopy(_port, 2, _payLoad, 0, 2);
-		//return _payLoad;
-	}
-	*/
+		this._qrs = qrs;
 	
+	}
+	
+	
+	public byte[] getPayLoad() throws IOException{
+		byte[] bQrs = _qrs.convert2Byte();
+		int qrsLength = bQrs.length;
+		byte[] _payload = new byte[qrsLength+16+4+4+2+1];
+		System.arraycopy(_NumOfHit, 3, _payload, 0, 1);
+		System.arraycopy(_port, 2, _payload, 1, 2);
+		System.arraycopy(_IPAdress, 0, _payload, 3, 4);
+		System.arraycopy(_Speed, 0, _payload, 7, 4);
+		System.arraycopy(bQrs, 0, _payload, 11, qrsLength);
+		System.arraycopy(_serventID, 0, _payload, qrsLength+11, 16);
+		return _payload;
+	}
+	
+
 	private byte[] convertIP2Byte(InetAddress IP) throws NumberFormatException, IOException{
 		byte[] b = new byte[4];
 		b = IP.getAddress();
@@ -71,4 +82,5 @@ public class QueryHitPayLoad {
         byte[] b = baos.toByteArray();
         return b;
 	}
+
 }
