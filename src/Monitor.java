@@ -118,30 +118,25 @@ public class Monitor {
 			    	}
 			    	String queryString = userInput.substring(command[0].length());
 			    	queryString.trim();
-			    	//check legality
-			    	if (!queryString.startsWith(" ")) //Blank start check
-		    		{				    		
-		    			//Check illegal characters
-		    			if (queryString.contains("|") || queryString.contains("*") || queryString.contains("?") 
-		    					|| queryString.contains("\"") ||queryString.contains("<") || queryString.contains(">")
-		    					|| queryString.contains("/") || queryString.endsWith("\\"))
-		    			{
-		    				System.out.println("Illegal character(s)(|, *, ?, \", <, >, /, \\) appeared in input path");			 
-		    			}
-		    			else
-		    			{	
-		    				System.out.println("Query:"+queryString);
-			    	
-		    				Thread query = new Thread(new Query(queryString, _client,rt));
-		    				query.start();
-		    				// send Query to all neighbors
-		    				//Thread update = new Thread(new Update(_client, rt));
-		    				//update.start();
-		    			}
+			    	//check legality			    		
+		    		//Check illegal characters
+		    		if (queryString.contains("|") || queryString.contains("*") || queryString.contains("?") 
+		    				|| queryString.contains("\"") ||queryString.contains("<") || queryString.contains(">")
+		    				|| queryString.contains("/") || queryString.endsWith("\\"))
+		    		{
+		    			System.out.println("Illegal character(s)(|, *, ?, \", <, >, /, \\) appeared in input path");			 
 		    		}
-			    	else
-			    		System.out.println("No blank begin!");
-			    }
+		    		else
+		    		{	
+		    			System.out.println("Query:"+queryString);
+			    
+		    			Thread query = new Thread(new Query(queryString, _client,rt));
+		    			query.start();
+		    			// send Query to all neighbors
+		    			//Thread update = new Thread(new Update(_client, rt));
+		    			//update.start();
+		    		}
+		    	}
 ////////////////send command//////////////////////
 			    else if (command[0].equals("send"))
 			    {
