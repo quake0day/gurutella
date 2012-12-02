@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 
@@ -27,10 +28,12 @@ public class FileInfoList {
 	private double fileSize = 0.0;
 	private String absolutePath = null;
 	private ArrayList <File> _sharedFile;
+	private ArrayList <QueryResultSet> _qrs;
 	
 	public FileInfoList()
 	{
 		_sharedFile = new ArrayList <File>();
+		_qrs = new ArrayList <QueryResultSet>();
 	}
 	
 	public String getAbsolutePath(){
@@ -41,7 +44,9 @@ public class FileInfoList {
 		File temp = new File(path).getAbsoluteFile();
 		absolutePath = temp.getAbsolutePath();
 	}
-	
+	public int getFileIndex(String fileName){
+		return _sharedFile.indexOf(fileName);
+	}
 	public void setFileNum(int fileNum){
 		this.fileNum = fileNum;
 	}
@@ -63,6 +68,28 @@ public class FileInfoList {
 		return fileSize;
 	}
 	
+	public ArrayList <QueryResultSet> queryFile(String queryString){
+		String[] querySet = queryString.split(" ");
+		Iterator <File> ie = _sharedFile.iterator();
+		while(ie.hasNext()){
+			File fileIterNew = ie.next();
+			for (String query: querySet)
+			{
+				if(fileIterNew.getName().contains(query)){
+					String fileName = fileIterNew.getName();
+					int fileSize = (int)fileIterNew.length(); // !! may loss some info
+					int fileIndex = _sharedFile.indexOf(fileName);
+					QueryResultSet qrs = new QueryResultSet(fileIndex,fileSize,fileName);
+					_qrs.add(qrs);
+				}
+			}
+		}
+		return _qrs;
+	}
+	
+	public int getQRSsize(){
+		return _qrs.size();
+	}
 	public boolean addFile(File file){
 		 if (_sharedFile.add(file))
 			 return true;
@@ -72,6 +99,7 @@ public class FileInfoList {
 			return false;
 		 }
 	}
+	
 	
 	public File[] getFile(String filename)	//Should ONLY input LEGAL parameter
 	{
