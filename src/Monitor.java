@@ -139,7 +139,7 @@ public class Monitor {
                         query.start();
                         System.out.println("Press Enter to Continue.");
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
-                        ref.start();
+                        //ref.start();
                   
 
                         
