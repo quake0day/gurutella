@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * 
@@ -14,14 +16,13 @@ public class QueryResultList {
 	/**
 	 * 
 	 */
-	private ArrayList<QueryResult> qrl;
+	//private ArrayList<QueryResult> qrl;
+	private Set<QueryResult> qrl;// list is some List of Strings
 	public QueryResultList() {
 		// TODO Auto-generated constructor stub
-		qrl = new ArrayList<QueryResult>();
-		
-		
+		qrl = new LinkedHashSet<QueryResult>();
 	}
-	public int ccc(){
+	public int getSize(){
 		return qrl.size();
 	}
 	public void add(QueryResult e){

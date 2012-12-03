@@ -32,8 +32,8 @@ public class ShowQueryRes implements Runnable{
 		System.out.println("-----------------------------");
 		System.out.println("The query was '"+ query+ "'");
 		Iterator<QueryResult> qrlIter = qrl.getItertor();
+		int i = 1;
 		while(qrlIter.hasNext()){
-			int i = 1;
 			 QueryResult res = qrlIter.next();
 			 System.out.println(i+")"+res._IP+":"+res._downloadPort+" 			Size:"+res._fileSize);
 			 System.out.println("Name:"+res._fileName);
