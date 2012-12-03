@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -17,11 +18,13 @@ public class QueryResultList {
 	 * 
 	 */
 	//private ArrayList<QueryResult> qrl;
-	private Set<QueryResult> qrl;// list is some List of Strings
+	private ArrayList<Integer> qrl;// list is some List of Strings
 	private String queryString;
+	private Hashtable<Integer, QueryResult> resTable;
 	public QueryResultList() {
 		// TODO Auto-generated constructor stub
-		qrl = new LinkedHashSet<QueryResult>();
+		qrl = new ArrayList<Integer>();
+		resTable = new Hashtable<Integer, QueryResult>();
 		queryString = null;
 	}
 	public synchronized void setQuery(String query){
@@ -30,22 +33,33 @@ public class QueryResultList {
 	public  String getQuery(){
 		return this.queryString;
 	}
-	public int getSize(){
-		return qrl.size();
+
+	
+	public void add(QueryResult e){	
+		if(qrl.contains(e.ID)){
+			qrl.remove(e.ID);
+		}
+		qrl.add(e.ID);
+		resTable.put(e.ID, e);
 	}
-	public void add(QueryResult e){
-		qrl.add(e);
-	}
-	public Iterator<QueryResult> getItertor(){
+	public Iterator<Integer> getItertor(){
 		return qrl.iterator();
 }
 
+	public QueryResult getResult(int ID){
+		return resTable.get(ID);
+	}
+	
 	public void clearAll(){
 		qrl.clear();
+		resTable = new Hashtable<Integer, QueryResult>();
 	}
+	
 	public void clear(int fileNO){
 		if(fileNO >= 1){
-		qrl.remove(fileNO-1);
+			fileNO = qrl.size() - fileNO;
+		int i = qrl.get(fileNO);
+		resTable.remove(i);
 		}
 	}
 	public int length(){

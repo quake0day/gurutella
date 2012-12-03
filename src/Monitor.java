@@ -26,6 +26,7 @@ public class Monitor {
     private NetworkServerList _nsl;
     private boolean isQuit = false;
     private QueryResultList _qrl;
+    private String queryString;
 
     @SuppressWarnings("deprecation")
 	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
@@ -121,7 +122,7 @@ public class Monitor {
                     if(command.length < 2){
                         System.out.println("Usage:find word1 [word2]");
                     }
-                    String queryString = userInput.substring(command[0].length());
+                    queryString = userInput.substring(command[0].length());
                     queryString = queryString.trim();
                     //check legality			    		
                     //Check illegal characters
@@ -142,8 +143,8 @@ public class Monitor {
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
 
                         //ref.start();
-                        
-                        Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString));
+                        Thread.sleep(250);
+                        Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,false));
                         showRes.start();
                     	
                         
@@ -152,6 +153,12 @@ public class Monitor {
                         //update.start();
                         
                     }
+                }
+                /////////////////listcommand////////////////////   
+                else if (command[0].equalsIgnoreCase("list")){
+                    Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    showRes.start();
+                	
                 }
                 ////////////////send command//////////////////////
                 else if (command[0].equals("send"))
