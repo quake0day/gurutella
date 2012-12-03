@@ -25,6 +25,7 @@ public class QueryHitPayLoad {
 	//byte[] _NumOfSize = new byte[4];
 	byte[] _serventID = new byte[16];
 	private QueryResultSet _qrs;
+	private byte[] _payload;
 	
 	public QueryHitPayLoad(int numberOfHits, int port, InetAddress IP, int Speed,QueryResultSet qrs, String serventID) throws IOException {
 		// TODO Auto-generated constructor stub
@@ -40,7 +41,7 @@ public class QueryHitPayLoad {
 	public byte[] getPayLoad() throws IOException{
 		byte[] bQrs = _qrs.convert2Byte();
 		int qrsLength = bQrs.length;
-		byte[] _payload = new byte[qrsLength+16+4+4+2+1];
+		_payload = new byte[qrsLength+16+4+4+2+1];
 		System.arraycopy(_NumOfHit, 3, _payload, 0, 1);
 		System.arraycopy(_port, 2, _payload, 1, 2);
 		System.arraycopy(_IPAdress, 0, _payload, 3, 4);
@@ -50,6 +51,9 @@ public class QueryHitPayLoad {
 		return _payload;
 	}
 	
+	public int getPayloadLength(){
+		return _payload.length;
+	}
 
 	private byte[] convertIP2Byte(InetAddress IP) throws NumberFormatException, IOException{
 		byte[] b = new byte[4];
