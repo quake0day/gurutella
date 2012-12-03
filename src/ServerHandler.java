@@ -95,7 +95,6 @@ public class ServerHandler extends Thread{
 		            		
 		            		System.out.println("HereIn");
 			            	
-<<<<<<< HEAD
 		            		if (messageType == (byte) 0x00){
 			            		System.out.println("toserver PING MESSAGE");
 			            		//Iterator<MessageContainer> iter = _routingTable.iterator();
@@ -157,63 +156,7 @@ public class ServerHandler extends Thread{
 			            		//String queryString = 
 			            		if (hasSameMessageID == false){
 			            			_idList.addRecord(new IDRecorder(mID, _serverSocThread));
-=======
-		            		boolean hasSameMessageID = false;	//check ID here
-		            		hasSameMessageID = _idList.checkID(mID);
-		            		
-		            		if (hasSameMessageID == false){
-		            			
-		            			///////////Ping Received/////////
-			            		if (messageType == (byte) 0x00){
-				            		System.out.println("toserver PING MESSAGE");
-				            		//Iterator<MessageContainer> iter = _routingTable.iterator();
-				            		_idList.addRecord(new IDRecorder(mID, _serverSocThread));
-				            			
-				            		Update sendNext = new Update(_cInfo,_serverSocThread
-				            				,(int)TTL-1,(int)Hops+1, _idList);
-				            		sendNext.start();
-				            		
-				            		// reply with PONG: REVISED
-				            		MessageContainer pongHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
-				            		pongHitContainer.setType(2);	//Pong Message
-				            		pongHitContainer.setTTL(7);
-				            		pongHitContainer.setHops(0);
-				            		pongHitContainer.setPayloadLength(14);
-				            		PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
-				            		pongHitContainer.addPayLoad(payload.getPayLoad());
-				            		
-				            		byte [] pong = new byte[4096];
-				            		pong = pongHitContainer.convertToByte();
-				    				DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
-				    				outToServer.write(pong);
-				            	}
-			            		///////////Pong Received///////////
-				            	else if (messageType == (byte) 0x01){
-				            		byte[] data = new byte[14];
-									in2Server.read(data);
-				            		System.out.println("server PONG MESSAGE");
-				            	}
-			            		//////////Query Received///////////
-				            	else if (messageType == (byte)0x80){
-				            		System.out.println("QUERY MESSAGE");
-				            		hasSameMessageID = _idList.checkID(mID);
-				            		byte[] payload = new byte[4096];
-				            		byte[] minimumSpeed = new byte[2];
-				            		int payloadLength = in2Server.read(payload);
-				            		byte[] queryString = new byte [payloadLength-2];
-				            		System.out.println("PayloadLength:"+payloadLength);
-				            		
-				            		System.arraycopy(payload, 0, minimumSpeed, 0, 2);
-				            		System.arraycopy(payload, 2, queryString, 0, queryString.length);
-				            		//ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
-				            		//IntBuffer ib = bb.asIntBuffer();
-				            		//int nMinSpeed = ib.get(0);
-				            		String nQueryString = new String(queryString, "UTF-8");
-				            		System.out.println("Query:"+nQueryString);
-				            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
-				 
-				            		//String queryString = 
->>>>>>> branch 'master' of ssh://git@github.com/quake0day/gurutella.git
+
 			            			Query sendNext = new Query(nQueryString,_cInfo,_serverSocThread
 			            					,(int)TTL-1,(int)Hops+1, _idList);
 			            			sendNext.start();
