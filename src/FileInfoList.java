@@ -69,6 +69,8 @@ public class FileInfoList {
 	}
 	
 	public ArrayList <QueryResultSet> queryFile(String queryString){
+		// clear the previous result
+		_qrs.clear();
 		String[] querySet = queryString.split(" ");
 		Iterator <File> ie = _sharedFile.iterator();
 		while(ie.hasNext()){
