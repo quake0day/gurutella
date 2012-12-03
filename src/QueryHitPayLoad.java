@@ -25,6 +25,7 @@ public class QueryHitPayLoad {
 	//byte[] _NumOfSize = new byte[4];
 	byte[] _serventID = new byte[16];
 	private QueryResultSet _qrs;
+	
 	public QueryHitPayLoad(int numberOfHits, int port, InetAddress IP, int Speed,QueryResultSet qrs, String serventID) throws IOException {
 		// TODO Auto-generated constructor stub
 		this._NumOfHit = convertInt2Byte(numberOfHits);
@@ -35,7 +36,6 @@ public class QueryHitPayLoad {
 		this._qrs = qrs;
 	
 	}
-	
 	
 	public byte[] getPayLoad() throws IOException{
 		byte[] bQrs = _qrs.convert2Byte();

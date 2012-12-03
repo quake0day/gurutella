@@ -19,7 +19,7 @@ public class simpella /*extends Thread*/{
 	private static int tcpPort1 = 6346;	//Connection
 	private static int tcpPort2 = 5635;	//Download
 	public static FileInfoList _fileList;
-	public static ClientInfoList _clients;
+	public static ConnectionInfoList _clients;
 	public static MessageIDList _routingTable;
 	public static NetworkServerList _networkServerList;
 	private static InetAddress IP = null;
@@ -52,7 +52,7 @@ public class simpella /*extends Thread*/{
 		
 		showWelcomeInfo(tcpPort1,tcpPort2);
 
-		 _clients = new ClientInfoList();
+		 _clients = new ConnectionInfoList();
 		 _fileList = new FileInfoList();
 		 _routingTable = new MessageIDList();
 		 _networkServerList = new NetworkServerList();

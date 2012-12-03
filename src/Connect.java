@@ -1,10 +1,8 @@
 
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -12,20 +10,17 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Connect extends Thread{
 	
 	private String targetIPAddress;
 	private int tcpport;
 	private Socket newEstablishedSocket = null;
-	private ClientInfoList clients;
+	private ConnectionInfoList clients;
 	private MessageIDList routingTable;
 	private NetworkServerList nsl;
-	private int tempClientIndex;
 	
-	public Connect (String targetIPAddressr, String tcp, ClientInfoList client,MessageIDList routingTable,NetworkServerList nsl) throws IOException{
+	public Connect (String targetIPAddressr, String tcp, ConnectionInfoList client,MessageIDList routingTable,NetworkServerList nsl) throws IOException{
 		targetIPAddress = targetIPAddressr;
 		tcpport = Integer.parseInt(tcp);
 		this.clients = client;
@@ -52,10 +47,10 @@ public class Connect extends Thread{
 			isAbleToConnect = false;
 		}
 		
-		Iterator<Socket> iter = clients.iterator();
+		Iterator<ConnectionInfo> iter = clients.iterator();
 		//  duplicate?
 		while(iter.hasNext()){
-			if(targetIPAddress.equals(iter.next().getInetAddress().toString().split("/")[1])){
+			if(targetIPAddress.equals(iter.next().getIP().toString().split("/")[1])){
 				isAbleToConnect = false;
 			}
 		}
@@ -78,7 +73,7 @@ public class Connect extends Thread{
 
 	    
 	}
-	/*public Connect(Socket socket,ClientInfoList clients, MessageIDList routingTable) {
+	/*public Connect(Socket socket,ConnectionInfoList clients, MessageIDList routingTable) {
 		// TODO Auto-generated constructor stub
 		this.clients = clients;
 		newEstablishedSocket = socket;
@@ -143,7 +138,8 @@ public class Connect extends Thread{
 			if (recResult.trim().equals(MyConstants.STATUS_200_REC)){
 				// Print out <string>
 				System.out.println(recResult.split("200 ")[1]);
-				clients.add_outgoing(newEstablishedSocket);
+	
+				clients.addConnection(new ConnectionInfo(tcpport, newEstablishedSocket));
 				System.out.println("Connection established!");
 				Thread update = new Update(clients, routingTable);
 				update.start();

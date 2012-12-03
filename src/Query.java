@@ -19,7 +19,7 @@ public class Query extends Thread {
 	/**
 	 * @param args
 	 */
-	private ClientInfoList clients;
+	private ConnectionInfoList clients;
 	private Socket forbiddenSocket = null;
 	private int TTL=7;
 	private int Hops=0;
@@ -30,14 +30,14 @@ public class Query extends Thread {
 	DataOutputStream outToServer = null;
 	private boolean isAbleToQuery = true;
 	
-	public Query(String queryString, ClientInfoList client, MessageIDList idList){
+	public Query(String queryString, ConnectionInfoList client, MessageIDList idList){
 		this.clients = client;
 		this.forbiddenSocket = null;
 		this._idList = idList;
 		this.queryString = queryString;
 	}
 	
-	public Query(String queryString, ClientInfoList client, Socket forbiddenSocket,int TTL
+	public Query(String queryString, ConnectionInfoList client, Socket forbiddenSocket,int TTL
 			, int Hops, MessageIDList idList){
 		this.queryString = queryString;
 		this.clients = client;
@@ -69,7 +69,7 @@ public class Query extends Thread {
 		else {
 			_idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
 			byte[] query = null;
-			Iterator<Socket> iter =clients.iterator();
+			Iterator<ConnectionInfo> iter =clients.iterator();
 			//byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
 			//byte[] mID = new byte[16];
 			//byte[] newPacketLength={0x00,0x00,0x00,0x00};
@@ -105,7 +105,7 @@ public class Query extends Thread {
 			
 			query = queryContainer.convertToByte();						
 			while(iter.hasNext()){									
-				Socket clientSocket = iter.next();					
+				Socket clientSocket = iter.next().getSocket();					
 				if(!clientSocket.equals(forbiddenSocket)){
 					try {
 						outToServer = new DataOutputStream(clientSocket.getOutputStream());

@@ -4,13 +4,11 @@ import java.io.PrintWriter;
 
 public class SendMessage extends Thread {
 	private int id;
-	private int type;
 	private String messageToSend;
-	private ClientInfoList clients;
-	public SendMessage(int connid, String message,int type, ClientInfoList client){
+	private ConnectionInfoList clients;
+	public SendMessage(int connid, String message,int type, ConnectionInfoList client){
 		this.clients = client;
 		this.id = connid;
-		this.type = type;
 		this.messageToSend = message;
 
 	}
@@ -18,7 +16,7 @@ public class SendMessage extends Thread {
 	public void run(){
 		PrintWriter outServer = null;
         try {
-			outServer = new PrintWriter(clients.get(type,id).getOutputStream(), 
+			outServer = new PrintWriter(clients.get(id).getSocket().getOutputStream(), 
 			        true);
 			outServer.println(messageToSend);
 		} catch (IOException e) {
