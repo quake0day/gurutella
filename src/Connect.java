@@ -237,7 +237,7 @@ public class Connect extends Thread{
                                     // I'm the one who send query initially
                                     //int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
                                     byte[] payload = data;
-                                    System.arraycopy(data,MyConstants.HEADER_LENGTH,payload,0,pLength);
+                                    //System.arraycopy(data,0,payload,0,pLength);
                                     System.out.println("copy payload");
                                     byte[] numberOfHits = new byte[4];
                                     byte[] port = new byte[4];
