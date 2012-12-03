@@ -37,7 +37,7 @@ public class QueryResultList {
 	
 	public void add(QueryResult e){	
 		if(qrl.contains(e.ID)){
-			qrl.remove(e.ID);
+			qrl.remove(qrl.indexOf(e.ID));
 		}
 		qrl.add(e.ID);
 		resTable.put(e.ID, e);
