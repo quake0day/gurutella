@@ -148,8 +148,11 @@ public class ServerHandler extends Thread{
 			            		//ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
 			            		//IntBuffer ib = bb.asIntBuffer();
 			            		//int nMinSpeed = ib.get(0);
-			            		String nQueryString = new String(queryString);
-			            		System.out.println("contains:::??"+nQueryString.contains("soc"));
+			            		// !! very important trim the last \0
+			            		byte[] queryStringtrim = new byte[queryString.length-1];
+			            		System.arraycopy(queryString, 0, queryStringtrim, 0, queryString.length-1);
+			            		
+			            		String nQueryString = new String(queryStringtrim);
 			            		System.out.println("Query:"+nQueryString);
 			            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
 			 
