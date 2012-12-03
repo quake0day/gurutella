@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.util.Iterator;
 
 
 
@@ -26,16 +28,20 @@ public class Monitor {
     private NetworkServerList _nsl;
     private boolean isQuit = false;
     private QueryResultList _qrl;
+    private MonitorNetwork _mnl;
     private String queryString;
+    private InetAddress IP;
 
     @SuppressWarnings("deprecation")
-	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP ) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
         this._fileList = fl;
         this._nsl = nsl;
+        this._mnl = mnl; 
         this._routingTable = rt;
+        this.IP = IP;
         
         _qrl = new QueryResultList();
         //System.out.println("test");  
@@ -97,7 +103,8 @@ public class Monitor {
                                     // see Connect.java for more detail
                                     //Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
                                     if(_client.size() < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
-                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable,_nsl,_qrl);
+                                    	/*InetAddress IP, FileInfoList fList, MonitorNetwork mnl*/
+                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,tcpPort2,_client,_routingTable,_nsl,_qrl,IP,_fileList,_mnl);
                                         connect.start();
                                     }
                                     else{
@@ -159,6 +166,13 @@ public class Monitor {
                     Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
                     showRes.start();
                 	
+                }
+                ////// Monitor command //////
+                else if(command[0].equalsIgnoreCase("monitor")){
+                    Iterator<String> k = _mnl.getIterator();
+                    while(k.hasNext()){
+                    	System.out.println(k.next());
+                    }
                 }
                 /////////////////clear command////////////////////   
                 else if (command[0].equalsIgnoreCase("clear")){

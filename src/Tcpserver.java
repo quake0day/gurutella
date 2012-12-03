@@ -18,12 +18,13 @@ public class Tcpserver extends Thread
     private ConnectionInfoList clients;
     private MessageIDList _routingTable;
     private FileInfoList _fileList;
+    private MonitorNetwork _mnl;
     private InetAddress IP;
     private int port;
     private int _downPort;
     private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
 
-    public Tcpserver (int tcpport,int tcpDown, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist) throws IOException, InterruptedException
+    public Tcpserver (int tcpport,int tcpDown, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist,MonitorNetwork _mnl) throws IOException, InterruptedException
     {
         //set the max size of socket pool
         this.port = tcpport;
@@ -53,7 +54,7 @@ public class Tcpserver extends Thread
             try {
                 listenSocket = _serverSK.accept();
                 threadPool.submit(new ServerHandler(listenSocket, clients,
-                            _routingTable, port, _downPort, IP, _fileList));
+                            _routingTable, port, _downPort, IP, _fileList,_mnl));
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

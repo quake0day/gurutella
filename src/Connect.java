@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Connect extends Thread{
@@ -16,18 +17,41 @@ public class Connect extends Thread{
     private String targetIPAddress;
     private int tcpport;
     private Socket newEstablishedSocket = null;
-    private ConnectionInfoList clients;
-    private MessageIDList routingTable;
+    private ConnectionInfoList _cInfo;
+    private MessageIDList _idList;
     private NetworkServerList nsl;
     private QueryResultList qrl;
+    private InetAddress _IP; 
+    private FileInfoList _fList;
+    private MonitorNetwork _mnl;
+    private int _downPort;
 
-    public Connect (String targetIPAddressr, String tcp, ConnectionInfoList client,MessageIDList routingTable,NetworkServerList nsl, QueryResultList qrl) throws IOException{
+    public Connect (String targetIPAddressr, String tcp, int tcpDownload, ConnectionInfoList cInfo,MessageIDList idList,NetworkServerList nsl, QueryResultList qrl,InetAddress IP, FileInfoList fList, MonitorNetwork mnl) throws IOException{
         targetIPAddress = targetIPAddressr;
         tcpport = Integer.parseInt(tcp);
-        this.clients = client;
-        this.routingTable = routingTable;
+        this._cInfo = cInfo;
+        this._idList = idList;
         this.nsl = nsl;
         this.qrl = qrl;
+        this._IP = IP;
+        this._fList = fList;
+        this._downPort = tcpDownload;
+        this._mnl = mnl;
+        /*    public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
+            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList, MonitorNetwork mnl)
+    {
+        _cInfo = cInfo;
+        _serverSocThread = serverSoc;
+        _idList = idList;
+        _fList = fList;
+        _port = tcpPort;
+        _mnl = mnl;
+        _downPort = tcpDownload;
+        _IP = IP;
+        _tempClientIndex = _cInfo.size();
+        //Socket listenSocket = clients.get(1,tempClientIndex);
+    }
+    */
         //ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
         boolean isAbleToConnect = true;
         InetAddress addr = null;
@@ -43,13 +67,13 @@ public class Connect extends Thread{
                 }
         // judge hostname
         try {
-            InetAddress ip_isAbleToConnect = InetAddress.getByName(targetIPAddress);					
+            InetAddress.getByName(targetIPAddress);					
         } catch (UnknownHostException e1) {
             System.out.println("Enter valid host name");
             isAbleToConnect = false;
         }
 
-        Iterator<ConnectionInfo> iter = clients.iterator();
+        Iterator<ConnectionInfo> iter = _cInfo.iterator();
         //  duplicate?
         while(iter.hasNext()){
             if(targetIPAddress.equals(iter.next().getIP().toString().split("/")[1])){
@@ -128,7 +152,7 @@ public class Connect extends Thread{
                 e1.printStackTrace();
             }
             if (messageLength == -1){ // means a broken socket
-                clients.remove(0, newEstablishedSocket);
+                _cInfo.remove(0, newEstablishedSocket);
                 isAlive = false;
                 break;
             }
@@ -141,9 +165,9 @@ public class Connect extends Thread{
                 // Print out <string>
                 System.out.println(recResult.split("200 ")[1]);
 
-                clients.addConnection(new ConnectionInfo(tcpport, newEstablishedSocket));
+                _cInfo.addConnection(new ConnectionInfo(tcpport, newEstablishedSocket));
                 System.out.println("Connection established!");
-                Thread update = new Update(clients, routingTable);
+                Thread update = new Update(_cInfo, _idList);
                 update.start();
                 //System.out.println(clients.size(0));
             }
@@ -167,7 +191,7 @@ public class Connect extends Thread{
                     int pLength = byte2int(payloadLen);
                     byte[] data = new byte [pLength];
                     try {
-						int payloadLength = stream.read(data);
+						 stream.read(data);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -178,7 +202,7 @@ public class Connect extends Thread{
                         }
                         else if(messageType == (byte)0x01){
                             System.out.println("toclient PONG");
-                            if(routingTable.checkID(mID) == false) { 
+                            if(_idList.checkID(mID) == false) { 
                                 // I'm the one who send ping initially
                                 byte[] payload = data;
                                 //System.arraycopy(data,23,payload,0,14);
@@ -216,7 +240,7 @@ public class Connect extends Thread{
                             }
                             else{ // I'm the one who send ping when I rec ping from others
                                 System.out.println("I'm the one who send ping when I rec ping from others");
-                                IDRecorder idr = routingTable.getRecord(mID);
+                                IDRecorder idr = _idList.getRecord(mID);
                                 Socket preSoc = idr.getSocket();
                                 try {
                                     DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
@@ -229,13 +253,106 @@ public class Connect extends Thread{
                         }
                         else if(messageType == (byte)0x80){
                             System.out.println("QUERY");
+                            System.out.println("QUERY MESSAGE");
+                            boolean hasSameMessageID = false;
+                            hasSameMessageID = _idList.checkID(mID);
+                            byte[] payload = new byte[4096];
+                            byte[] minimumSpeed = new byte[2];
+                            int payloadLength = 0;
+							try {
+								payloadLength = stream.read(payload);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                            byte[] queryString = new byte [payloadLength-2];
+                            System.out.println("PayloadLength:"+payloadLength);
+
+                            System.arraycopy(payload, 0, minimumSpeed, 0, 2);
+                            System.arraycopy(payload, 2, queryString, 0, queryString.length);
+                            //ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
+                            //IntBuffer ib = bb.asIntBuffer();
+                            //int nMinSpeed = ib.get(0);
+                            // !! very important trim the last \0
+                            byte[] queryStringtrim = new byte[queryString.length-1];
+                            System.arraycopy(queryString, 0, queryStringtrim, 0, queryString.length-1);
+
+                            String nQueryString = new String(queryStringtrim);
+                            System.out.println("Query:"+nQueryString);
+                            // add Query to Monitor the whole network
+                            _mnl.saveQuery(nQueryString);
+
+                            
+                            //ByteBuffer bc = ByteBuffer.wrap(queryString);
+
+                            //String queryString = 
+                            if (hasSameMessageID == false){
+                                _idList.addRecord(new IDRecorder(mID, newEstablishedSocket));
+
+                                Query sendNext = new Query(nQueryString,_cInfo,newEstablishedSocket
+                                        ,(int)TTL-1,(int)Hops+1, _idList);
+                                sendNext.start();
+
+                                // reply with Query Hit
+                                ArrayList<QueryResultSet> _qrs = _fList.queryFile(nQueryString);
+                                int _NumberOfHits = _qrs.size();
+                                Iterator<QueryResultSet> qrsIter = _qrs.iterator();
+                                while(qrsIter.hasNext()){ // create multiple query hit packet
+                                    QueryResultSet qrs = qrsIter.next();
+                                    MessageContainer queryHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+                                    queryHitContainer.setType(4);	//QueryHit Message
+                                    queryHitContainer.setTTL((int)Hops+2);
+                                    queryHitContainer.setHops(0);
+                                    int Speed = 10000;
+                                    String serventID = "12j3l2j3ljlasjdfasdf";
+                                    //queryHitContainer.setPayloadLength(14);
+                                    //int numberOfHits, int port, InetAddress IP, int Speed, String serventID
+                                    QueryHitPayLoad queryPayLoad = null;
+									try {
+										queryPayLoad = new QueryHitPayLoad(_NumberOfHits,_downPort,_IP,Speed,qrs, serventID);
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+                                    //PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
+                                    try {
+										queryHitContainer.addPayLoad(queryPayLoad.getPayLoad());
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+                                    queryHitContainer.setPayloadLength(queryPayLoad.getPayloadLength());
+                                    byte [] queryHit = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
+                                    queryHit = queryHitContainer.convertToByte();
+                                    DataOutputStream outToServer = null;
+									try {
+										outToServer = new DataOutputStream(newEstablishedSocket.getOutputStream());
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+                                    try {
+										outToServer.write(queryHit);
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+                                    try {
+										outToServer.flush();
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+
+                                }
+                            }	
                         }
 
                         else if(messageType == (byte)0x81){
                             System.out.println("QUERYHIT");
                            // while(pLength+23 <= messageLength){ // means more than one packets in the queue
 
-                                if(routingTable.checkID(mID) == false) { 
+                                if(_idList.checkID(mID) == false) { 
                                     // I'm the one who send query initially
                                     //int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
                                     byte[] payload = data;
@@ -268,8 +385,8 @@ public class Connect extends Thread{
                                         e.printStackTrace();
                                         System.out.println("cannot get IP addr string from PONG");
                                     }
-                                    int nSpeed = byte2int(Speed);
-                                    String nServentID = new String(serventID);
+                                   // int nSpeed = byte2int(Speed);
+                                   // String nServentID = new String(serventID);
                                     byte[] fileIndex = new byte[4];
                                     byte[] fileSize = new byte[4];
                                     byte[] fileName = new byte[resSet.length - 8];
@@ -293,7 +410,7 @@ public class Connect extends Thread{
                                 }
                                 else{ // I'm the one who send ping when I rec ping from others
                                     System.out.println("I'm the one who send query when I rec query from others");
-                                    IDRecorder idr = routingTable.getRecord(mID);
+                                    IDRecorder idr = _idList.getRecord(mID);
                                     Socket preSoc = idr.getSocket();
                                     try {
                                         DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
