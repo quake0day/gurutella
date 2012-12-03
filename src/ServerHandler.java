@@ -1,4 +1,3 @@
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,86 +75,81 @@ public class ServerHandler extends Thread{
 			    //Connection Established, start reading header
 					  while (_isAlive)
 					  {
-				        if(messageLength == -1){ // means a broken socket
-				        	_cInfo.remove(1, _serverSocThread);
+
+				       	byte[] header = new byte[23];
+						int mLength = in2Server.read(header);	
+						
+						if(mLength == -1){ // means a broken socket
+			         		_cInfo.remove(1, _serverSocThread);
 				        	_isAlive = false;
 				        	break;
 				         }
-				        
-				       	byte[] header = new byte[23];
-						in2Server.read(header);
-						
+				        						
 					  	byte[] mID = new byte[16];
 		        		System.arraycopy(header, 0, mID, 0, 16);
 		            	byte messageType = (byte)header[16];
 		            	byte TTL = (byte)header[17];
 		            	byte Hops = (byte)header[18];
 		            	System.out.println("server Received Header");
-		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){
-		            		
+		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){		            	
 		            		
 		            		System.out.println("HereIn");
 			            	
-		            		if (messageType == (byte) 0x00){
-			            		System.out.println("toserver PING MESSAGE");
-			            		//Iterator<MessageContainer> iter = _routingTable.iterator();
-			            		boolean hasSameMessageID = false;
-			            		hasSameMessageID = _idList.checkID(mID);
-			            		if(hasSameMessageID == false){
-			            			_idList.addRecord(new IDRecorder(mID, _serverSocThread));
-			            				
-			            			Update sendNext = new Update(_cInfo,_serverSocThread
-			            					,(int)TTL-1,(int)Hops+1, _idList);
-			            			sendNext.start();
-			            			
-			            			// reply with PONG: REVISED
-			            			MessageContainer pongHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
-			            			pongHitContainer.setType(2);	//Pong Message
-			            			pongHitContainer.setTTL(7);
-			            			pongHitContainer.setHops(0);
-			            			pongHitContainer.setPayloadLength(14);
-			            			PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
-			            			pongHitContainer.addPayLoad(payload.getPayLoad());
-			            			
-			            			byte [] pong = new byte[4096];
-			            			pong = pongHitContainer.convertToByte();
-			    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
-			    					outToServer.write(pong);
-			            		}
-			            		else
-			            		{
-			            			_isAlive = false;
-			            			break;
-			            		}
-			            		
-			            	}
-			            	else if (messageType == (byte) 0x01){
-			            		byte[] data = new byte[14];
-								in2Server.read(data);
-			            		System.out.println("server PONG MESSAGE");
-			            	}
-			            	else if (messageType == (byte)0x80){
-			            		System.out.println("QUERY MESSAGE");
-			            		boolean hasSameMessageID = false;
-			            		hasSameMessageID = _idList.checkID(mID);
-			            		byte[] payload = new byte[4096];
-			            		byte[] minimumSpeed = new byte[2];
-			            		int payloadLength = in2Server.read(payload);
-			            		byte[] queryString = new byte [payloadLength-2];
-			            		System.out.println("PayloadLength:"+payloadLength);
-			            		
-			            		System.arraycopy(payload, 0, minimumSpeed, 0, 2);
-			            		System.arraycopy(payload, 2, queryString, 0, queryString.length);
-			            		//ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
-			            		//IntBuffer ib = bb.asIntBuffer();
-			            		//int nMinSpeed = ib.get(0);
-			            		String nQueryString = new String(queryString, "UTF-8");
-			            		System.out.println("Query:"+nQueryString);
-			            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
-			 
-			            		//String queryString = 
-			            		if (hasSameMessageID == false){
-			            			_idList.addRecord(new IDRecorder(mID, _serverSocThread));
+		            		boolean hasSameMessageID = false;	//check ID here
+		            		hasSameMessageID = _idList.checkID(mID);
+		            		
+		            		if (hasSameMessageID == false){
+		            			
+		            			///////////Ping Received/////////
+			            		if (messageType == (byte) 0x00){
+				            		System.out.println("toserver PING MESSAGE");
+				            		//Iterator<MessageContainer> iter = _routingTable.iterator();
+				            		_idList.addRecord(new IDRecorder(mID, _serverSocThread));
+				            			
+				            		Update sendNext = new Update(_cInfo,_serverSocThread
+				            				,(int)TTL-1,(int)Hops+1, _idList);
+				            		sendNext.start();
+				            		
+				            		// reply with PONG: REVISED
+				            		MessageContainer pongHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+				            		pongHitContainer.setType(2);	//Pong Message
+				            		pongHitContainer.setTTL(7);
+				            		pongHitContainer.setHops(0);
+				            		pongHitContainer.setPayloadLength(14);
+				            		PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
+				            		pongHitContainer.addPayLoad(payload.getPayLoad());
+				            		
+				            		byte [] pong = new byte[4096];
+				            		pong = pongHitContainer.convertToByte();
+				    				DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
+				    				outToServer.write(pong);
+				            	}
+			            		///////////Pong Received///////////
+				            	else if (messageType == (byte) 0x01){
+				            		byte[] data = new byte[14];
+									in2Server.read(data);
+				            		System.out.println("server PONG MESSAGE");
+				            	}
+			            		//////////Query Received///////////
+				            	else if (messageType == (byte)0x80){
+				            		System.out.println("QUERY MESSAGE");
+				            		hasSameMessageID = _idList.checkID(mID);
+				            		byte[] payload = new byte[4096];
+				            		byte[] minimumSpeed = new byte[2];
+				            		int payloadLength = in2Server.read(payload);
+				            		byte[] queryString = new byte [payloadLength-2];
+				            		System.out.println("PayloadLength:"+payloadLength);
+				            		
+				            		System.arraycopy(payload, 0, minimumSpeed, 0, 2);
+				            		System.arraycopy(payload, 2, queryString, 0, queryString.length);
+				            		//ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
+				            		//IntBuffer ib = bb.asIntBuffer();
+				            		//int nMinSpeed = ib.get(0);
+				            		String nQueryString = new String(queryString, "UTF-8");
+				            		System.out.println("Query:"+nQueryString);
+				            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
+				 
+				            		//String queryString = 
 			            			Query sendNext = new Query(nQueryString,_cInfo,_serverSocThread
 			            					,(int)TTL-1,(int)Hops+1, _idList);
 			            			sendNext.start();
@@ -182,21 +176,22 @@ public class ServerHandler extends Thread{
 				    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
 				    					outToServer.write(queryHit);
 			            			}
-			            			
-			            		}
+				            	}	
 			            	}
+		            		//////////QueryHit received(??)/////////
 			            	else if (messageType == (byte)0x81){
 			            		System.out.println("QUERY HIT MESSAGE");
 			            	}
-			 
-		            	}
+			            	else
+			            	{
+			            		break;	 
+			            	}
+			            }
 		            	else{
-			           		_isAlive = false;
 			            	break;
 			            }
 					  }
 	          	  }
-	            }
 	          	  else{ // We cannot accept
 	          		  _out2Client.println(MyConstants.STATUS_503);
 						  //new Disconnect(tempClientIndex,1,clients);
@@ -212,6 +207,7 @@ public class ServerHandler extends Thread{
 	        // inServer.close(); 
 	        // listenSocket.close(); 
 	          	  }
+	           }
 	    } 
 	}catch(IOException e)
 	    {
@@ -228,5 +224,5 @@ public class ServerHandler extends Thread{
 	    		return false;
 	    	}
 	    	else
->>>>>>> branch 'master' of ssh://git@github.com/quake0day/gurutella.git
 	    		return true;*/
+
