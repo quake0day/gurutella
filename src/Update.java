@@ -19,7 +19,7 @@ public class Update extends Thread {
 	/**
 	 * @param args
 	 */
-	private ClientInfoList clients;
+	private ConnectionInfoList clients;
 	private Socket forbiddenSocket = null;
 	private int TTL=7;
 	private int Hops=0;
@@ -28,13 +28,13 @@ public class Update extends Thread {
 	PrintWriter outServer = null;
 	DataOutputStream outToServer = null;
 	
-	public Update(ClientInfoList client, MessageIDList idList){
+	public Update(ConnectionInfoList client, MessageIDList idList){
 		this.clients = client;
 		this.forbiddenSocket = null;
 		this._idList = idList;
 	}
 	
-	public Update(ClientInfoList client, Socket forbiddenSocket,int TTL
+	public Update(ConnectionInfoList client, Socket forbiddenSocket,int TTL
 			, int Hops, MessageIDList idList){
 		this.clients = client;
 		this.forbiddenSocket = forbiddenSocket;
@@ -65,7 +65,7 @@ public class Update extends Thread {
 		else {
 			_idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
 			byte[] ping = null;
-			Iterator<Socket> iter =clients.iterator();
+			Iterator<ConnectionInfo> iter =clients.iterator();
 			//byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
 			//byte[] mID = new byte[16];
 			//byte[] newPacketLength={0x00,0x00,0x00,0x00};
@@ -89,7 +89,7 @@ public class Update extends Thread {
 			
 			ping = pingContainer.convertToByte();						
 			while(iter.hasNext()){									
-				Socket clientSocket = iter.next();					
+				Socket clientSocket = iter.next().getSocket();					
 				if(!clientSocket.equals(forbiddenSocket)){
 					try {
 						outToServer = new DataOutputStream(clientSocket.getOutputStream());

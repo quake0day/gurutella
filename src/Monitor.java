@@ -20,13 +20,13 @@ public class Monitor {
 	 * @param args
 	 */
 	private int tcpPort1,tcpPort2;
-	private ClientInfoList _client;
+	private ConnectionInfoList _client;
 	private FileInfoList _fileList;
 	private MessageIDList _routingTable;
 	private NetworkServerList _nsl;
 	private boolean isQuit = false;
 
-	public Monitor (int port1, int port2, ClientInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
 		 this.tcpPort1 = port1;
 		 this.tcpPort2 = port2;
 		 this._client = clients;
@@ -42,7 +42,7 @@ public class Monitor {
 		 { 
 			 
 		 try {
-			    System.out.print("simpella>");
+			 	System.out.print("simpella>");
 			 	//obtain user input
 			    userInput = stdIn.readLine();
 			    // split user input by space and save it to an matrix
@@ -53,6 +53,7 @@ public class Monitor {
 			    if (command[0].equalsIgnoreCase("quit"))
 			    {
 			    	isQuit = true;
+			    	System.out.println("Good Bye!");
 			    }
 /////////////////scan command//////////////////////
 			    else if (command[0].equalsIgnoreCase("scan"))
@@ -90,7 +91,7 @@ public class Monitor {
 						    		// create new thread connect to handle this request
 							    	// see Connect.java for more detail
 							    	//Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
-							    	if(_client.size(0) < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
+							    	if(_client.size() < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
 							    		Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable,_nsl);
 							    		connect.start();
 							    	}
@@ -141,12 +142,12 @@ public class Monitor {
 			    else if (command[0].equals("send"))
 			    {
 			    	String message = null;
-			    	int connid = 0;
 			    	// for send command, a user should provide at least 3 parameters
 			    	if(command.length < 3){
 			    		System.out.println("Usage:send <conn-id> <message>");
 			    	}
-			    	else{		
+			    	else{
+			    		int connid = 0;		
 			    		try{
 			    			connid = Integer.parseInt(command[1]);
 			    		} catch(NumberFormatException e){
