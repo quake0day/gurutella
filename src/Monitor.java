@@ -25,6 +25,7 @@ public class Monitor {
     private MessageIDList _routingTable;
     private NetworkServerList _nsl;
     private boolean isQuit = false;
+    private QueryResultList _qrl;
 
     public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
@@ -33,6 +34,8 @@ public class Monitor {
         this._fileList = fl;
         this._nsl = nsl;
         this._routingTable = rt;
+        
+        _qrl = new QueryResultList();
         //System.out.println("test");  
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
@@ -92,7 +95,7 @@ public class Monitor {
                                     // see Connect.java for more detail
                                     //Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
                                     if(_client.size() < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
-                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable,_nsl);
+                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,_client,_routingTable,_nsl,_qrl);
                                         connect.start();
                                     }
                                     else{
@@ -129,13 +132,17 @@ public class Monitor {
                     }
                     else
                     {	
-                        System.out.println("Query:"+queryString);
+                        System.out.println("Searching Simpella Network for `"+queryString+"'");
 
                         Thread query = new Thread(new Query(queryString, _client,rt));
                         query.start();
+                        System.out.println("Press Enter to Continue.");
+                        Thread ref = new Thread(new RefreshResponseNum(_qrl));
+                        ref.start();
                         // send Query to all neighbors
                         //Thread update = new Thread(new Update(_client, rt));
                         //update.start();
+                        
                     }
                 }
                 ////////////////send command//////////////////////

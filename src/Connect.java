@@ -19,13 +19,15 @@ public class Connect extends Thread{
     private ConnectionInfoList clients;
     private MessageIDList routingTable;
     private NetworkServerList nsl;
+    private QueryResultList qrl;
 
-    public Connect (String targetIPAddressr, String tcp, ConnectionInfoList client,MessageIDList routingTable,NetworkServerList nsl) throws IOException{
+    public Connect (String targetIPAddressr, String tcp, ConnectionInfoList client,MessageIDList routingTable,NetworkServerList nsl, QueryResultList qrl) throws IOException{
         targetIPAddress = targetIPAddressr;
         tcpport = Integer.parseInt(tcp);
         this.clients = client;
         this.routingTable = routingTable;
         this.nsl = nsl;
+        this.qrl = qrl;
         //ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
         boolean isAbleToConnect = true;
         InetAddress addr = null;
@@ -279,8 +281,10 @@ public class Connect extends Thread{
                                     String nFileName = new String(fileName);
                                     System.out.println(nFileName+" FileIndex:"+nFileIndex+" FileSize:"+nFileSize);
                                     if(nIP != null){
-                                        //ServerInfo nServerInfo = new ServerInfo(nPort,nIP,nFileNum,nfileSize);
+                                    	QueryResult nQueryResult = new QueryResult(nFileIndex,nIP,nPort,nFileSize,nFileName);
+                                        //int index,InetAddress _IP,int _downloadPort,int _fileSize,String _fileName
                                         //nsl.addServer(nServerInfo);
+                                    	qrl.add(nQueryResult);
                                     }
 
 
