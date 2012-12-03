@@ -117,7 +117,7 @@ public class Connect extends Thread{
 		}
 
 		while(isAlive){
-            byte[] data = new byte[4096];
+            byte[] data = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
          	int messageLength=0;
 			try {
 				messageLength = stream.read(data);
@@ -161,10 +161,10 @@ public class Connect extends Thread{
 		            	byte Hops = (byte)data[18];
 		            	
 		            	if((int)(TTL+Hops) >=7 && (int)(TTL+Hops) <= 15) {
-		            	if(messageType == 0x00){
+		            	if(messageType == (byte)0x00){
 	            		System.out.println("toclient PING");
 			            	}
-		            	else{
+		            	else if(messageType == (byte)0x01){
 		            		System.out.println("toclient PONG");
 		            		if(routingTable.checkID(mID) == false) { 
 		            			// I'm the one who send ping initially
@@ -215,6 +215,14 @@ public class Connect extends Thread{
 								} 
 			           		}
 			           	}
+		            	else if(messageType == (byte)0x80){
+		            		System.out.println("QUERY");
+		            	}
+		            	
+		            	else if(messageType == (byte)0x81){
+		            		System.out.println("QUERYHIT");
+
+		            	}
 	            	}
 			
 	          	}
