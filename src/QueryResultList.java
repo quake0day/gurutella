@@ -57,8 +57,9 @@ public class QueryResultList {
 	
 	public void clear(int fileNO){
 		if(fileNO >= 1){
-			fileNO = qrl.size() - fileNO;
-		int i = qrl.get(fileNO);
+		//fileNO = qrl.size() - fileNO;
+		int i = qrl.get(fileNO-1);
+		qrl.remove(fileNO-1);
 		resTable.remove(i);
 		}
 	}

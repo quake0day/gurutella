@@ -52,7 +52,6 @@ public class ShowQueryRes implements Runnable{
 		else{
 			System.out.println("");
 			System.out.println("-----------------------------");
-			System.out.println("The query was '"+ query+ "'");
 			Iterator<Integer> qrlIter = qrl.getItertor();
 			int i = 1;
 			while(qrlIter.hasNext()){

@@ -143,7 +143,7 @@ public class Monitor {
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
 
                         //ref.start();
-                        Thread.sleep(250);
+                        Thread.sleep(450);
                         Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,false));
                         showRes.start();
                     	
@@ -158,6 +158,33 @@ public class Monitor {
                 else if (command[0].equalsIgnoreCase("list")){
                     Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
                     showRes.start();
+                	
+                }
+                /////////////////clear command////////////////////   
+                else if (command[0].equalsIgnoreCase("clear")){
+                	boolean finished = false;
+                	if(command.length > 2){
+                		System.out.println("Usage: clear [file-no]");
+                	}
+                	else if(command.length == 1){
+                		_qrl.clearAll();
+                		finished = true;
+                	}
+                	else if(command.length == 2){
+                		try{
+                		    int num = Integer.parseInt(command[1]);
+                		    _qrl.clear(num);
+                		    finished = true;
+                		}catch(NumberFormatException e){
+                		    System.out.println("Please enter file number");
+                		    finished = false;
+                		}
+                		
+                	}
+                	if(finished == true){
+                    Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    showRes.start();
+                	}
                 	
                 }
                 ////////////////send command//////////////////////
