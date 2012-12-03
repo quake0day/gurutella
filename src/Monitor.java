@@ -136,6 +136,7 @@ public class Monitor {
                     {	
                         System.out.println("Searching Simpella Network for `"+queryString+"'");
                         _qrl.setQuery(queryString);
+                        // send Query to all neighbors
                         Thread query = new Thread(new Query(queryString, _client,rt));
                         query.start();
                         
@@ -146,18 +147,45 @@ public class Monitor {
                         Thread.sleep(450);
                         Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,false));
                         showRes.start();
-                    	
-                        
-                        // send Query to all neighbors
-                        //Thread update = new Thread(new Update(_client, rt));
-                        //update.start();
-                        
                     }
                 }
-                /////////////////listcommand////////////////////   
+                /////////////////list command////////////////////   
                 else if (command[0].equalsIgnoreCase("list")){
                     Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
                     showRes.start();
+                	
+                }
+                /////////////////download command////////////////////   
+                else if (command[0].equalsIgnoreCase("download")){
+                	boolean downloadAble = false;
+                	QueryResult fileInfo = null;
+                	if(command.length != 2){
+                		System.out.println("Usage: download <file-no>");
+                	}
+                	else if(command.length == 2){
+                		try{
+                		    int num = Integer.parseInt(command[1]);
+                		    if(num <= _qrl.length() && num > 0){
+                		    	fileInfo = _qrl.getDownload(num);
+                		    	if(fileInfo != null){
+                    		    	downloadAble = true;
+                		    	}
+                		    }
+                		}catch(NumberFormatException e){
+                		    System.out.println("Please enter a correct file number");
+                		    downloadAble = false;
+                		}
+                		
+                	}
+                	if(downloadAble == false){
+                		System.out.println("Cannot download target file, try again.");
+                	}
+                	if(downloadAble == true){
+                		//fileInfo._downloadPort
+                		
+                    //Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    //showRes.start();
+                	}
                 	
                 }
                 /////////////////clear command////////////////////   
