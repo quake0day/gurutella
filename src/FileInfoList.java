@@ -78,7 +78,7 @@ public class FileInfoList {
 				String fileName = fileIterNew.getName().toString().trim();
 				if(fileName.toLowerCase().contains(query.toLowerCase())){
 					int fileSize = (int)fileIterNew.length(); // !! may loss some info
-					int fileIndex = _sharedFile.indexOf(fileName);
+					int fileIndex = _sharedFile.indexOf(fileIterNew);
 					QueryResultSet qrs = new QueryResultSet(fileIndex,fileSize,fileName);
 					_qrs.add(qrs);
 				}
