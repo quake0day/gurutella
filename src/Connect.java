@@ -160,7 +160,10 @@ public class Connect extends Thread{
 		            	byte messageType = (byte)data[16];
 		            	byte TTL = (byte)data[17];
 		            	byte Hops = (byte)data[18];
-		            	
+		            	byte[] payloadLen = new byte [4];
+		            	System.arraycopy(data,19,payloadLen,2,2);
+		            	int pLength = byte2int(payloadLen);
+
 		            	if((int)(TTL+Hops) >=0 && (int)(TTL+Hops) <= 15) {
 		            	if(messageType == (byte)0x00){
 	            		System.out.println("toclient PING");
@@ -222,25 +225,26 @@ public class Connect extends Thread{
 		            	
 		            	else if(messageType == (byte)0x81){
 		            		System.out.println("QUERYHIT");
-		            		
+		           		 while(pLength+23 <= messageLength){ // means more than one packets in the queue
+		        			 
 		            		if(routingTable.checkID(mID) == false) { 
 		            			// I'm the one who send query initially
 		            			int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
 			            		byte[] payload = new byte[payloadLength];
-			            		System.arraycopy(data,MyConstants.HEADER_LENGTH,payload,0,payloadLength);
+			            		System.arraycopy(data,MyConstants.HEADER_LENGTH,payload,0,pLength);
 			            		System.out.println("copy payload");
 			            		byte[] numberOfHits = new byte[4];
 			            		byte[] port = new byte[4];
 			            		byte[] IPaddr = new byte[4];
 			            		byte[] Speed = new byte[4];
-			            		byte[] resSet = new byte[payloadLength-16-4-4-2-1];
+			            		byte[] resSet = new byte[pLength-16-4-4-2-1];
 			            		byte[] serventID = new byte[16];
 			            		System.arraycopy(payload,0,numberOfHits,3, 1);
 			            		System.arraycopy(payload,1,port,2, 2);
 			            		System.arraycopy(payload,3,IPaddr,0,4);
 			            		System.arraycopy(payload,7,Speed,0,4);
-			            		System.arraycopy(payload,11,resSet,0,payloadLength-16-4-4-2-1);
-			            		System.arraycopy(payload,payloadLength-16,serventID,0,16);
+			            		System.arraycopy(payload,11,resSet,0,pLength-16-4-4-2-1);
+			            		System.arraycopy(payload,pLength-16,serventID,0,16);
 			            		ByteBuffer bk = ByteBuffer.wrap(numberOfHits);
 			            		IntBuffer ik = bk.asIntBuffer();
 			            		int nNumberOfHits = ik.get(0);
@@ -272,6 +276,9 @@ public class Connect extends Thread{
 				           			//ServerInfo nServerInfo = new ServerInfo(nPort,nIP,nFileNum,nfileSize);
 				           			//nsl.addServer(nServerInfo);
 				           			}
+				            		
+				            		
+				            		
 			           		}
 				       		else{ // I'm the one who send ping when I rec ping from others
 				       			System.out.println("I'm the one who send query when I rec query from others");
@@ -286,11 +293,24 @@ public class Connect extends Thread{
 								} 
 			           		}
 		            		
-		            		
+			            	if(pLength+23 < messageLength){
+				            	payloadLen = new byte [4];
+				            	messageLength = messageLength - pLength - 23;
+				            	System.arraycopy(data,19+pLength+23,payloadLen,2,2);
+				            	int pLength_new = byte2int(payloadLen);
+				            	pLength = pLength_new;
+				            	
+				            	}
+				            	else if(pLength+23 == messageLength){
+				            		pLength = pLength+24;
+				            	}
+				 
+				 }
 
 		            	}
 	            	}
-			
+		 
+
 	          	}
 		 }
 	
