@@ -117,10 +117,10 @@ public class Connect extends Thread{
         }
 
         while(isAlive){
-            byte[] data = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
+            byte[] header = new byte[MyConstants.HEADER_LENGTH];
             int messageLength=0;
             try {
-                messageLength = stream.read(data);
+                messageLength = stream.read(header);
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -133,7 +133,7 @@ public class Connect extends Thread{
 
             System.out.println("client received: " + messageLength);
 
-            String recResult = new String(data);
+            String recResult = new String(header);
 
             if (recResult.trim().equals(MyConstants.STATUS_200_REC)){
                 // Print out <string>
@@ -154,16 +154,22 @@ public class Connect extends Thread{
             else{
                 //System.out.println(res);
                 // regular message, judge message type
-                if(checkMessagePacketValidation(data,messageLength)){
+                if(checkMessagePacketValidation(header,messageLength)){
                     byte[] mID = new byte[16];
-                    System.arraycopy(data, 0, mID, 0, 16);
-                    byte messageType = (byte)data[16];
-                    byte TTL = (byte)data[17];
-                    byte Hops = (byte)data[18];
+                    System.arraycopy(header, 0, mID, 0, 16);
+                    byte messageType = (byte)header[16];
+                    byte TTL = (byte)header[17];
+                    byte Hops = (byte)header[18];
                     byte[] payloadLen = new byte [4];
-                    System.arraycopy(data,19,payloadLen,2,2);
+                    System.arraycopy(header,19,payloadLen,2,2);
                     int pLength = byte2int(payloadLen);
-
+                    byte[] data = new byte [pLength];
+                    try {
+						int payloadLength = stream.read(data);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
                     if((int)(TTL+Hops) >=0 && (int)(TTL+Hops) <= 15) {
                         if(messageType == (byte)0x00){
                             System.out.println("toclient PING");
@@ -172,8 +178,8 @@ public class Connect extends Thread{
                             System.out.println("toclient PONG");
                             if(routingTable.checkID(mID) == false) { 
                                 // I'm the one who send ping initially
-                                byte[] payload = new byte[14];
-                                System.arraycopy(data,23,payload,0,14);
+                                byte[] payload = data;
+                                //System.arraycopy(data,23,payload,0,14);
                                 System.out.println("copy payload");
                                 byte[] port = new byte[4];
                                 byte[] IPaddr = new byte[4];
@@ -225,12 +231,12 @@ public class Connect extends Thread{
 
                         else if(messageType == (byte)0x81){
                             System.out.println("QUERYHIT");
-                            while(pLength+23 <= messageLength){ // means more than one packets in the queue
+                           // while(pLength+23 <= messageLength){ // means more than one packets in the queue
 
                                 if(routingTable.checkID(mID) == false) { 
                                     // I'm the one who send query initially
-                                    int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
-                                    byte[] payload = new byte[payloadLength];
+                                    //int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
+                                    byte[] payload = data;
                                     System.arraycopy(data,MyConstants.HEADER_LENGTH,payload,0,pLength);
                                     System.out.println("copy payload");
                                     byte[] numberOfHits = new byte[4];
@@ -293,6 +299,7 @@ public class Connect extends Thread{
                                     } 
                                 }
 
+                                /*
                                 if(pLength+23 < messageLength){
                                     payloadLen = new byte [4];
                                     messageLength = messageLength - pLength - 23;
@@ -304,9 +311,10 @@ public class Connect extends Thread{
                                 else if(pLength+23 == messageLength){
                                     pLength = pLength+24;
                                 }
+                                
 
                             }
-
+*/
                         }
                     }
 
