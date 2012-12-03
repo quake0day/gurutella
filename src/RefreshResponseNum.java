@@ -38,18 +38,7 @@ public class RefreshResponseNum  implements Runnable{
 				e1.printStackTrace();
 			}
 			System.out.print("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-	        BufferedReader stdIn = new BufferedReader(
-	                new InputStreamReader(System.in));
-	        String userInput = null;
-			try {
-				userInput = stdIn.readLine();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			if(userInput.equals('\n') || userInput.equals('\r')){
-				break;
-			}
+
             try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

@@ -140,6 +140,14 @@ public class Monitor {
                         System.out.println("Press Enter to Continue.");
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
                         ref.start();
+                        while(true){
+                        	userInput = stdIn.readLine();
+                        	if(userInput.equals('\r') || userInput.equals('\n')){
+                        		ref.interrupt();
+                        		ref.destroy();
+                        		break;
+                        	}
+                        }
 
                         
                         // send Query to all neighbors
