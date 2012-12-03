@@ -38,6 +38,7 @@ public class ServerHandler extends Thread{
 		_idList = idList;
 		_fList = fList;
 		_port = tcpPort;
+		_downPort = tcpDownload;
 		_IP = IP;
 		_tempClientIndex = _cInfo.size(1);
 		//Socket listenSocket = clients.get(1,tempClientIndex);
@@ -178,7 +179,7 @@ public class ServerHandler extends Thread{
 				            			String serventID = "12j3l2j3ljlasjdfasdf";
 				            			//queryHitContainer.setPayloadLength(14);
 				            			//int numberOfHits, int port, InetAddress IP, int Speed, String serventID
-				            			QueryHitPayLoad queryPayLoad = new QueryHitPayLoad(_NumberOfHits,_port,_IP,Speed,qrs, serventID);
+				            			QueryHitPayLoad queryPayLoad = new QueryHitPayLoad(_NumberOfHits,_downPort,_IP,Speed,qrs, serventID);
 				            			//PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
 				            			queryHitContainer.addPayLoad(queryPayLoad.getPayLoad());
 				            			byte [] queryHit = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
