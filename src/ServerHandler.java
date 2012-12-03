@@ -235,6 +235,17 @@ public class ServerHandler extends Thread{
             }
     }
 }
+		//Create additional threads from ThreadPool 
+		//for the single branch thread of TCPServer declared in class Simpella 
+	    
+	    /*public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
+	    	// check if length is larger than 22
+	    	if(MessageLength < 22){
+	    		return false;
+	    	}
+	    	else
+	    		return true;*/
+
 //Create additional threads from ThreadPool 
 //for the single branch thread of TCPServer declared in class Simpella 
 
