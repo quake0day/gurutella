@@ -140,8 +140,9 @@ public class Monitor {
                         System.out.println("Press Enter to Continue.");
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
                         //ref.start();
-                  
-
+                        
+                        Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString));
+                        showRes.start();
                         
                         // send Query to all neighbors
                         //Thread update = new Thread(new Update(_client, rt));

@@ -7,10 +7,9 @@ import java.util.Iterator;
 
 /**
  * @author quake0day
- * @param <iterator>
  *
  */
-public class QueryResultList<iterator> {
+public class QueryResultList {
 
 	/**
 	 * 
@@ -20,14 +19,17 @@ public class QueryResultList<iterator> {
 		// TODO Auto-generated constructor stub
 		qrl = new ArrayList<QueryResult>();
 		
+		
 	}
-	
+	public int ccc(){
+		return qrl.size();
+	}
 	public void add(QueryResult e){
 		qrl.add(e);
 	}
 	public Iterator<QueryResult> getItertor(){
 		return qrl.iterator();
-	}
+}
 
 	public void clearAll(){
 		qrl.clear();
