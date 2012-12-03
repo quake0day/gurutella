@@ -91,7 +91,7 @@ public class ServerHandler extends Thread{
 		            	byte TTL = (byte)header[17];
 		            	byte Hops = (byte)header[18];
 		            	System.out.println("server Received Header");
-		            	if((int)(TTL+Hops) == 7 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){		            	
+		            	if((int)(TTL+Hops) <= 14 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){		            	
 		            		
 		            		System.out.println("HereIn");
 			            	
@@ -172,7 +172,7 @@ public class ServerHandler extends Thread{
 			            				QueryResultSet qrs = qrsIter.next();
 				            			MessageContainer queryHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
 				            			queryHitContainer.setType(4);	//QueryHit Message
-				            			queryHitContainer.setTTL(Hops+2);
+				            			queryHitContainer.setTTL((int)Hops+2);
 				            			queryHitContainer.setHops(0);
 				            			int Speed = 10000;
 				            			String serventID = "12j3l2j3ljlasjdfasdf";
