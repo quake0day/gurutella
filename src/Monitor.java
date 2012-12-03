@@ -173,13 +173,18 @@ public class Monitor {
                 	else if(command.length == 2){
                 		try{
                 		    int num = Integer.parseInt(command[1]);
-                		    _qrl.clear(num);
-                		    finished = true;
+                		    if(num <= _qrl.length() && num > 0){
+                		    	_qrl.clear(num);
+                		    	finished = true;
+                		    }
                 		}catch(NumberFormatException e){
-                		    System.out.println("Please enter file number");
+                		    System.out.println("Please enter a correct file number");
                 		    finished = false;
                 		}
                 		
+                	}
+                	if(finished == false){
+                		System.out.println("Cannot clear target file, try again.");
                 	}
                 	if(finished == true){
                     Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
