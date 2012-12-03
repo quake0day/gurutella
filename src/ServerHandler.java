@@ -19,7 +19,7 @@ import java.util.Iterator;
  */
 public class ServerHandler extends Thread{
 	private Socket _serverSocThread;
-			ClientInfoList _cInfo; 
+			ConnectionInfoList _cInfo; 
 			PrintWriter _out2Client;
 			MessageIDList _idList;
 			FileInfoList _fList;
@@ -30,7 +30,7 @@ public class ServerHandler extends Thread{
 			boolean _isAlive = true;
 			
 
-	public ServerHandler(Socket serverSoc, ClientInfoList cInfo, MessageIDList idList,
+	public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
 			int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList)
 	{
 		_cInfo = cInfo;
@@ -40,7 +40,7 @@ public class ServerHandler extends Thread{
 		_port = tcpPort;
 		_downPort = tcpDownload;
 		_IP = IP;
-		_tempClientIndex = _cInfo.size(1);
+		_tempClientIndex = _cInfo.size();
 		//Socket listenSocket = clients.get(1,tempClientIndex);
 	}
 	public void run()
@@ -69,7 +69,7 @@ public class ServerHandler extends Thread{
 	            if(recResult.trim().equals("SIMPELLA CONNECT/0.6")){
 	          	  if(_tempClientIndex >= 0 && _tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM ){ // We can accpet
 	          		  _out2Client.println(MyConstants.STATUS_200);
-	          		  _cInfo.add_incoming(_serverSocThread);
+	          		  _cInfo.addConnection(new ConnectionInfo(_port, _serverSocThread));
 					  new Update(_cInfo, _idList);
 					  //update.start();
 					  

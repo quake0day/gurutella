@@ -15,7 +15,7 @@ public class Tcpserver extends Thread
  public static int count = 0;
  public Socket[] socketArray;
  //public ArrayList<Socket> clients = null;
- private ClientInfoList clients;
+ private ConnectionInfoList clients;
  private MessageIDList _routingTable;
  private FileInfoList _fileList;
  private InetAddress IP;
@@ -23,7 +23,7 @@ public class Tcpserver extends Thread
  private int _downPort;
  private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
  
- public Tcpserver (int tcpport,int tcpDown, ClientInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist) throws IOException, InterruptedException
+ public Tcpserver (int tcpport,int tcpDown, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist) throws IOException, InterruptedException
    {
 	 //set the max size of socket pool
 	 this.port = tcpport;
