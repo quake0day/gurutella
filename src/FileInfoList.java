@@ -76,7 +76,7 @@ public class FileInfoList {
 		while(ie.hasNext()){
 			for (String query: querySet)
 			{
-				File fileIterNew = ie.next();
+				File fileIterNew = ie.next(); //test
 				String fileName = fileIterNew.getName().toString().trim();
 				if(fileName.toLowerCase().contains(query.toLowerCase())){
 					int fileSize = (int)fileIterNew.length(); // !! may loss some info
