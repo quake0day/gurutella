@@ -70,19 +70,48 @@ public class FileInfoList {
 	
 	public ArrayList <QueryResultSet> queryFile(String queryString){
 		String[] querySet = queryString.split(" ");
+		String query = queryString;
 		Iterator <File> ie = _sharedFile.iterator();
 		while(ie.hasNext()){
 			File fileIterNew = ie.next();
+			String fileName = fileIterNew.getName().toString().trim();
+			System.out.println(">?????aa?"+fileName);
+			byte[] qu = fileName.getBytes();
+			byte[] qua = query.getBytes();
+			System.out.println(qu);
+			System.out.println(qua);
+			String quq = new String(qua);
+			String quz = new String(qu);
+			System.out.println("quz:"+quz.contains("soc"));
+			System.out.println("quq:"+quq.contains("soc"));
+			System.out.println("quq:"+quq.contains(quz));
+			
+			System.out.println(">?@@@"+querySet[0].contains("soc"));
+			for(int i=0 ; i< querySet.length; i++){
+				if(fileName.contains(querySet[i]) == true){
+					break;
+				}
+			}
+			/*
 			for (String query: querySet)
 			{
-				if(fileIterNew.getName().contains(query)){
-					String fileName = fileIterNew.getName();
+				String fileName = fileIterNew.getName().toString().trim();
+				String q = query;
+				System.out.println("NAME:"+fileName);
+				System.out.println("query:"+query.contains("s"));
+				System.out.println("query:"+query.contains("o"));
+
+				System.out.println("IS:"+fileName.contains(q));
+				String k = "soc.c";
+				System.out.println(fileName.contains("soc"));
+				if(fileName.toLowerCase().contains(query.toLowerCase())){
 					int fileSize = (int)fileIterNew.length(); // !! may loss some info
 					int fileIndex = _sharedFile.indexOf(fileName);
 					QueryResultSet qrs = new QueryResultSet(fileIndex,fileSize,fileName);
 					_qrs.add(qrs);
 				}
 			}
+			*/
 		}
 		return _qrs;
 	}

@@ -117,7 +117,7 @@ public class ServerHandler extends Thread{
 			            			PongPayload payload = new PongPayload(_port, _IP, _fList.getFileNum(), _fList.getFileSize());
 			            			pongHitContainer.addPayLoad(payload.getPayLoad());
 			            			
-			            			byte [] pong = new byte[4096];
+			            			byte [] pong = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
 			            			pong = pongHitContainer.convertToByte();
 			    					DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
 			    					outToServer.write(pong);
@@ -149,7 +149,8 @@ public class ServerHandler extends Thread{
 			            		//ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
 			            		//IntBuffer ib = bb.asIntBuffer();
 			            		//int nMinSpeed = ib.get(0);
-			            		String nQueryString = new String(queryString, "UTF-8");
+			            		String nQueryString = new String(queryString);
+			            		System.out.println("contains:::??"+nQueryString.contains("soc"));
 			            		System.out.println("Query:"+nQueryString);
 			            		//ByteBuffer bc = ByteBuffer.wrap(queryString);
 			 
