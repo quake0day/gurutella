@@ -66,4 +66,17 @@ public class QueryResultList {
 	public int length(){
 		return qrl.size();
 	}
+	/**
+	 * @param num
+	 * @return 
+	 */
+	public QueryResult getDownload(int fileNO) {
+		// TODO Auto-generated method stub
+		if(fileNO >= 1){
+		//fileNO = qrl.size() - fileNO;
+		int i = qrl.get(fileNO-1);
+		return resTable.get(i);
+		}
+		return null;
+	}
 }
