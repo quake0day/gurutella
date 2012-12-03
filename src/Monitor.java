@@ -27,7 +27,8 @@ public class Monitor {
     private boolean isQuit = false;
     private QueryResultList _qrl;
 
-    public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
+    @SuppressWarnings("deprecation")
+	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
@@ -139,6 +140,12 @@ public class Monitor {
                         System.out.println("Press Enter to Continue.");
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
                         ref.start();
+                        userInput = stdIn.readLine();
+                        if(userInput.equals('\n') || userInput.equals('\r'))
+                        {
+                        	ref.stop();
+                        }
+                        
                         // send Query to all neighbors
                         //Thread update = new Thread(new Update(_client, rt));
                         //update.start();
