@@ -68,6 +68,7 @@ public class FileInfoList {
 		return fileSize;
 	}
 	
+	
 	public ArrayList <QueryResultSet> queryFile(String queryString){
 		// clear the previous result
 		_qrs.clear();
@@ -89,10 +90,10 @@ public class FileInfoList {
 		}
 		return _qrs;
 	}
-	
 	public int getQRSsize(){
 		return _qrs.size();
 	}
+	
 	public boolean addFile(File file){
 		 if (_sharedFile.add(file))
 			 return true;
