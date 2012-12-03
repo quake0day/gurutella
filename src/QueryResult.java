@@ -19,13 +19,15 @@ public class QueryResult {
 	int _downloadPort;
 	int _fileSize;
 	String _fileName;
-	public QueryResult(int index,InetAddress _IP,int _downloadPort,int _fileSize,String _fileName) {
+	String queryString;
+	public QueryResult(int index,InetAddress _IP,int _downloadPort,int _fileSize,String _fileName,String queryString) {
 		// TODO Auto-generated constructor stub
 		this._IP = _IP;
 		this._downloadPort = _downloadPort;
 		this._fileSize = _fileSize;
 		this._fileName = _fileName;
 		this.index = index;
+		this.queryString = queryString;
 	}
 	
 	public InetAddress getIP(){

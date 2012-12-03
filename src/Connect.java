@@ -281,7 +281,8 @@ public class Connect extends Thread{
                                     String nFileName = new String(fileName);
                                     System.out.println(nFileName+" FileIndex:"+nFileIndex+" FileSize:"+nFileSize);
                                     if(nIP != null){
-                                    	QueryResult nQueryResult = new QueryResult(nFileIndex,nIP,nPort,nFileSize,nFileName);
+                                    	String queryString = qrl.getQuery();
+                                    	QueryResult nQueryResult = new QueryResult(nFileIndex,nIP,nPort,nFileSize,nFileName,queryString);
                                         //int index,InetAddress _IP,int _downloadPort,int _fileSize,String _fileName
                                         //nsl.addServer(nServerInfo);
                                     	qrl.add(nQueryResult);

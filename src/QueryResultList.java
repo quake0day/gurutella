@@ -18,9 +18,17 @@ public class QueryResultList {
 	 */
 	//private ArrayList<QueryResult> qrl;
 	private Set<QueryResult> qrl;// list is some List of Strings
+	private String queryString;
 	public QueryResultList() {
 		// TODO Auto-generated constructor stub
 		qrl = new LinkedHashSet<QueryResult>();
+		queryString = null;
+	}
+	public synchronized void setQuery(String query){
+		this.queryString = query;
+	}
+	public  String getQuery(){
+		return this.queryString;
 	}
 	public int getSize(){
 		return qrl.size();

@@ -35,9 +35,11 @@ public class ShowQueryRes implements Runnable{
 		int i = 1;
 		while(qrlIter.hasNext()){
 			 QueryResult res = qrlIter.next();
-			 System.out.println(i+")"+res._IP+":"+res._downloadPort+" 			Size:"+res._fileSize);
-			 System.out.println("Name:"+res._fileName);
-			 i++;
+			 if(res.queryString.equals(query)){
+				 System.out.println(i+")"+res._IP+":"+res._downloadPort+" 			Size:"+res._fileSize);
+				 System.out.println("Name:"+res._fileName);
+				 i++;
+			 }
 		}
 		System.out.println("");
 		

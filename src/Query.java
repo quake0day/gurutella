@@ -119,13 +119,14 @@ public class Query extends Thread {
                         // send Ping
                         try {
                             outToServer.write(query);
+                            /*
                             System.out.print("sent a QueryID: ");	//for test use
                             for (int i: _idNum)
                             {
                                 System.out.print(i + "\t");
                             }
                             System.out.println();
-
+							*/
 
                             //outToServer.writeChars("\r\n");
                         } catch (IOException e) {

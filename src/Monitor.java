@@ -134,9 +134,10 @@ public class Monitor {
                     else
                     {	
                         System.out.println("Searching Simpella Network for `"+queryString+"'");
-
+                        _qrl.setQuery(queryString);
                         Thread query = new Thread(new Query(queryString, _client,rt));
                         query.start();
+                        
                         System.out.println("Press Enter to Continue.");
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
 
@@ -144,7 +145,7 @@ public class Monitor {
                         
                         Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString));
                         showRes.start();
-
+                    	
                         
                         // send Query to all neighbors
                         //Thread update = new Thread(new Update(_client, rt));
