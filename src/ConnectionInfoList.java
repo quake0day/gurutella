@@ -118,17 +118,17 @@ public synchronized Iterator<ConnectionInfo> iterator() {
     return _connections.iterator();
 }	
 
-public void remove(int connectionID) {
+public synchronized void remove(int connectionID) {
     _connections.remove(connectionID);
 }
 
-public void remove(int type, Socket vicSocket){
+public synchronized void remove(int type, Socket vicSocket){
     int vic_index;
     vic_index = _connections.indexOf(vicSocket);
     _connections.remove(vic_index);
 }
 
-public Socket getSocket(String ip)
+public synchronized Socket getSocket(String ip)
 {
 	for (int i = 0; i < _connections.size(); i++)
 	{

@@ -103,12 +103,14 @@ public class Update extends Thread {
                     // send Ping
                     try {
                         outToServer.write(ping);
+                        /*
                         System.out.print("sent a PingID: ");	//for test use
                         for (int i: _idNum)
                         {
                             System.out.print(i + "\t");
                         }
                         System.out.println();
+                        */
 
 
                         //outToServer.writeChars("\r\n");

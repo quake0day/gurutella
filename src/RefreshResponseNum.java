@@ -38,9 +38,9 @@ public class RefreshResponseNum  implements Runnable{
 				e1.printStackTrace();
 			}
 			System.out.print("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-
+   
             try {
-				Thread.sleep(100);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();

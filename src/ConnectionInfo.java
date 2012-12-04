@@ -21,7 +21,7 @@ public class ConnectionInfo {
         _socket = soc;
     }	
 
-    public boolean isSame(Socket soc)
+    public synchronized boolean isSame(Socket soc)
     {
         if (_socket == soc)
             return true;
@@ -29,27 +29,27 @@ public class ConnectionInfo {
             return false;
     }
 
-    public Socket getSocket()
+    public  synchronized Socket getSocket()
     {
         return _socket;
     }
 
-    public int getConnPort()
+    public synchronized int getConnPort()
     {
         return _connectionPort;
     }
 
-    public int getDownProt()
+    public synchronized int getDownProt()
     {
         return _downloadPort;
     }
 
-    public void setDownPort(int port)
+    public synchronized void setDownPort(int port)
     {
         _downloadPort = port;
     }
 
-    public InetAddress getIP()
+    public synchronized InetAddress getIP()
     {
         return _socket.getInetAddress();
     }

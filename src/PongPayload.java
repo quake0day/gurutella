@@ -47,7 +47,7 @@ public class PongPayload {
         byte[] b = new byte[4];
         b = IP.getAddress();
         InetAddress IPc = InetAddress.getByAddress(b);
-        System.out.println(IPc.getHostAddress());
+        //System.out.println(IPc.getHostAddress());
         return b;
     }
 
