@@ -35,6 +35,7 @@ public class Download extends Thread{
 	
 	public void run()
 	{
+		_qR = _qL.getDownload(_fileNo);
 		if (_qL.getDownload(_fileNo) != null)
 		{			
 			Socket soc4Down = null;
@@ -44,7 +45,6 @@ public class Download extends Thread{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			_qR = _qL.getDownload(_fileNo);
 			String _fileName = _qR.getFileName();
 			String IPAdd = soc4Down.getLocalAddress().toString().split("/")[1] + ":" + _qR.getDownloadPort();
 			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
