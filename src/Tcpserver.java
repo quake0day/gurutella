@@ -11,7 +11,7 @@ public class Tcpserver extends Thread
 { 
     //protected Socket clientSocket;
     private ServerSocket _serverSK;
-
+    private ServerSocket _uploadServer;
     public static int count = 0;
     public Socket[] socketArray;
     //public ArrayList<Socket> clients = null;
@@ -41,6 +41,7 @@ public class Tcpserver extends Thread
         socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
         try{
             _serverSK = new ServerSocket(port);   
+            _uploadServer = new ServerSocket(_downPort);
         } catch(Exception e){
             System.out.println("You're using a port that cannot Establish TCP connection, program halt...");
             System.exit(1);
@@ -52,6 +53,7 @@ public class Tcpserver extends Thread
         //boolean isAlive = true;
         //PrintWriter outServer = null;
         Socket listenSocket = null;
+        Socket uploadSocket = null;
         //Create a server socket for every accepted connection
 
         while(true)

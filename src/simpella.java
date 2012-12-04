@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -49,7 +50,7 @@ public class simpella /*extends Thread*/{
         }
         else
         {
-            System.out.println("Usage: java Echoer <tcp-port> <udp-port>");
+            System.out.println("Usage: java simpella <tcp-port> <udp-port>");
         }
 
         showWelcomeInfo(tcpPort1,tcpPort2);
@@ -62,8 +63,12 @@ public class simpella /*extends Thread*/{
         _qrl = new QueryResultList();
         //TCPServer thread start
         Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList);
-        _tcpServer.start();
+        _tcpServer.start();        
+       // @SuppressWarnings("resource")
+		Thread testD = new ServerUpload(tcpPort2, _fileList);
+		testD.start();
         new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl);
+
         //threadPool.submit(new Tcpserver(10025,_clients));
         // download port
         //threadPool.submit(new Tcpserver(tcpPort2,_clients));

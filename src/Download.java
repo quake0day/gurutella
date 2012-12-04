@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.Socket;
 
 /**
@@ -40,6 +41,7 @@ public class Download extends Thread{
 			String IPAdd = _qR.getIP().toString().split("/")[1] + ":" + _qR.getDownloadPort();
 			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
 			Socket soc4Down = null;
+			//System.out.println("IP\t" + _qR.getIP());
 			try {
 				soc4Down = new Socket(_qR.getIP(), _downPort);
 			} catch (IOException e1) {
@@ -54,13 +56,17 @@ public class Download extends Thread{
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (NullPointerException e2) {
+				System.out.println("Unsuccessful download request...Sorry");
+				return;
 			}
-			
+
 			try {
 				int size = -1;
 				DataInputStream in = new DataInputStream(soc4Down.getInputStream());
 				byte[] line1 = new byte[32];	//size of fail massage
 				in.read(line1);
+				System.out.println("responsed");
 				if (new HTTPFailMessage(line1).isFailMessage())
 				{
 					System.out.println(MyConstants.STATUS_503_queryFail);
@@ -71,7 +77,7 @@ public class Download extends Thread{
 					if (new HTTPResponseMessage(line1).isResponse())
 					{
 						int i = 0;
-						byte[] line2 = new byte[100];
+						byte[] line2 = new byte[400];
 						byte[] data;
 						in.read(line2);
 						for (byte t: line2)
