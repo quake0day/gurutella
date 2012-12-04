@@ -95,26 +95,26 @@ public class Monitor {
                     {
                     	if (command[1].equalsIgnoreCase("c"))
                     	{
-                    		System.out.println("HOST STATS:
------------")
-                    	}
-                    	else if (command[1].equalsIgnoreCase("d"))
-                    	{
                     		
                     	}
                     	else if (command[1].equalsIgnoreCase("d"))
                     	{
                     		
                     	}
-                    	else if (command[1].equalsIgnoreCase("d"))
+                    	else if (command[1].equalsIgnoreCase("h"))
+                    	{
+                    		System.out.println("HOST STATS:");
+                    		System.out.println("-----------");
+                    	}
+                    	else if (command[1].equalsIgnoreCase("n"))
                     	{
                     		
                     	}
-                    	else if (command[1].equalsIgnoreCase("d"))
+                    	else if (command[1].equalsIgnoreCase("q"))
                     	{
                     		
                     	}
-                    	else if (command[1].equalsIgnoreCase("d"))
+                    	else if (command[1].equalsIgnoreCase("s"))
                     	{
                     		
                     	}
