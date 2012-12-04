@@ -127,6 +127,17 @@ public class FileInfoList {
             return (File[]) matchList.toArray();
     }	
 
+    public File getThisFile(String filename)
+    {
+    	for (File f: _sharedFile )
+    	{
+    		if (f.getName().equals(filename))
+    			return f;
+    	}
+    	
+    	return null;
+    }
+    
     public void clear(){
         if (!this.isNull())
         {
