@@ -15,28 +15,34 @@ import java.net.Socket;
  */
 public class Download extends Thread{
 	private int _fileNo;
+	private int _downPort;
 	private QueryResultList _qL;
 	private QueryResult _qR = null;
-	private ConnectionInfoList _cIL;
 	private DownloadList _dL;
 
-	public Download(int n, QueryResultList QL, ConnectionInfoList list, DownloadList dL)
+	public Download(int n, int port, QueryResultList QL, DownloadList dL)
 	{
 		_fileNo = n;
 		_qL = QL;
-		_cIL = list;
 		_dL = dL;
+		_downPort = port;
 	}
 	
 	public void run()
 	{
-		if (_qL.getDownload(_fileNo) != null && _cIL != null)
+		if (_qL.getDownload(_fileNo) != null)
 		{
 			_qR = _qL.getDownload(_fileNo);
 			String _fileName = _qR.getFileName();
 			String IPAdd = _qR.getIP().toString().split("/")[1] + ":" + _qR.getDownloadPort();
 			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
-			Socket soc4Down = _cIL.getSocket(_qR.getIP().toString().split("/")[1]);
+			Socket soc4Down = null;
+			try {
+				soc4Down = new Socket(_qR.getIP(), _downPort);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			try {
 				DataOutputStream out = new DataOutputStream(soc4Down.getOutputStream());

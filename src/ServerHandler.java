@@ -3,12 +3,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * ServerHandler handling Server responses
@@ -20,18 +23,20 @@ import java.util.Iterator;
  */
 public class ServerHandler extends Thread{
     private Socket _serverSocThread;
-    ConnectionInfoList _cInfo; 
-    PrintWriter _out2Client;
-    MessageIDList _idList;
-    FileInfoList _fList;
-    MonitorNetwork _mnl;
-    QueryResultList _qrl;
-    NetworkServerList _nsl;
-    InetAddress _IP;
-    int _port;
-    int _downPort;
-    int _tempClientIndex;
-    boolean _isAlive = true;
+    		ConnectionInfoList _cInfo; 
+    		PrintWriter _out2Client;
+    		MessageIDList _idList;
+    		FileInfoList _fList;
+    		QueryResultList _qrl;
+    		NetworkServerList _nsl;
+    		InetAddress _IP;
+    		int _port;
+    		int _downPort;
+    		int _tempClientIndex;
+    		boolean _isAlive = true;
+    private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
+
+    		MonitorNetwork _mnl;
 
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
@@ -148,11 +153,11 @@ public class ServerHandler extends Thread{
                                     /*
                                     else
                                     {
-                                        _isAlive = false;
-                                        break;
+                                        continue;
                                     }
+<<<<<<< HEAD
+=======
                                     */
-
                                 }
                                 else if (messageType == (byte) 0x01){
                                     //byte[] data = new byte[14];
@@ -263,7 +268,8 @@ public class ServerHandler extends Thread{
                                             DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
                                             outToServer.write(queryHit);
                                             outToServer.flush();
-
+                                            
+                                            threadPool.submit(new ServerUpload(new ServerSocket(_downPort), _fList));
                                         }
                                     }	
                                 }

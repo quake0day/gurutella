@@ -231,7 +231,7 @@ public class Monitor {
                 	}
                 	if(downloadAble == true){
                 		int num = Integer.parseInt(command[1]);
-                		Thread download = new Download(num, _qrl, _client, _downList);
+                		Thread download = new Download(num, tcpPort2, _qrl, _downList);
                 		download.start();
                 		long t0 = new Date().getTime();
                 		while(new Date().getTime() - t0 < 1000)
