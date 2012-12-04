@@ -1,6 +1,8 @@
 import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -16,12 +18,14 @@ public class Download extends Thread{
 	private QueryResultList _qL;
 	private QueryResult _qR = null;
 	private ConnectionInfoList _cIL;
+	private DownloadList _dL;
 
-	public Download(int n, QueryResultList QL, ConnectionInfoList list)
+	public Download(int n, QueryResultList QL, ConnectionInfoList list, DownloadList dL)
 	{
 		_fileNo = n;
 		_qL = QL;
 		_cIL = list;
+		_dL = dL;
 	}
 	
 	public void run()
@@ -37,6 +41,7 @@ public class Download extends Thread{
 			try {
 				DataOutputStream out = new DataOutputStream(soc4Down.getOutputStream());
 				out.write(b);
+				System.out.println("Sent download request...");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -53,11 +58,12 @@ public class Download extends Thread{
 				}
 				else 
 				{
-					HTTPResponseMessage resp = new HTTPResponseMessage(line1);
-					if (resp.isResponse())
+					
+					if (new HTTPResponseMessage(line1).isResponse())
 					{
 						int i = 0;
 						byte[] line2 = new byte[100];
+						byte[] data;
 						in.read(line2);
 						for (byte t: line2)
 						{
@@ -69,10 +75,25 @@ public class Download extends Thread{
 						byte[] line =new byte[32 + i];
 						System.arraycopy(line, 0, line1, 0, 32);
 						System.arraycopy(line, 32, line2, 0, i);
+						HTTPResponseMessage resp = new HTTPResponseMessage(line);
 						System.out.println(MyConstants.STATUS_200_DownLoadAble);
+						size = resp.getSize();
 						
+						System.out.print("Downloading '" + _qR.getFileName() + "' ...");
+						
+						System.out.println("\n");
+						byte[] tempdata = new byte[MyConstants.MAX_BUFFER_DOWNLOAD];	//size <= real size
+						DownloadStorage storage = new DownloadStorage(_qR);
+						_dL.add2DownList(storage);
+						int dataLength = in.read(tempdata);
+						while(dataLength != -1)
+						{
+							storage.addData(tempdata, dataLength);
+							dataLength = in.read(tempdata);
+						}
+						storage.setEnd();
 					}
-
+					System.out.println("Unexpected HTTP Response received! Sorry.");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
