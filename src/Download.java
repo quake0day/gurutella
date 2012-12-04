@@ -37,6 +37,7 @@ public class Download extends Thread{
 			try {
 				DataOutputStream out = new DataOutputStream(soc4Down.getOutputStream());
 				out.write(b);
+				System.out.println("Sent download request...");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -53,11 +54,12 @@ public class Download extends Thread{
 				}
 				else 
 				{
-					HTTPResponseMessage resp = new HTTPResponseMessage(line1);
-					if (resp.isResponse())
+					
+					if (new HTTPResponseMessage(line1).isResponse())
 					{
 						int i = 0;
 						byte[] line2 = new byte[100];
+						byte[] data;
 						in.read(line2);
 						for (byte t: line2)
 						{
@@ -69,10 +71,31 @@ public class Download extends Thread{
 						byte[] line =new byte[32 + i];
 						System.arraycopy(line, 0, line1, 0, 32);
 						System.arraycopy(line, 32, line2, 0, i);
+						HTTPResponseMessage resp = new HTTPResponseMessage(line);
 						System.out.println(MyConstants.STATUS_200_DownLoadAble);
+						size = resp.getSize();
+						
+						byte[] tempdata = new byte[MyConstants.MAX_BUFFER_DOWNLOAD];	//size <= real size
+						int dataLength = in.read(tempdata);
+						while(dataLength != -1)
+						{
+							
+							dataLength = in.read(tempdata);
+						}
+						int n =0;
+						for (n = 0; n < tempdata.length; n++)
+						{
+							if ((int) (tempdata[n]) == 0)
+							{
+								break;
+							}
+						}
+						data = new byte[n];
+						System.arraycopy(tempdata, 0, data, 0, n);
+						
 						
 					}
-
+					
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

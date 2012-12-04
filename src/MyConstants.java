@@ -13,6 +13,7 @@ public interface MyConstants {
     public final static int MAX_PAYLOAD_LENGTH = 4096; //bytes
     public final static int MAX_QUERY_LENGTH = 256; //bytes
     public final static int HEADER_LENGTH = 23; //bytes
+    public final static int MAX_BUFFER_DOWNLOAD = 200;
     public final static String STATUS_200 = "SIMPELLA/0.6 200 OK\r\n";
     public final static String STATUS_200_REC = "SIMPELLA/0.6 200 OK";
     public final static String STATUS_200_DownLoadAble = "200 OK. Ready to download!";
@@ -23,5 +24,4 @@ public interface MyConstants {
     public final static String localIPNum="127.0.0.1";
     public final static String localHost="localhost";
     public final static String connectFail = "cannot connect to this Host. Connection refused";
-
 }
