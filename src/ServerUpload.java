@@ -71,8 +71,12 @@ public class ServerUpload extends Thread{
 				HTTPGetMessage gotMessage = new HTTPGetMessage(tempIn);
 				if (gotMessage.isGetMessage())
 				{
+
+					byte[] request = new byte[1024];
 					_fileNum = gotMessage.getRequestNum();
 					_fileName = gotMessage.getRequestName();
+					in.read(request);
+					gotMessage = new HTTPGetMessage(request);
 					_downIP = gotMessage.getIPString();
 					_downPort = gotMessage.getPortNum();
 					if (_uploadSoc.getInetAddress().toString().split("/")[1]
