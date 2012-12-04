@@ -239,6 +239,7 @@ public class Monitor {
                 	}
                 	if(downloadAble == true){
                 		int num = Integer.parseInt(command[1]);
+                		//System.out.println(tcpPort2);
                 		Thread download = new Download(num, tcpPort2, _qrl, _downList, _fileList);
                 		download.start();
                 		long t0 = new Date().getTime();

@@ -28,14 +28,21 @@ public class ServerUpload extends Thread{
 	
 	private FileInfoList _fileList;
 	
-	public ServerUpload(ServerSocket sSoc, FileInfoList fList)
+	public ServerUpload(int downPort, FileInfoList fList)
 	{
-		_serverSoc = sSoc;
+		//_serverSoc = Soc;
+		_downPort = downPort;
 		_fileList = fList;
 	}
 	
 	public void run()
 	{
+		try {
+			_serverSoc = new ServerSocket(_downPort);
+		} catch (IOException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		} 
 		try {
 			_uploadSoc = _serverSoc.accept();
 		} catch (IOException e2) {
@@ -44,11 +51,11 @@ public class ServerUpload extends Thread{
 		}
 
 		DataOutputStream out;
+		DataInputStream in;
 		try {
 			out = new DataOutputStream(_uploadSoc.getOutputStream());
-			DataInputStream in;
 			in = new DataInputStream(_uploadSoc.getInputStream());
-
+			System.out.println("Initializing");
 		
 			byte[] tempIn = new byte[30];
 
@@ -57,6 +64,7 @@ public class ServerUpload extends Thread{
 			long t0 = new Date().getTime();
 			while ((new Date().getTime() - t0) < (10 * 60 * 1000))
 			{
+				System.out.println("GetM");
 				HTTPGetMessage gotMessage = new HTTPGetMessage(tempIn);
 				if (gotMessage.isGetMessage())
 				{
@@ -76,13 +84,13 @@ public class ServerUpload extends Thread{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					
+					System.out.println("sending file");
 						InputStream inFile;
 						try {
 							int byteread = 0;
 							while(byteread != -1)
 							{
-								byte[] tempbytes = new byte[1000];
+								byte[] tempbytes = new byte[20000];
 								inFile = new FileInputStream(file[0]);
 								byteread = inFile.read(tempbytes);
 								out.write(tempbytes);

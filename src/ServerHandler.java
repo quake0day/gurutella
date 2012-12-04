@@ -53,7 +53,9 @@ public class ServerHandler extends Thread{
         _downPort = tcpDownload;
         _IP = IP;
         _tempClientIndex = _cInfo.size();
-        //Socket listenSocket = clients.get(1,tempClientIndex);
+        //Thread downThread;
+		//downThread = new ServerUpload(_downPort, _fList);
+		//downThread.start();
     }
     
     public int byte2int(byte[] i){
@@ -269,7 +271,7 @@ public class ServerHandler extends Thread{
                                             outToServer.write(queryHit);
                                             outToServer.flush();
                                             
-                                            threadPool.submit(new ServerUpload(new ServerSocket(_downPort), _fList));
+                                            //threadPool.submit(new ServerUpload(new ServerSocket(_downPort), _fList));
                                         }
                                     }	
                                 }
