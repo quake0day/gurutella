@@ -72,6 +72,9 @@ public class Download extends Thread{
 				} catch (SocketException e4) {
 					System.out.println("\rDownload " + _qR.getFileName() + "is terminated..");
 					return;
+				} catch (IOException e5) {
+					System.out.println("\rDownload " + _qR.getFileName() + "is terminated..");
+					return;
 				}
 				System.out.println("responsed");
 				if (new HTTPFailMessage(line1).isFailMessage())

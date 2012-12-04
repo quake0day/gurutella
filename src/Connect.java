@@ -88,13 +88,16 @@ public class Connect extends Thread{
             } catch (UnknownHostException e) {
                 // TODO Auto-generated catch block
                 System.out.println("cannot connect to this Host. Connection refused");
+                return;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 System.out.println("cannot connect to this Host. Connection refused");
+                return;
             }
         }
         else{
             System.out.println("Cannot connect to itself and it may have duplicate connection.");
+            return;
         }
 
 
@@ -132,6 +135,10 @@ public class Connect extends Thread{
             // TODO Auto-generated catch block
            // e.printStackTrace();
         	System.out.println("Open failed, invalid connection.");
+        	return;
+        } catch (NullPointerException np) {
+        	System.out.println("Open failed..");
+        	return;
         }
         // Do handshake
         outServer.println("SIMPELLA CONNECT/0.6\r\n");

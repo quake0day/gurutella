@@ -82,9 +82,11 @@ public class ServerUpload extends Thread{
 					if (_uploadSoc.getInetAddress().toString().split("/")[1]
 						.equals(_downIP))
 					{
-						File[] file = _fileList.getFile(_fileName);
-						HTTPResponseMessage resp = new HTTPResponseMessage((int) file[0].length());
+						File file = _fileList.getThisFile(_fileName);
+						System.out.println("thisFileGot");
+						HTTPResponseMessage resp = new HTTPResponseMessage((int) file.length());
 						byte[] response = resp.getMessage();
+						System.out.println("ready to write");
 						try {
 							out.write(response);
 						} catch (IOException e) {
@@ -92,12 +94,13 @@ public class ServerUpload extends Thread{
 							e.printStackTrace();
 						}
 						InputStream inFile;
+						System.out.println("sending");
 						try {
 							int byteread = 0;
 							while(byteread != -1)
 							{
 								byte[] tempbytes = new byte[20000];
-								inFile = new FileInputStream(file[0]);
+								inFile = new FileInputStream(file);
 								try {
 									byteread = inFile.read(tempbytes);
 								} catch (SocketException e1) {
