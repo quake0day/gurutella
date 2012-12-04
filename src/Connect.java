@@ -256,22 +256,20 @@ public class Connect extends Thread{
                             System.out.println("QUERY MESSAGE");
                             boolean hasSameMessageID = false;
                             hasSameMessageID = _idList.checkID(mID);
-                           // byte[] payload = new byte[4096];
+                            byte[] payload = new byte[4096];
                             byte[] minimumSpeed = new byte[2];
-                            //int payloadLength = 0;
-                            /*
+                            int payloadLength = 0;
 							try {
 								payloadLength = stream.read(payload);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							*/
-                            byte[] queryString = new byte [pLength-2];
-                            System.out.println("PayloadLength:"+pLength);
+                            byte[] queryString = new byte [payloadLength-2];
+                            System.out.println("PayloadLength:"+payloadLength);
 
-                            System.arraycopy(data, 0, minimumSpeed, 0, 2);
-                            System.arraycopy(data, 2, queryString, 0, queryString.length);
+                            System.arraycopy(payload, 0, minimumSpeed, 0, 2);
+                            System.arraycopy(payload, 2, queryString, 0, queryString.length);
                             //ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
                             //IntBuffer ib = bb.asIntBuffer();
                             //int nMinSpeed = ib.get(0);
@@ -388,7 +386,7 @@ public class Connect extends Thread{
                                         System.out.println("cannot get IP addr string from PONG");
                                     }
                                    // int nSpeed = byte2int(Speed);
-                                    String nServentID = new String(serventID);
+                                   // String nServentID = new String(serventID);
                                     byte[] fileIndex = new byte[4];
                                     byte[] fileSize = new byte[4];
                                     byte[] fileName = new byte[resSet.length - 8];

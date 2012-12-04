@@ -1,3 +1,4 @@
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -126,4 +127,15 @@ public void remove(int type, Socket vicSocket){
     vic_index = _connections.indexOf(vicSocket);
     _connections.remove(vic_index);
 }
+
+public Socket getSocket(String ip)
+{
+	for (int i = 0; i < _connections.size(); i++)
+	{
+		if (_connections.get(i).getIP().toString().split("/")[1].matches(ip))
+			return _connections.get(i).getSocket();
+	}
+	return null;
+}
+
 }
