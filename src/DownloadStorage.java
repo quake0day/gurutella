@@ -8,8 +8,9 @@
  */
 public class DownloadStorage {
 	private QueryResult _qR;
-	private byte[] _data;
+	private byte[] _data = null;
 	private boolean flag = false;
+	private int _totalLength = 0;
 	
 	public DownloadStorage(QueryResult qr)
 	{
@@ -19,8 +20,12 @@ public class DownloadStorage {
 	
 	public void addData(byte[] data, int size)
 	{
-		_data = new byte[size];
-		System.arraycopy(data, 0, _data, _data.length, size);
+
+		byte[] cache = _data;
+		data = new byte[_totalLength + size];
+		System.arraycopy(data, 0, _data, _totalLength, size);
+		System.arraycopy(cache, 0, _data, 0, _totalLength);
+		_totalLength += size;
 	}
 	
 	public int getDownloadSize()
