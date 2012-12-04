@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 
@@ -31,6 +33,7 @@ public class Monitor {
     private MonitorNetwork _mnl;
     private String queryString;
     private InetAddress IP;
+    private DownloadList _downList;
 
     @SuppressWarnings("deprecation")
 	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP ) throws IOException, InterruptedException{
@@ -51,6 +54,16 @@ public class Monitor {
 
         while(!isQuit)
         { 
+        	/*ArrayList<DownloadStorage> finishOnes = _downList.findEndDown();
+        	while (finishOnes != null)
+        	{//select where to store the down load file/////
+        		String cmd = null;
+        		DownloadStorage dS = finishOnes.get(0);
+        		System.out.println("File " + dS.getQuery().getFileName() 
+        				+ "finished download. Would you like to save it in your shared folder?");
+        		BufferedReader input
+        	}*/////Should be in Main Thread if used...
+        			//Maybe need some structure adjustment..
 
             try {
                 System.out.print("simpella>");
@@ -195,10 +208,14 @@ public class Monitor {
                 		System.out.println("Cannot download target file, try again.");
                 	}
                 	if(downloadAble == true){
-                		//fileInfo._downloadPort
-                		
-                    //Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
-                    //showRes.start();
+                		int num = Integer.parseInt(command[1]);
+                		Thread download = new Download(num, _qrl, _client, _downList);
+                		download.start();
+                		long t0 = new Date().getTime();
+                		while(new Date().getTime() - t0 < 1000)
+                		{
+                			//wait
+                		}
                 	}
                 	
                 }

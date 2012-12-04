@@ -1,6 +1,8 @@
 import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -16,12 +18,14 @@ public class Download extends Thread{
 	private QueryResultList _qL;
 	private QueryResult _qR = null;
 	private ConnectionInfoList _cIL;
+	private DownloadList _dL;
 
-	public Download(int n, QueryResultList QL, ConnectionInfoList list)
+	public Download(int n, QueryResultList QL, ConnectionInfoList list, DownloadList dL)
 	{
 		_fileNo = n;
 		_qL = QL;
 		_cIL = list;
+		_dL = dL;
 	}
 	
 	public void run()
@@ -75,27 +79,21 @@ public class Download extends Thread{
 						System.out.println(MyConstants.STATUS_200_DownLoadAble);
 						size = resp.getSize();
 						
+						System.out.print("Downloading '" + _qR.getFileName() + "' ...");
+						
+						System.out.println("\n");
 						byte[] tempdata = new byte[MyConstants.MAX_BUFFER_DOWNLOAD];	//size <= real size
+						DownloadStorage storage = new DownloadStorage(_qR);
+						_dL.add2DownList(storage);
 						int dataLength = in.read(tempdata);
 						while(dataLength != -1)
 						{
-							
+							storage.addData(tempdata, dataLength);
 							dataLength = in.read(tempdata);
 						}
-						int n =0;
-						for (n = 0; n < tempdata.length; n++)
-						{
-							if ((int) (tempdata[n]) == 0)
-							{
-								break;
-							}
-						}
-						data = new byte[n];
-						System.arraycopy(tempdata, 0, data, 0, n);
-						
-						
+						storage.setEnd();
 					}
-					
+					System.out.println("Unexpected HTTP Response received! Sorry.");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
