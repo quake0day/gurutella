@@ -130,7 +130,8 @@ public class Connect extends Thread{
                     true);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+           // e.printStackTrace();
+        	//System.out.println("Cannot ")
         }
         // Do handshake
         outServer.println("SIMPELLA CONNECT/0.6\r\n");
