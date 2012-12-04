@@ -199,6 +199,8 @@ public class Connect extends Thread{
                     if((int)(TTL+Hops) >=0 && (int)(TTL+Hops) <= 15) {
                         if(messageType == (byte)0x00){
                             System.out.println("toclient PING");
+                            System.out.println("toclient PING");
+
                             boolean hasSameMessageID = false;
                             hasSameMessageID = _idList.checkID(mID);
                             if(hasSameMessageID == false){
