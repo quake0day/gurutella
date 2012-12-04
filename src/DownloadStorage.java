@@ -14,10 +14,12 @@ public class DownloadStorage {
 	public DownloadStorage(QueryResult qr)
 	{
 		_qR = qr;
+		//_data = new byte[];
 	}
 	
 	public void addData(byte[] data, int size)
 	{
+		_data = new byte[size];
 		System.arraycopy(data, 0, _data, _data.length, size);
 	}
 	
