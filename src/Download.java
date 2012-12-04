@@ -125,7 +125,10 @@ public class Download extends Thread{
 						fin.write(storage.getByte());
 						storage.setEnd();
 					}
-					System.out.println("Unexpected HTTP Response received! Sorry.");
+					else
+					{
+						System.out.println("Unexpected HTTP Response received! Sorry.");
+					}
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
