@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Date;
 
 
@@ -56,11 +57,12 @@ public class ServerUpload extends Thread{
 		try {
 			out = new DataOutputStream(_uploadSoc.getOutputStream());
 			in = new DataInputStream(_uploadSoc.getInputStream());
-			System.out.println("Initializing");
+			//System.out.println("Initializing");
 		
-			byte[] tempIn = new byte[30];
-
+			byte[] tempIn = new byte[32];
+			
 			in.read(tempIn);
+			
 			System.out.println("read data");
 			long t0 = new Date().getTime();
 			while ((new Date().getTime() - t0) < (10 * 60 * 1000))
@@ -69,14 +71,13 @@ public class ServerUpload extends Thread{
 				HTTPGetMessage gotMessage = new HTTPGetMessage(tempIn);
 				if (gotMessage.isGetMessage())
 				{
-				System.out.println("GetM");
 					_fileNum = gotMessage.getRequestNum();
 					_fileName = gotMessage.getRequestName();
 					_downIP = gotMessage.getIPString();
 					_downPort = gotMessage.getPortNum();
 					if (_uploadSoc.getInetAddress().toString().split("/")[1]
 						.equals(_downIP))
-					{System.out.println("resp");
+					{
 						File[] file = _fileList.getFile(_fileName);
 						HTTPResponseMessage resp = new HTTPResponseMessage((int) file[0].length());
 						byte[] response = resp.getMessage();
@@ -86,7 +87,6 @@ public class ServerUpload extends Thread{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					System.out.println("sending file");
 						InputStream inFile;
 						try {
 							int byteread = 0;
@@ -94,10 +94,14 @@ public class ServerUpload extends Thread{
 							{
 								byte[] tempbytes = new byte[20000];
 								inFile = new FileInputStream(file[0]);
-								byteread = inFile.read(tempbytes);
+								try {
+									byteread = inFile.read(tempbytes);
+								} catch (SocketException e1) {
+									_uploadSoc.close();
+									continue;
+								}
 								out.write(tempbytes);
 							}
-							System.out.println("over");
 						} catch (Exception e1) {
 							System.out.println("Wrong in reading uploading file!");
 						}

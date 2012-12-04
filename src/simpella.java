@@ -40,11 +40,11 @@ public class simpella /*extends Thread*/{
             tcpPort1 = Integer.parseInt(args[0]);
             tcpPort2 = Integer.parseInt(args[1]);
             if(tcpPort1 < 0 && tcpPort1 > 60000 && tcpPort2 < 0 && tcpPort2 > 60000){
-                System.err.println("Error when try to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
+                System.err.println("Error when trying to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
                 System.exit(1);
             }
             else if (tcpPort1 == tcpPort2){
-                System.err.println("Error when try to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
+                System.err.println("Error when trying to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
                 System.exit(1);
             }
         }

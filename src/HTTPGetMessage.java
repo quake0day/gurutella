@@ -36,7 +36,7 @@ public class HTTPGetMessage {
 	
 	public boolean isGetMessage()	//Server
 	{
-		if (_messagePieces[0].split(" ")[0] == "Get")
+		if (_messagePieces[0].split(" ")[0].equals("Get"))
 			return true;
 		else 
 			return false;

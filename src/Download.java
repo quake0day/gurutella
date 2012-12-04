@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * 
@@ -65,7 +66,12 @@ public class Download extends Thread{
 				int size = -1;
 				DataInputStream in = new DataInputStream(soc4Down.getInputStream());
 				byte[] line1 = new byte[32];	//size of fail massage
-				in.read(line1);
+				try {
+					in.read(line1);
+				} catch (SocketException e4) {
+					System.out.println("\rDownload " + _qR.getFileName() + "is terminated..");
+					return;
+				}
 				System.out.println("responsed");
 				if (new HTTPFailMessage(line1).isFailMessage())
 				{
