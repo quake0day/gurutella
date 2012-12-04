@@ -256,17 +256,20 @@ public class Connect extends Thread{
                             System.out.println("QUERY MESSAGE");
                             boolean hasSameMessageID = false;
                             hasSameMessageID = _idList.checkID(mID);
-                            byte[] payload = new byte[4096];
+                            byte[] payload = data;
+                            //byte[] payload = new byte[4096];
                             byte[] minimumSpeed = new byte[2];
-                            int payloadLength = 0;
+                            //int payloadLength = 0;
+                            /*
 							try {
 								payloadLength = stream.read(payload);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-                            byte[] queryString = new byte [payloadLength-2];
-                            System.out.println("PayloadLength:"+payloadLength);
+							*/
+                            byte[] queryString = new byte [pLength-2];
+                            System.out.println("PayloadLength:"+pLength);
 
                             System.arraycopy(payload, 0, minimumSpeed, 0, 2);
                             System.arraycopy(payload, 2, queryString, 0, queryString.length);
@@ -281,6 +284,7 @@ public class Connect extends Thread{
                             System.out.println("Query:"+nQueryString);
                             // add Query to Monitor the whole network
                             //_mnl.saveQuery(nQueryString);
+
 
                             
                             //ByteBuffer bc = ByteBuffer.wrap(queryString);
