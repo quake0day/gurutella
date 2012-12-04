@@ -95,7 +95,18 @@ public class Monitor {
                     {
                     	if (command[1].equalsIgnoreCase("c"))
                     	{
-                    		
+                    		int i = 0;
+                    		System.out.println("CONNECTION STATS:");
+                    		System.out.println("-----------");
+                    		Iterator<ConnectionInfo> iter = _client.iterator();         
+                    		while (iter.hasNext())
+                    		{
+                    			i++;
+                    			ConnectionInfo c = iter.next();
+                    			System.out.println("(" + i + " " 
+                    			+ c.getIP().toString().split("/")[1] + ":" + c.getConnPort()
+                    					+ "\t\t" );
+                    		}
                     	}
                     	else if (command[1].equalsIgnoreCase("d"))
                     	{
@@ -105,6 +116,7 @@ public class Monitor {
                     	{
                     		System.out.println("HOST STATS:");
                     		System.out.println("-----------");
+                    		
                     	}
                     	else if (command[1].equalsIgnoreCase("n"))
                     	{

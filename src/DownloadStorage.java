@@ -20,9 +20,12 @@ public class DownloadStorage {
 	public void addData(byte[] data, int size)
 	{
 		byte[] cache = _data;
-		data = new byte[_totalLength + size];
+		_data = new byte[_totalLength + size];
 		System.arraycopy(data, 0, _data, _totalLength, size);
-		System.arraycopy(cache, 0, _data, 0, _totalLength);
+		if (_totalLength != 0)
+		{
+			System.arraycopy(cache, 0, _data, 0, _totalLength);
+		}
 		_totalLength += size;
 	}
 	
