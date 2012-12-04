@@ -210,11 +210,12 @@ public class ServerHandler extends Thread{
                                     System.out.println("QUERY MESSAGE");
                                     boolean hasSameMessageID = false;
                                     hasSameMessageID = _idList.checkID(mID);
-                                    byte[] payload = new byte[4096];
+                                    //byte[] payload = new byte[4096];
+                                    byte[] payload = data;
                                     byte[] minimumSpeed = new byte[2];
-                                    int payloadLength = in2Server.read(payload);
-                                    byte[] queryString = new byte [payloadLength-2];
-                                    System.out.println("PayloadLength:"+payloadLength);
+                                    //int payloadLength = in2Server.read(payload);
+                                    byte[] queryString = new byte [pLength-2];
+                                    System.out.println("PayloadLength:"+pLength);
 
                                     System.arraycopy(payload, 0, minimumSpeed, 0, 2);
                                     System.arraycopy(payload, 2, queryString, 0, queryString.length);
