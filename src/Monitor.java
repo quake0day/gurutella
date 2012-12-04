@@ -162,7 +162,7 @@ public class Monitor {
                     }
                     else
                     {	
-                        System.out.println("Searching Simpella Network for `"+queryString+"'");
+                        System.out.println("Searching Simpella Network for '"+queryString+"'");
                         _qrl.setQuery(queryString);
                         // send Query to all neighbors
                         Thread query = new Thread(new Query(queryString, _client,rt));

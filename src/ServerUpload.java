@@ -43,6 +43,7 @@ public class ServerUpload extends Thread{
 			// TODO Auto-generated catch block
 			//e3.printStackTrace();
 		//} 
+		while (true) {
 		try {
 			_uploadSoc = _serverSoc.accept();
 		} catch (IOException e2) {
@@ -60,21 +61,22 @@ public class ServerUpload extends Thread{
 			byte[] tempIn = new byte[30];
 
 			in.read(tempIn);
-
+			System.out.println("read data");
 			long t0 = new Date().getTime();
 			while ((new Date().getTime() - t0) < (10 * 60 * 1000))
 			{
-				System.out.println("GetM");
+				
 				HTTPGetMessage gotMessage = new HTTPGetMessage(tempIn);
 				if (gotMessage.isGetMessage())
 				{
+				System.out.println("GetM");
 					_fileNum = gotMessage.getRequestNum();
 					_fileName = gotMessage.getRequestName();
 					_downIP = gotMessage.getIPString();
 					_downPort = gotMessage.getPortNum();
 					if (_uploadSoc.getInetAddress().toString().split("/")[1]
 						.equals(_downIP))
-					{
+					{System.out.println("resp");
 						File[] file = _fileList.getFile(_fileName);
 						HTTPResponseMessage resp = new HTTPResponseMessage((int) file[0].length());
 						byte[] response = resp.getMessage();
@@ -95,6 +97,7 @@ public class ServerUpload extends Thread{
 								byteread = inFile.read(tempbytes);
 								out.write(tempbytes);
 							}
+							System.out.println("over");
 						} catch (Exception e1) {
 							System.out.println("Wrong in reading uploading file!");
 						}
@@ -104,5 +107,6 @@ public class ServerUpload extends Thread{
 		} catch(Exception e2) {
 			e2.getStackTrace();
 		}
+	}
 	}
 }
