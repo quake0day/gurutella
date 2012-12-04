@@ -46,6 +46,7 @@ public class Monitor {
         this._routingTable = rt;
         this.IP = IP;
         this._qrl = qrl;
+        _downList = new DownloadList();
         //System.out.println("test");  
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
