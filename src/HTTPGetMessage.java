@@ -44,22 +44,38 @@ public class HTTPGetMessage {
 	
 	public int getRequestNum()	//Server
 	{
-		return Integer.parseInt(_messagePieces[0].split("/")[2]);
+
+		int dd =_messagePieces[0].indexOf("HTTP/1.1");
+		System.out.println("dd"+dd);
+		
+		String _temp = _messagePieces[0].substring(4, dd-1);
+		System.out.println(_temp);
+		return Integer.parseInt(_temp.split("/")[2]);
 	}
 	
 	public String getRequestName()	//Server
 	{
-		return _messagePieces[0].split("/")[3].split(" ")[0];
+		int dd =_messagePieces[0].indexOf("HTTP/1.1");
+		System.out.println("dd"+dd);
+		
+		String _temp = _messagePieces[0].substring(4, dd-1);
+		System.out.println(_temp);
+		
+		return _temp.split("/")[3];
 	}
 	
 	public String getIPString()	//Server
 	{
-		return _messagePieces[1].split(":")[1].trim();
+		System.out.println(_messagePieces[1]);
+		System.out.println(_messagePieces[2]);
+		return _messagePieces[2].split(":")[1].trim();
 	}
 	
 	public int getPortNum()	//Server
-	{
-		return Integer.parseInt(_messagePieces[1].split(":")[2]);
+	{System.out.println(_messagePieces[0]);
+		System.out.println(_messagePieces[1]);
+		System.out.println(_messagePieces[2]);
+		return Integer.parseInt(_messagePieces[2].split(":")[2]);
 	}
 	
 	public byte[] getMessage()	//Client

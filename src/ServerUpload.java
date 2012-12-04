@@ -59,7 +59,7 @@ public class ServerUpload extends Thread{
 			in = new DataInputStream(_uploadSoc.getInputStream());
 			//System.out.println("Initializing");
 		
-			byte[] tempIn = new byte[32];
+			byte[] tempIn = new byte[4096];
 			
 			in.read(tempIn);
 			
@@ -75,8 +75,7 @@ public class ServerUpload extends Thread{
 					byte[] request = new byte[1024];
 					_fileNum = gotMessage.getRequestNum();
 					_fileName = gotMessage.getRequestName();
-					in.read(request);
-					gotMessage = new HTTPGetMessage(request);
+					//gotMessage = new HTTPGetMessage(request);
 					_downIP = gotMessage.getIPString();
 					_downPort = gotMessage.getPortNum();
 					if (_uploadSoc.getInetAddress().toString().split("/")[1]

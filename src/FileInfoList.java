@@ -99,7 +99,7 @@ public class FileInfoList {
             return true;
         else
         {
-            System.out.println("File " + file.getName() + " failed to share...");
+            //System.out.println("File " + file.getName() + " failed to share...");
             return false;
         }
     }
@@ -131,7 +131,10 @@ public class FileInfoList {
     {
     	for (File f: _sharedFile )
     	{
-    		if (f.getName().equals(filename))
+    		//System.out.println(f.getName());
+    		//System.out.println(filename);
+    		//System.out.println(f.getName().trim().equals(filename.trim()));
+    		if (f.getName().trim().equals(filename.trim()))
     			return f;
     	}
     	
