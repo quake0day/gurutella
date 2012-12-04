@@ -61,11 +61,22 @@ public class simpella /*extends Thread*/{
         _networkServerList = new NetworkServerList();
         _mnl = new MonitorNetwork();
         _qrl = new QueryResultList();
+        ServerSocket cmdServer = null;
+        ServerSocket datServer = null;
+        
+        try {
+        	cmdServer = new ServerSocket(10025);
+        	datServer = new ServerSocket(tcpPort2);
+        } catch (IOException e) {
+            System.out.println("You're using a port that cannot Establish TCP connection, program halt...");
+            System.exit(1);
+        }
+        
         //TCPServer thread start
-        Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList);
+        Tcpserver _tcpServer = new Tcpserver(cmdServer, 10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList);
         _tcpServer.start();        
        // @SuppressWarnings("resource")
-		Thread testD = new ServerUpload(tcpPort2, _fileList);
+		Thread testD = new ServerUpload(datServer, tcpPort2, _fileList);
 		testD.start();
         new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl);
 

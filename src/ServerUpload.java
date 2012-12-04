@@ -28,21 +28,21 @@ public class ServerUpload extends Thread{
 	
 	private FileInfoList _fileList;
 	
-	public ServerUpload(int downPort, FileInfoList fList)
+	public ServerUpload(ServerSocket Soc, int downPort, FileInfoList fList)
 	{
-		//_serverSoc = Soc;
+		_serverSoc = Soc;
 		_downPort = downPort;
 		_fileList = fList;
 	}
 	
 	public void run()
 	{
-		try {
-			_serverSoc = new ServerSocket(_downPort);
-		} catch (IOException e3) {
+		//try {
+			//_serverSoc = new ServerSocket(_downPort);
+		//} catch (IOException e3) {
 			// TODO Auto-generated catch block
-			e3.printStackTrace();
-		} 
+			//e3.printStackTrace();
+		//} 
 		try {
 			_uploadSoc = _serverSoc.accept();
 		} catch (IOException e2) {
