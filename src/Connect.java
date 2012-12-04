@@ -467,6 +467,22 @@ public class Connect extends Thread{
                                     } 
                                 }
 
+                                /*
+                                if(pLength+23 < messageLength){
+                                    payloadLen = new byte [4];
+                                    messageLength = messageLength - pLength - 23;
+                                    System.arraycopy(data,19+pLength+23,payloadLen,2,2);
+                                    int pLength_new = byte2int(payloadLen);
+                                    pLength = pLength_new;
+
+                                }
+                                else if(pLength+23 == messageLength){
+                                    pLength = pLength+24;
+                                }
+                                
+
+                            }
+*/
                         }
                     }
 
