@@ -88,10 +88,42 @@ public class Monitor {
                 /////////////////info command////////////////////   
                 else if (command[0].equalsIgnoreCase("info")){
                     if(command.length != 2){
-                        System.out.println("Usage:info [cdhnqs]");
+                        System.out.println("Usage:info [c|d|h|n|q|s]");                    
                     }
-                    Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
-                    showRes.start();
+                    else
+                    {
+                    	if (command[1].equalsIgnoreCase("c"))
+                    	{
+                    		System.out.println("HOST STATS:
+-----------")
+                    	}
+                    	else if (command[1].equalsIgnoreCase("d"))
+                    	{
+                    		
+                    	}
+                    	else if (command[1].equalsIgnoreCase("d"))
+                    	{
+                    		
+                    	}
+                    	else if (command[1].equalsIgnoreCase("d"))
+                    	{
+                    		
+                    	}
+                    	else if (command[1].equalsIgnoreCase("d"))
+                    	{
+                    		
+                    	}
+                    	else if (command[1].equalsIgnoreCase("d"))
+                    	{
+                    		
+                    	}
+                    	else
+                    	{
+                    		System.out.println("Usage:info [c|d|h|n|q|s]");
+                    	}
+                    	Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    	showRes.start();
+                    }
                 	
                 }
                 /////////////////open command//////////////////////
