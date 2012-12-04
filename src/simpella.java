@@ -68,7 +68,6 @@ public class simpella /*extends Thread*/{
         // download port
         //threadPool.submit(new Tcpserver(tcpPort2,_clients));
     }
-    
     public static void showWelcomeInfo(int tcpPort1,int tcpPort2){
         boolean usePublicDNS = false;
         try {
