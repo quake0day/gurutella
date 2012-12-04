@@ -30,32 +30,32 @@ public class QueryResultList {
 	public synchronized void setQuery(String query){
 		this.queryString = query;
 	}
-	public  String getQuery(){
+	public synchronized String getQuery(){
 		return this.queryString;
 	}
 
 	
-	public void add(QueryResult e){	
+	public synchronized void add(QueryResult e){	
 		if(qrl.contains(e.ID)){
 			qrl.remove(qrl.indexOf(e.ID));
 		}
 		qrl.add(e.ID);
 		resTable.put(e.ID, e);
 	}
-	public Iterator<Integer> getItertor(){
+	public synchronized Iterator<Integer> getItertor(){
 		return qrl.iterator();
 }
 
-	public QueryResult getResult(int ID){
+	public synchronized QueryResult getResult(int ID){
 		return resTable.get(ID);
 	}
 	
-	public void clearAll(){
+	public synchronized void clearAll(){
 		qrl.clear();
 		resTable = new Hashtable<Integer, QueryResult>();
 	}
 	
-	public void clear(int fileNO){
+	public synchronized void clear(int fileNO){
 		if(fileNO >= 1){
 		//fileNO = qrl.size() - fileNO;
 		int i = qrl.get(fileNO-1);
@@ -63,14 +63,14 @@ public class QueryResultList {
 		resTable.remove(i);
 		}
 	}
-	public int length(){
+	public synchronized int length(){
 		return qrl.size();
 	}
 	/**
 	 * @param num
 	 * @return 
 	 */
-	public QueryResult getDownload(int fileNO) {
+	public synchronized QueryResult getDownload(int fileNO) {
 		// TODO Auto-generated method stub
 		if(fileNO >= 1){
 		//fileNO = qrl.size() - fileNO;

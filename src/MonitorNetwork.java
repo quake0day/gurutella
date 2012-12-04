@@ -20,14 +20,14 @@ public class MonitorNetwork {
 		_querySet = new ArrayList<String>();
 	}
 	
-	public void saveQuery(String query){
+	public synchronized void saveQuery(String query){
 		this._querySet.add(query);
 	}
 	
-	public ArrayList<String> getQuerySet(){
+	public synchronized ArrayList<String> getQuerySet(){
 		return this._querySet;
 	}
-	public Iterator<String> getIterator(){
+	public synchronized Iterator<String> getIterator(){
 		return this._querySet.iterator();
 	}
 

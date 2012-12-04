@@ -45,9 +45,7 @@ public class Monitor {
         this._mnl = mnl; 
         this._routingTable = rt;
         this.IP = IP;
-       
-        
-        _qrl = qrl;
+        this._qrl = qrl;
         //System.out.println("test");  
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
@@ -165,7 +163,16 @@ public class Monitor {
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
 
                         //ref.start();
-                        Thread.sleep(450);
+                    	char r = 0;
+                    	try{
+                    		r=(char)System.in.read();
+                    	}catch (IOException e){
+                    		System.out.println("please enter illegal character");
+                    	}
+                    	if(r == '\r' || r == '\n'){
+                    		ref.interrupt();
+                    	}
+                        //Thread.sleep(100);
                         Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,false));
                         showRes.start();
                     }
@@ -178,10 +185,17 @@ public class Monitor {
                 }
                 ////// Monitor command //////
                 else if(command[0].equalsIgnoreCase("monitor")){
-                    Iterator<String> k = _mnl.getIterator();
-                    while(k.hasNext()){
-                    	System.out.println(k.next());
-                    }
+                	Thread showMonitor = new Thread(new ShowMonitorNetwork(_mnl));
+                	showMonitor.start();
+                	char r = 0;
+                	try{
+                		r=(char)System.in.read();
+                	}catch (IOException e){
+                		System.out.println("please enter illegal character");
+                	}
+                	if(r == '\r' || r == '\n'){
+                		showMonitor.interrupt();
+                	}
                 }
                 /////////////////download command////////////////////   
                 else if (command[0].equalsIgnoreCase("download")){

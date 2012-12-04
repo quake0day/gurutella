@@ -26,7 +26,7 @@ public class Tcpserver extends Thread
     private int _downPort;
     private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
 
-    public Tcpserver (int tcpport,int tcpDown, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist,MonitorNetwork _mnl,QueryResultList qrl,NetworkServerList nsl) throws IOException, InterruptedException
+    public Tcpserver (int tcpport,int tcpDown, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist,MonitorNetwork mnl,QueryResultList qrl,NetworkServerList nsl) throws IOException, InterruptedException
     {
         //set the max size of socket pool
         this.port = tcpport;
@@ -37,6 +37,7 @@ public class Tcpserver extends Thread
         this._fileList = filelist;
         this._qrl = qrl;
         this._nsl = nsl;
+        this._mnl = mnl;
         socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
         try{
             _serverSK = new ServerSocket(port);   
