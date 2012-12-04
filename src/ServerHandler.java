@@ -143,10 +143,8 @@ public class ServerHandler extends Thread{
                                     }
                                     else
                                     {
-                                        _isAlive = false;
-                                        break;
+                                        continue;
                                     }
-
                                 }
                                 else if (messageType == (byte) 0x01){
                                     //byte[] data = new byte[14];
