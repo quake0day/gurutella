@@ -36,19 +36,20 @@ public class Download extends Thread{
 	public void run()
 	{
 		if (_qL.getDownload(_fileNo) != null)
-		{
-			_qR = _qL.getDownload(_fileNo);
-			String _fileName = _qR.getFileName();
-			String IPAdd = _qR.getIP().toString().split("/")[1] + ":" + _qR.getDownloadPort();
-			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
+		{			
 			Socket soc4Down = null;
-			//System.out.println("IP\t" + _qR.getIP());
 			try {
 				soc4Down = new Socket(_qR.getIP(), _downPort);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			_qR = _qL.getDownload(_fileNo);
+			String _fileName = _qR.getFileName();
+			String IPAdd = soc4Down.getLocalAddress().toString().split("/")[1] + ":" + _qR.getDownloadPort();
+			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
+
+			//System.out.println("IP\t" + _qR.getIP());
 			
 			try {
 				DataOutputStream out = new DataOutputStream(soc4Down.getOutputStream());
