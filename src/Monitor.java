@@ -162,7 +162,8 @@ public class Monitor {
                         System.out.println("Press Enter to Continue.");
                         Thread ref = new Thread(new RefreshResponseNum(_qrl));
 
-                        //ref.start();
+                        ref.start();
+                        while(true){
                     	char r = 0;
                     	try{
                     		r=(char)System.in.read();
@@ -171,10 +172,16 @@ public class Monitor {
                     	}
                     	if(r == '\r' || r == '\n'){
                     		ref.interrupt();
+                    		System.out.println("");
+                    		
+                    		break;
                     	}
+                        }
+                    	
                         //Thread.sleep(100);
                         Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,false));
                         showRes.start();
+
                     }
                 }
                 /////////////////list command////////////////////   
