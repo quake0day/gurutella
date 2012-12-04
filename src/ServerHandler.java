@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class ServerHandler extends Thread{
     PrintWriter _out2Client;
     MessageIDList _idList;
     FileInfoList _fList;
-    MonitorNetwork _mnl;
+    QueryResultList _qrl;
     InetAddress _IP;
     int _port;
     int _downPort;
@@ -32,19 +33,25 @@ public class ServerHandler extends Thread{
 
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
-            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList, MonitorNetwork mnl)
+            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork _mnl,QueryResultList qrl)
     {
         _cInfo = cInfo;
         _serverSocThread = serverSoc;
         _idList = idList;
         _fList = fList;
         _port = tcpPort;
-        _mnl = mnl;
+        _qrl = qrl;
         _downPort = tcpDownload;
         _IP = IP;
         _tempClientIndex = _cInfo.size();
         //Socket listenSocket = clients.get(1,tempClientIndex);
     }
+    
+    public int byte2int(byte[] i){
+        ByteBuffer bc = ByteBuffer.wrap(i);
+        return bc.getInt();
+    }
+
     public void run()
     {
         try {
@@ -93,8 +100,18 @@ public class ServerHandler extends Thread{
                             byte messageType = (byte)header[16];
                             byte TTL = (byte)header[17];
                             byte Hops = (byte)header[18];
+                            byte[] payloadLen = new byte [4];
+                            System.arraycopy(header,19,payloadLen,2,2);
+                            int pLength = byte2int(payloadLen);
+                            byte[] data = new byte [pLength];
+                            try {
+                            	in2Server.read(data);
+        					} catch (IOException e1) {
+        						// TODO Auto-generated catch block
+        						e1.printStackTrace();
+        					}
                             System.out.println("server Received Header");
-                            if((int)(TTL+Hops) <= 14 && TTL < 8 && TTL > 0 && Hops >= 0 && Hops < 7){		            	
+                            if((int)(TTL+Hops) <= 14 && (int)TTL < 8 && (int)TTL > 0 && (int)Hops >= 0 && (int)Hops < 7){		            	
 
                                 System.out.println("HereIn");
 
@@ -132,8 +149,8 @@ public class ServerHandler extends Thread{
 
                                 }
                                 else if (messageType == (byte) 0x01){
-                                    byte[] data = new byte[14];
-                                    in2Server.read(data);
+                                    //byte[] data = new byte[14];
+                                    //in2Server.read(data);
                                     System.out.println("server PONG MESSAGE");
                                 }
                                 else if (messageType == (byte)0x80){
@@ -157,10 +174,6 @@ public class ServerHandler extends Thread{
 
                                     String nQueryString = new String(queryStringtrim);
                                     System.out.println("Query:"+nQueryString);
-                                    // add Query to Monitor the whole network
-                                    _mnl.saveQuery(nQueryString);
-
-                                    
                                     //ByteBuffer bc = ByteBuffer.wrap(queryString);
 
                                     //String queryString = 
@@ -201,6 +214,74 @@ public class ServerHandler extends Thread{
                                 //////////QueryHit received(??)/////////
                                 else if (messageType == (byte)0x81){
                                     System.out.println("QUERY HIT MESSAGE");
+                                    if(_idList.checkID(mID) == false) { 
+                                        // I'm the one who send query initially
+                                        //int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
+                                        byte[] payload = data;
+                                        //System.arraycopy(data,0,payload,0,pLength);
+                                        System.out.println("copy payload");
+                                        byte[] numberOfHits = new byte[4];
+                                        byte[] port = new byte[4];
+                                        byte[] IPaddr = new byte[4];
+                                        byte[] Speed = new byte[4];
+                                        byte[] resSet = new byte[pLength-16-4-4-2-1];
+                                        byte[] serventID = new byte[16];
+                                        System.arraycopy(payload,0,numberOfHits,3, 1);
+                                        System.arraycopy(payload,1,port,2, 2);
+                                        System.arraycopy(payload,3,IPaddr,0,4);
+                                        System.arraycopy(payload,7,Speed,0,4);
+                                        System.arraycopy(payload,11,resSet,0,pLength-16-4-4-2-1);
+                                        System.arraycopy(payload,pLength-16,serventID,0,16);
+                                        ByteBuffer bk = ByteBuffer.wrap(numberOfHits);
+                                        IntBuffer ik = bk.asIntBuffer();
+                                        int nNumberOfHits = ik.get(0);
+                                        ByteBuffer bb = ByteBuffer.wrap(port);
+                                        IntBuffer ib = bb.asIntBuffer();
+                                        int nPort = ib.get(0);
+                                        InetAddress nIP = null;
+                                        try {
+                                            nIP = InetAddress.getByAddress(IPaddr);
+                                            System.out.println(nIP.getHostAddress());
+                                        } catch (UnknownHostException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                            System.out.println("cannot get IP addr string from PONG");
+                                        }
+                                       // int nSpeed = byte2int(Speed);
+                                       // String nServentID = new String(serventID);
+                                        byte[] fileIndex = new byte[4];
+                                        byte[] fileSize = new byte[4];
+                                        byte[] fileName = new byte[resSet.length - 8];
+                                        System.arraycopy(resSet,0,fileIndex,0,4);
+                                        System.arraycopy(resSet,4,fileSize,0,4);
+                                        System.arraycopy(resSet,8,fileName,0,fileName.length);
+                                        int nFileIndex = byte2int(fileIndex);
+                                        int nFileSize = byte2int(fileSize);
+                                        String nFileName = new String(fileName);
+                                        System.out.println(nFileName+" FileIndex:"+nFileIndex+" FileSize:"+nFileSize);
+                                        if(nIP != null){
+                                        	String queryString = _qrl.getQuery();
+                                        	QueryResult nQueryResult = new QueryResult(nFileIndex,nIP,nPort,nFileSize,nFileName,queryString);
+                                            //int index,InetAddress _IP,int _downloadPort,int _fileSize,String _fileName
+                                            //nsl.addServer(nServerInfo);
+                                        	_qrl.add(nQueryResult);
+                                        }
+
+
+
+                                    }
+                                    else{ // I'm the one who send ping when I rec ping from others
+                                        System.out.println("I'm the one who send query when I rec query from others");
+                                        IDRecorder idr = _idList.getRecord(mID);
+                                        Socket preSoc = idr.getSocket();
+                                        try {
+                                            DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
+                                            outToServer.write(data); // send data to the prev node
+                                        } catch (IOException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        } 
+                                    }
                                 }
                                 else
                                 {
@@ -235,17 +316,6 @@ public class ServerHandler extends Thread{
             }
     }
 }
-		//Create additional threads from ThreadPool 
-		//for the single branch thread of TCPServer declared in class Simpella 
-	    
-	    /*public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
-	    	// check if length is larger than 22
-	    	if(MessageLength < 22){
-	    		return false;
-	    	}
-	    	else
-	    		return true;*/
-
 //Create additional threads from ThreadPool 
 //for the single branch thread of TCPServer declared in class Simpella 
 
@@ -256,4 +326,3 @@ return false;
 }
 else
 return true;*/
-

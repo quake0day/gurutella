@@ -23,6 +23,7 @@ public class simpella /*extends Thread*/{
     public static MessageIDList _routingTable;
     public static NetworkServerList _networkServerList;
     public static MonitorNetwork _mnl;
+    public static QueryResultList _qrl;
     private static InetAddress IP = null;
 
 
@@ -58,10 +59,14 @@ public class simpella /*extends Thread*/{
         _routingTable = new MessageIDList();
         _networkServerList = new NetworkServerList();
         _mnl = new MonitorNetwork();
+        _qrl = new QueryResultList();
         //TCPServer thread start
-        Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl);
+        Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl);
         _tcpServer.start();
-        new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP);
+        new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl);
+        //threadPool.submit(new Tcpserver(10025,_clients));
+        // download port
+        //threadPool.submit(new Tcpserver(tcpPort2,_clients));
     }
     
     public static void showWelcomeInfo(int tcpPort1,int tcpPort2){

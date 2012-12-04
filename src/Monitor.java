@@ -36,7 +36,7 @@ public class Monitor {
     private DownloadList _downList;
 
     @SuppressWarnings("deprecation")
-	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP ) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP,QueryResultList qrl ) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
@@ -45,8 +45,9 @@ public class Monitor {
         this._mnl = mnl; 
         this._routingTable = rt;
         this.IP = IP;
+       
         
-        _qrl = new QueryResultList();
+        _qrl = qrl;
         //System.out.println("test");  
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
