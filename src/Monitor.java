@@ -85,6 +85,15 @@ public class Monitor {
                     // see Info.java for more detail
                     new Scan(_fileList);			 	   
                 }
+                /////////////////info command////////////////////   
+                else if (command[0].equalsIgnoreCase("info")){
+                    if(command.length != 2){
+                        System.out.println("Usage:info [cdhnqs]");
+                    }
+                    Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    showRes.start();
+                	
+                }
                 /////////////////open command//////////////////////
                 else if (command[0].equalsIgnoreCase("open"))
                 {
@@ -153,7 +162,7 @@ public class Monitor {
                     }
                     else
                     {	
-                        System.out.println("Searching Simpella Network for `"+queryString+"'");
+                        System.out.println("Searching Simpella Network for '"+queryString+"'");
                         _qrl.setQuery(queryString);
                         // send Query to all neighbors
                         Thread query = new Thread(new Query(queryString, _client,rt));
@@ -224,14 +233,14 @@ public class Monitor {
                 		    System.out.println("Please enter a correct file number");
                 		    downloadAble = false;
                 		}
-                		
                 	}
                 	if(downloadAble == false){
                 		System.out.println("Cannot download target file, try again.");
                 	}
                 	if(downloadAble == true){
                 		int num = Integer.parseInt(command[1]);
-                		Thread download = new Download(num, tcpPort2, _qrl, _downList);
+                		//System.out.println(tcpPort2);
+                		Thread download = new Download(num, tcpPort2, _qrl, _downList, _fileList);
                 		download.start();
                 		long t0 = new Date().getTime();
                 		while(new Date().getTime() - t0 < 1000)

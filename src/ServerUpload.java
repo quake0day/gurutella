@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Date;
 
 
@@ -28,14 +29,22 @@ public class ServerUpload extends Thread{
 	
 	private FileInfoList _fileList;
 	
-	public ServerUpload(ServerSocket sSoc, FileInfoList fList)
+	public ServerUpload(ServerSocket Soc, int downPort, FileInfoList fList)
 	{
-		_serverSoc = sSoc;
+		_serverSoc = Soc;
+		_downPort = downPort;
 		_fileList = fList;
 	}
 	
 	public void run()
 	{
+		//try {
+			//_serverSoc = new ServerSocket(_downPort);
+		//} catch (IOException e3) {
+			// TODO Auto-generated catch block
+			//e3.printStackTrace();
+		//} 
+		while (true) {
 		try {
 			_uploadSoc = _serverSoc.accept();
 		} catch (IOException e2) {
@@ -44,24 +53,30 @@ public class ServerUpload extends Thread{
 		}
 
 		DataOutputStream out;
+		DataInputStream in;
 		try {
 			out = new DataOutputStream(_uploadSoc.getOutputStream());
-			DataInputStream in;
 			in = new DataInputStream(_uploadSoc.getInputStream());
-
+			//System.out.println("Initializing");
 		
-			byte[] tempIn = new byte[30];
-
+			byte[] tempIn = new byte[32];
+			
 			in.read(tempIn);
-
+			
+			System.out.println("read data");
 			long t0 = new Date().getTime();
 			while ((new Date().getTime() - t0) < (10 * 60 * 1000))
 			{
+				
 				HTTPGetMessage gotMessage = new HTTPGetMessage(tempIn);
 				if (gotMessage.isGetMessage())
 				{
+
+					byte[] request = new byte[1024];
 					_fileNum = gotMessage.getRequestNum();
 					_fileName = gotMessage.getRequestName();
+					in.read(request);
+					gotMessage = new HTTPGetMessage(request);
 					_downIP = gotMessage.getIPString();
 					_downPort = gotMessage.getPortNum();
 					if (_uploadSoc.getInetAddress().toString().split("/")[1]
@@ -76,15 +91,19 @@ public class ServerUpload extends Thread{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					
 						InputStream inFile;
 						try {
 							int byteread = 0;
 							while(byteread != -1)
 							{
-								byte[] tempbytes = new byte[1000];
+								byte[] tempbytes = new byte[20000];
 								inFile = new FileInputStream(file[0]);
-								byteread = inFile.read(tempbytes);
+								try {
+									byteread = inFile.read(tempbytes);
+								} catch (SocketException e1) {
+									_uploadSoc.close();
+									continue;
+								}
 								out.write(tempbytes);
 							}
 						} catch (Exception e1) {
@@ -96,5 +115,6 @@ public class ServerUpload extends Thread{
 		} catch(Exception e2) {
 			e2.getStackTrace();
 		}
+	}
 	}
 }

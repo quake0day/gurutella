@@ -36,7 +36,7 @@ public class HTTPGetMessage {
 	
 	public boolean isGetMessage()	//Server
 	{
-		if (_messagePieces[0].split(" ")[0] == "Get")
+		if (_messagePieces[0].split(" ")[0].equals("GET"))
 			return true;
 		else 
 			return false;
@@ -54,12 +54,12 @@ public class HTTPGetMessage {
 	
 	public String getIPString()	//Server
 	{
-		return _messagePieces[2].split(":")[1].trim();
+		return _messagePieces[1].split(":")[1].trim();
 	}
 	
 	public int getPortNum()	//Server
 	{
-		return Integer.parseInt(_messagePieces[2].split(":")[2]);
+		return Integer.parseInt(_messagePieces[1].split(":")[2]);
 	}
 	
 	public byte[] getMessage()	//Client

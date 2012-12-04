@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -39,17 +40,17 @@ public class simpella /*extends Thread*/{
             tcpPort1 = Integer.parseInt(args[0]);
             tcpPort2 = Integer.parseInt(args[1]);
             if(tcpPort1 < 0 && tcpPort1 > 60000 && tcpPort2 < 0 && tcpPort2 > 60000){
-                System.err.println("Error when try to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
+                System.err.println("Error when trying to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
                 System.exit(1);
             }
             else if (tcpPort1 == tcpPort2){
-                System.err.println("Error when try to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
+                System.err.println("Error when trying to listen to port1:"+tcpPort1+" and port2:"+tcpPort2);
                 System.exit(1);
             }
         }
         else
         {
-            System.out.println("Usage: java Echoer <tcp-port> <udp-port>");
+            System.out.println("Usage: java simpella <tcp-port> <udp-port>");
         }
 
         showWelcomeInfo(tcpPort1,tcpPort2);
@@ -60,15 +61,29 @@ public class simpella /*extends Thread*/{
         _networkServerList = new NetworkServerList();
         _mnl = new MonitorNetwork();
         _qrl = new QueryResultList();
+        ServerSocket cmdServer = null;
+        ServerSocket datServer = null;
+        
+        try {
+        	cmdServer = new ServerSocket(10025);
+        	datServer = new ServerSocket(tcpPort2);
+        } catch (IOException e) {
+            System.out.println("You're using a port that cannot Establish TCP connection, program halt...");
+            System.exit(1);
+        }
+        
         //TCPServer thread start
-        Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList);
-        _tcpServer.start();
+        Tcpserver _tcpServer = new Tcpserver(cmdServer, 10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList);
+        _tcpServer.start();        
+       // @SuppressWarnings("resource")
+		Thread testD = new ServerUpload(datServer, tcpPort2, _fileList);
+		testD.start();
         new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl);
+
         //threadPool.submit(new Tcpserver(10025,_clients));
         // download port
         //threadPool.submit(new Tcpserver(tcpPort2,_clients));
     }
-    
     public static void showWelcomeInfo(int tcpPort1,int tcpPort2){
         boolean usePublicDNS = false;
         try {

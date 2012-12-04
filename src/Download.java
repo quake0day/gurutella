@@ -1,9 +1,12 @@
 import java.io.DataInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * 
@@ -19,23 +22,22 @@ public class Download extends Thread{
 	private QueryResultList _qL;
 	private QueryResult _qR = null;
 	private DownloadList _dL;
+	private FileInfoList _fileList;
 
-	public Download(int n, int port, QueryResultList QL, DownloadList dL)
+	public Download(int n, int port, QueryResultList QL, DownloadList dL, FileInfoList fl)
 	{
 		_fileNo = n;
 		_qL = QL;
 		_dL = dL;
 		_downPort = port;
+		_fileList = fl;
 	}
 	
 	public void run()
 	{
+		_qR = _qL.getDownload(_fileNo);
 		if (_qL.getDownload(_fileNo) != null)
-		{
-			_qR = _qL.getDownload(_fileNo);
-			String _fileName = _qR.getFileName();
-			String IPAdd = _qR.getIP().toString().split("/")[1] + ":" + _qR.getDownloadPort();
-			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
+		{			
 			Socket soc4Down = null;
 			try {
 				soc4Down = new Socket(_qR.getIP(), _downPort);
@@ -43,6 +45,11 @@ public class Download extends Thread{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			String _fileName = _qR.getFileName();
+			String IPAdd = soc4Down.getLocalAddress().toString().split("/")[1] + ":" + _qR.getDownloadPort();
+			byte[] b = new HTTPGetMessage(_fileNo, _fileName, IPAdd).getMessage();
+
+			//System.out.println("IP\t" + _qR.getIP());
 			
 			try {
 				DataOutputStream out = new DataOutputStream(soc4Down.getOutputStream());
@@ -51,13 +58,22 @@ public class Download extends Thread{
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (NullPointerException e2) {
+				System.out.println("Unsuccessful download request...Sorry");
+				return;
 			}
-			
+
 			try {
 				int size = -1;
 				DataInputStream in = new DataInputStream(soc4Down.getInputStream());
 				byte[] line1 = new byte[32];	//size of fail massage
-				in.read(line1);
+				try {
+					in.read(line1);
+				} catch (SocketException e4) {
+					System.out.println("\rDownload " + _qR.getFileName() + "is terminated..");
+					return;
+				}
+				System.out.println("responsed");
 				if (new HTTPFailMessage(line1).isFailMessage())
 				{
 					System.out.println(MyConstants.STATUS_503_queryFail);
@@ -68,7 +84,7 @@ public class Download extends Thread{
 					if (new HTTPResponseMessage(line1).isResponse())
 					{
 						int i = 0;
-						byte[] line2 = new byte[100];
+						byte[] line2 = new byte[400];
 						byte[] data;
 						in.read(line2);
 						for (byte t: line2)
@@ -97,6 +113,11 @@ public class Download extends Thread{
 							storage.addData(tempdata, dataLength);
 							dataLength = in.read(tempdata);
 						}
+						FileOutputStream fin = new FileOutputStream(
+								_fileList.getAbsolutePath() + "\\" 
+										+ _qR.getFileName());
+						
+						fin.write(storage.getByte());
 						storage.setEnd();
 					}
 					System.out.println("Unexpected HTTP Response received! Sorry.");
