@@ -108,21 +108,35 @@ public class Download extends Thread{
 						
 						System.out.print("Downloading '" + _qR.getFileName() + "' ...");
 						
-						System.out.println("\n");
-						byte[] tempdata = new byte[MyConstants.MAX_BUFFER_DOWNLOAD];	//size <= real size
+						System.out.println("");
+						byte[] tempdata = null;
+						if(size > MyConstants.MAX_BUFFER_DOWNLOAD){
+							tempdata = new byte[MyConstants.MAX_BUFFER_DOWNLOAD];	//size <= real size
+						}
+						else{
+							tempdata = new byte[size];
+						}
 						DownloadStorage storage = new DownloadStorage(_qR);
 						_dL.add2DownList(storage);
 						int dataLength = in.read(tempdata);
-						while(dataLength != -1)
-						{
+						if(dataLength == size){
 							storage.addData(tempdata, dataLength);
-							dataLength = in.read(tempdata);
+						}
+						else{
+							int cacheLength = dataLength;
+							while(cacheLength < size)
+							{
+								storage.addData(tempdata, dataLength);
+								dataLength = in.read(tempdata);
+								cacheLength += dataLength;
+							}
 						}
 						FileOutputStream fin = new FileOutputStream(
 								_fileList.getAbsolutePath() + "\\" 
 										+ _qR.getFileName());
 						
 						fin.write(storage.getByte());
+						fin.close();
 						storage.setEnd();
 					}
 					System.out.println("Unexpected HTTP Response received! Sorry.");
