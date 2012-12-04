@@ -233,14 +233,13 @@ public class Monitor {
                 		    System.out.println("Please enter a correct file number");
                 		    downloadAble = false;
                 		}
-                		
                 	}
                 	if(downloadAble == false){
                 		System.out.println("Cannot download target file, try again.");
                 	}
                 	if(downloadAble == true){
                 		int num = Integer.parseInt(command[1]);
-                		Thread download = new Download(num, tcpPort2, _qrl, _downList);
+                		Thread download = new Download(num, tcpPort2, _qrl, _downList, _fileList);
                 		download.start();
                 		long t0 = new Date().getTime();
                 		while(new Date().getTime() - t0 < 1000)

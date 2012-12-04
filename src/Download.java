@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -19,13 +20,15 @@ public class Download extends Thread{
 	private QueryResultList _qL;
 	private QueryResult _qR = null;
 	private DownloadList _dL;
+	private FileInfoList _fileList;
 
-	public Download(int n, int port, QueryResultList QL, DownloadList dL)
+	public Download(int n, int port, QueryResultList QL, DownloadList dL, FileInfoList fl)
 	{
 		_fileNo = n;
 		_qL = QL;
 		_dL = dL;
 		_downPort = port;
+		_fileList = fl;
 	}
 	
 	public void run()
@@ -97,6 +100,11 @@ public class Download extends Thread{
 							storage.addData(tempdata, dataLength);
 							dataLength = in.read(tempdata);
 						}
+						FileOutputStream fin = new FileOutputStream(
+								_fileList.getAbsolutePath() + "\\" 
+										+ _qR.getFileName());
+						
+						fin.write(storage.getByte());
 						storage.setEnd();
 					}
 					System.out.println("Unexpected HTTP Response received! Sorry.");
