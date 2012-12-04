@@ -280,7 +280,7 @@ public class Connect extends Thread{
                             String nQueryString = new String(queryStringtrim);
                             System.out.println("Query:"+nQueryString);
                             // add Query to Monitor the whole network
-                            _mnl.saveQuery(nQueryString);
+                            //_mnl.saveQuery(nQueryString);
 
                             
                             //ByteBuffer bc = ByteBuffer.wrap(queryString);

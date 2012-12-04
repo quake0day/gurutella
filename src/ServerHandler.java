@@ -23,7 +23,6 @@ public class ServerHandler extends Thread{
     PrintWriter _out2Client;
     MessageIDList _idList;
     FileInfoList _fList;
-    MonitorNetwork _mnl;
     InetAddress _IP;
     int _port;
     int _downPort;
@@ -32,14 +31,13 @@ public class ServerHandler extends Thread{
 
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
-            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList, MonitorNetwork mnl)
+            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork _mnl,QueryResultList qrl)
     {
         _cInfo = cInfo;
         _serverSocThread = serverSoc;
         _idList = idList;
         _fList = fList;
         _port = tcpPort;
-        _mnl = mnl;
         _downPort = tcpDownload;
         _IP = IP;
         _tempClientIndex = _cInfo.size();
@@ -157,10 +155,6 @@ public class ServerHandler extends Thread{
 
                                     String nQueryString = new String(queryStringtrim);
                                     System.out.println("Query:"+nQueryString);
-                                    // add Query to Monitor the whole network
-                                    _mnl.saveQuery(nQueryString);
-
-                                    
                                     //ByteBuffer bc = ByteBuffer.wrap(queryString);
 
                                     //String queryString = 
@@ -235,17 +229,6 @@ public class ServerHandler extends Thread{
             }
     }
 }
-		//Create additional threads from ThreadPool 
-		//for the single branch thread of TCPServer declared in class Simpella 
-	    
-	    /*public boolean checkMessagePacketValidation(byte[] data,int MessageLength){
-	    	// check if length is larger than 22
-	    	if(MessageLength < 22){
-	    		return false;
-	    	}
-	    	else
-	    		return true;*/
-
 //Create additional threads from ThreadPool 
 //for the single branch thread of TCPServer declared in class Simpella 
 
@@ -256,4 +239,3 @@ return false;
 }
 else
 return true;*/
-
