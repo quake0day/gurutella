@@ -26,6 +26,11 @@ public class DownloadStorage {
 		return _data.length;
 	}
 	
+	public byte[] getByte()
+	{
+		return _data;
+	}
+	
 	public boolean isQuery(QueryResult qr)
 	{
 		if(_qR == qr)
