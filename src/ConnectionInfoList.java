@@ -124,8 +124,14 @@ public synchronized void remove(int connectionID) {
 
 public synchronized void remove(int type, Socket vicSocket){
     int vic_index;
+    String IP = vicSocket.getInetAddress().getHostAddress();
+    String Port = ":"+vicSocket.getPort();
     vic_index = _connections.indexOf(vicSocket);
+    try{
     _connections.remove(vic_index);
+    } catch (Exception e){
+    	System.out.println("The connection with " + IP +Port+" is down...");
+    }
 }
 
 public synchronized Socket getSocket(String ip)

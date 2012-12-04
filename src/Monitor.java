@@ -85,6 +85,15 @@ public class Monitor {
                     // see Info.java for more detail
                     new Scan(_fileList);			 	   
                 }
+                /////////////////info command////////////////////   
+                else if (command[0].equalsIgnoreCase("info")){
+                    if(command.length != 2){
+                        System.out.println("Usage:info [cdhnqs]");
+                    }
+                    Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    showRes.start();
+                	
+                }
                 /////////////////open command//////////////////////
                 else if (command[0].equalsIgnoreCase("open"))
                 {
