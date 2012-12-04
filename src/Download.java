@@ -89,7 +89,7 @@ public class Download extends Thread{
 						int i = 0;
 						byte[] line2 = new byte[400];
 						byte[] data;
-						in.read(line2);
+						int pLength = in.read(line2);
 						for (byte t: line2)
 						{
 							i++;
@@ -97,9 +97,9 @@ public class Download extends Thread{
 								break;
 						}
 						
-						byte[] line =new byte[32 + i];
-						System.arraycopy(line, 0, line1, 0, 32);
-						System.arraycopy(line, 32, line2, 0, i);
+						byte[] line =new byte[32 + pLength];
+						System.arraycopy(line1, 0, line, 0, 32);
+						System.arraycopy(line2, 0, line, 32, pLength);
 						HTTPResponseMessage resp = new HTTPResponseMessage(line);
 						System.out.println(MyConstants.STATUS_200_DownLoadAble);
 						size = resp.getSize();
