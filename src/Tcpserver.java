@@ -34,6 +34,7 @@ public class Tcpserver extends Thread
         this.clients = client;
         this._routingTable = rt;
         this._fileList = filelist;
+        this._qrl = qrl;
         socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
         try{
             _serverSK = new ServerSocket(port);   
