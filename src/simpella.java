@@ -61,7 +61,7 @@ public class simpella /*extends Thread*/{
         _mnl = new MonitorNetwork();
         _qrl = new QueryResultList();
         //TCPServer thread start
-        Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl);
+        Tcpserver _tcpServer = new Tcpserver(10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList);
         _tcpServer.start();
         new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl);
         //threadPool.submit(new Tcpserver(10025,_clients));

@@ -25,6 +25,7 @@ public class ServerHandler extends Thread{
     MessageIDList _idList;
     FileInfoList _fList;
     QueryResultList _qrl;
+    NetworkServerList _nsl;
     InetAddress _IP;
     int _port;
     int _downPort;
@@ -33,7 +34,7 @@ public class ServerHandler extends Thread{
 
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
-            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork _mnl,QueryResultList qrl)
+            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork _mnl,QueryResultList qrl,NetworkServerList nsl)
     {
         _cInfo = cInfo;
         _serverSocThread = serverSoc;
@@ -41,6 +42,7 @@ public class ServerHandler extends Thread{
         _fList = fList;
         _port = tcpPort;
         _qrl = qrl;
+        _nsl = nsl;
         _downPort = tcpDownload;
         _IP = IP;
         _tempClientIndex = _cInfo.size();
@@ -141,17 +143,68 @@ public class ServerHandler extends Thread{
                                         DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
                                         outToServer.write(pong);
                                     }
+                                    /*
                                     else
                                     {
                                         _isAlive = false;
                                         break;
                                     }
+                                    */
 
                                 }
                                 else if (messageType == (byte) 0x01){
                                     //byte[] data = new byte[14];
                                     //in2Server.read(data);
                                     System.out.println("server PONG MESSAGE");
+                                    System.out.println("toclient PONG");
+                                    if(_idList.checkID(mID) == false) { 
+                                        // I'm the one who send ping initially
+                                        byte[] payload = data;
+                                        //System.arraycopy(data,23,payload,0,14);
+                                        System.out.println("copy payload");
+                                        byte[] port = new byte[4];
+                                        byte[] IPaddr = new byte[4];
+                                        byte[] fileNum = new byte[4];
+                                        byte[] fileSize = new byte[4];
+                                        System.arraycopy(payload,0,port,2, 2);
+                                        System.arraycopy(payload,2,IPaddr,0,4);
+                                        System.arraycopy(payload,6,fileNum,0,4);
+                                        System.arraycopy(payload,10,fileSize,0,4);
+                                        /*public ServerInfo(int port, InetAddress IP, int fileNum,
+                                          double fileSize) {*/
+                                        ByteBuffer bb = ByteBuffer.wrap(port);
+                                        IntBuffer ib = bb.asIntBuffer();
+                                        int nPort = ib.get(0);
+                                        InetAddress nIP = null;
+                                        try {
+                                            nIP = InetAddress.getByAddress(IPaddr);
+                                            System.out.println(nIP.getHostAddress());
+                                        } catch (UnknownHostException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                            System.out.println("cannot get IP addr string from PONG");
+                                        }
+                                        ByteBuffer bc = ByteBuffer.wrap(fileNum);
+                                        int nFileNum = bc.getInt();
+                                        ByteBuffer bd = ByteBuffer.wrap(fileSize);
+                                        int nfileSize = bd.getInt();
+                                        if(nIP != null){
+                                            ServerInfo nServerInfo = new ServerInfo(nPort,nIP,nFileNum,nfileSize);
+                                            _nsl.addServer(nServerInfo);
+                                        }
+                                    }
+                                    else{ // I'm the one who send ping when I rec ping from others
+                                        System.out.println("I'm the one who send ping when I rec ping from others");
+                                        IDRecorder idr = _idList.getRecord(mID);
+                                        Socket preSoc = idr.getSocket();
+                                        try {
+                                            DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
+                                            outToServer.write(data); // send data to the prev node
+                                        } catch (IOException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        } 
+                                    }
                                 }
                                 else if (messageType == (byte)0x80){
                                     System.out.println("QUERY MESSAGE");
