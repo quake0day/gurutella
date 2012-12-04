@@ -199,6 +199,48 @@ public class Connect extends Thread{
                     if((int)(TTL+Hops) >=0 && (int)(TTL+Hops) <= 15) {
                         if(messageType == (byte)0x00){
                             System.out.println("toclient PING");
+                            System.out.println("toclient PING");
+
+                            boolean hasSameMessageID = false;
+                            hasSameMessageID = _idList.checkID(mID);
+                            if(hasSameMessageID == false){
+                                _idList.addRecord(new IDRecorder(mID, newEstablishedSocket));
+
+                                Update sendNext = new Update(_cInfo,newEstablishedSocket
+                                        ,(int)TTL-1,(int)Hops+1, _idList);
+                                sendNext.start();
+
+                                // reply with PONG: REVISED
+                                MessageContainer pongHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
+                                pongHitContainer.setType(2);	//Pong Message
+                                pongHitContainer.setTTL(7);
+                                pongHitContainer.setHops(0);
+                                pongHitContainer.setPayloadLength(14);
+                                PongPayload payload = null;
+								try {
+									payload = new PongPayload(tcpport, _IP, _fList.getFileNum(), _fList.getFileSize());
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+                                pongHitContainer.addPayLoad(payload.getPayLoad());
+
+                                byte [] pong = new byte[MyConstants.MAX_PAYLOAD_LENGTH];
+                                pong = pongHitContainer.convertToByte();
+                                DataOutputStream outToServer = null;
+								try {
+									outToServer = new DataOutputStream(newEstablishedSocket.getOutputStream());
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+                                try {
+									outToServer.write(pong);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+                            }
                         }
                         else if(messageType == (byte)0x01){
                             System.out.println("toclient PONG");
