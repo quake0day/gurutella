@@ -93,6 +93,22 @@ public class FileInfoList {
         }
         return _qrs;
     }
+    
+    public ArrayList <QueryResultSet> queryAllFiles(){
+        // clear the previous result
+        _qrs.clear();
+        Iterator <File> ie = _sharedFile.iterator();
+        while(ie.hasNext()){
+                File fileIterNew = ie.next(); //test
+                String fileName = fileIterNew.getName().toString().trim();
+                    int fileSize = (int)fileIterNew.length(); // !! may loss some info
+                    int fileIndex = _sharedFile.indexOf(fileIterNew);
+                    QueryResultSet qrs = new QueryResultSet(fileIndex,fileSize,fileName);
+                    _qrs.add(qrs);
+
+        }
+        return _qrs;
+    }
     public int getQRSsize(){
         return _qrs.size();
     }

@@ -35,6 +35,7 @@ public class ServerHandler extends Thread{
     		int _downPort;
     		int _tempClientIndex;
     		boolean _isAlive = true;
+    		boolean queryAll = false;
     private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
 
     		MonitorNetwork _mnl;
@@ -243,6 +244,7 @@ public class ServerHandler extends Thread{
                                     _mnl.saveQuery(nQueryString);
                                     if((int) TTL == 1 && (int) Hops == 0 && nQueryString.equals("    ")){
                                     	System.out.println("catch INDEX ALL QUERY!!");
+                                    	queryAll = true;
                                     }
                                     //String queryString = 
                                     if (hasSameMessageID == false){
@@ -253,8 +255,16 @@ public class ServerHandler extends Thread{
                                         sendNext.start();
 
                                         // reply with Query Hit
-                                        ArrayList<QueryResultSet> _qrs = _fList.queryFile(nQueryString);
+                                        ArrayList<QueryResultSet> _qrs;
+                                        if(queryAll == true){
+                                        	_qrs = _fList.queryAllFiles();
+                                        }
+                                        else
+                                        {
+                                        	_qrs = _fList.queryFile(nQueryString);
+                                        }
                                         int _NumberOfHits = _qrs.size();
+
                                         Iterator<QueryResultSet> qrsIter = _qrs.iterator();
                                         while(qrsIter.hasNext()){ // create multiple query hit packet
                                             QueryResultSet qrs = qrsIter.next();
