@@ -108,19 +108,17 @@ public class Query extends Thread {
                 MessageContainer queryContainer = new MessageContainer();//use in this way
                 queryContainer.setID(_idNum);							//would be more readable
                if(indexAllFiles == true){
-            	   byte[] payload_1 = {0x00,0x00,0x32,0x32,0x32,0x32,0x00};
-                   queryContainer.setPayloadLength(7);						//see comment in 
                    queryContainer.setTTL(1);								//MessageContainer.java
                    queryContainer.setHops(0);
-                   queryContainer.addPayLoad(payload_1);
                }
                else if(indexAllFiles == false){
-                queryContainer.setPayloadLength(payloadLength);						//see comment in 
                 queryContainer.setTTL(TTL);								//MessageContainer.java
                 queryContainer.setHops(Hops);
-                queryContainer.addPayLoad(payload);
                }
+                queryContainer.setPayloadLength(payloadLength);						//see comment in 
                 queryContainer.setType(3);
+                queryContainer.addPayLoad(payload);
+
 
                 query = queryContainer.convertToByte();						
                 while(iter.hasNext()){									
