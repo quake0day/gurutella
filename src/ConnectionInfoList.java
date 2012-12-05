@@ -98,6 +98,16 @@ public ConnectionInfoList(){
     _connections = new ArrayList<ConnectionInfo> ();
 }
 
+public boolean containsConn(InetAddress ip)
+{
+	for (ConnectionInfo cI: _connections)
+	{
+		if (cI.getIP().equals(ip))
+			return true;
+	}
+	return false;
+}
+
 public synchronized void addConnection(ConnectionInfo c) {
     // TODO Auto-generated method stub
     _connections.add(c);
@@ -128,7 +138,7 @@ public synchronized void remove(int type, Socket vicSocket){
     String Port = ":"+vicSocket.getPort();
     vic_index = _connections.indexOf(vicSocket);
     try{
-    _connections.remove(vic_index);
+    	_connections.remove(vic_index);
     } catch (Exception e){
     	System.out.println("The connection with " + IP +Port+" is down...");
     }

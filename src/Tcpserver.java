@@ -58,6 +58,7 @@ public class Tcpserver extends Thread
                 listenSocket = _serverSK.accept();
                 threadPool.submit(new ServerHandler(listenSocket, clients,
                             _routingTable, port, _downPort, IP, _fileList,_mnl,_qrl,_nsl,_k));
+                System.out.println(listenSocket.getInetAddress());
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.swing.Timer;
+
 
 
 
@@ -37,9 +39,13 @@ public class Monitor {
     private InetAddress IP;
     private GUID _k;
     private DownloadList _downList;
+    
+    private ConnectionMaintenance _connectionM;
 
     @SuppressWarnings("deprecation")
-	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP,QueryResultList qrl,GUID k ) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl
+			, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP
+			,QueryResultList qrl,GUID k ) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
@@ -55,7 +61,11 @@ public class Monitor {
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
         String userInput;
-
+        _connectionM = new ConnectionMaintenance(IP, tcpPort2, this, _client, _routingTable
+        		, _nsl, _qrl, _fileList, _mnl, _k);
+        Timer connectionTimer = new Timer(4000, _connectionM);
+       // connectionTimer.start();
+        
         while(!isQuit)
         { 
         	/*ArrayList<DownloadStorage> finishOnes = _downList.findEndDown();
@@ -228,8 +238,11 @@ public class Monitor {
                                     //Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
                                     if(_client.size() < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
                                     	/*InetAddress IP, FileInfoList fList, MonitorNetwork mnl*/
-                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,tcpPort2,_client,_routingTable,_nsl,_qrl,IP,_fileList,_mnl,_k);
-                                        connect.start();
+                                        //Thread connect = new Connect(targetIPAddress,targetTCPPort
+                                    	//,tcpPort2,_client,_routingTable,_nsl,_qrl,IP,_fileList,_mnl,_k);
+                                        //connect.start();
+                                    	createConn(targetIPAddress,targetTCPPort,tcpPort2,_client,_routingTable
+                                    			,_nsl,_qrl,IP,_fileList,_mnl,_k);
                                     }
                                     else{
                                         System.out.println(MyConstants.STATUS_OUTGOING_REACHED_LIMIT);
@@ -516,5 +529,18 @@ public class Monitor {
         }
         stdIn.close();
         System.exit(1);
+    }
+    
+    public boolean createConn(String IP, String port1, int port2, ConnectionInfoList c, MessageIDList m, NetworkServerList n, QueryResultList q, InetAddress myIP,FileInfoList fileList,MonitorNetwork mnl, GUID k)
+    {
+    	Thread connect;
+		try {
+			connect = new Connect(IP,port1,port2,c,m,n,q,myIP,fileList,mnl,k);
+			connect.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
     }
 }
