@@ -337,9 +337,11 @@ public class Connect extends Thread{
                             // add Query to Monitor the whole network
                             _mnl.saveQuery(nQueryString);
 
+                            boolean queryAll = false;
 
                             if((int) TTL == 1 && (int) Hops == 0 && nQueryString.equals("    ")){
                             	System.out.println("catch INDEX ALL QUERY!!");
+                            	queryAll = true;
                             }
                             //ByteBuffer bc = ByteBuffer.wrap(queryString);
 
@@ -352,7 +354,14 @@ public class Connect extends Thread{
                                 sendNext.start();
 
                                 // reply with Query Hit
-                                ArrayList<QueryResultSet> _qrs = _fList.queryFile(nQueryString);
+                                ArrayList<QueryResultSet> _qrs;
+								if(queryAll == true){
+                                	_qrs = _fList.queryAllFiles();
+                                }
+                                else
+                                {
+                                	_qrs = _fList.queryFile(nQueryString);
+                                }
                                 int _NumberOfHits = _qrs.size();
                                 Iterator<QueryResultSet> qrsIter = _qrs.iterator();
                                 while(qrsIter.hasNext()){ // create multiple query hit packet

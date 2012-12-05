@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 
 
@@ -120,9 +121,60 @@ public class Monitor {
                     		//ConnectionInfoList client, Socket forbiddenSocket, MessageIDList idList, boolean indexAllFiles
                             Thread query2 = new Thread(new Query(_client,rt,true));
                             query2.start();
+                            Thread.sleep(2000);
+                    		Iterator<Integer> qrlIter = qrl.getItertor();
+                    		//int i = 1;
+                    		long totalSize = 0;
+                    		int totalFiles = 0;
+                    		HashSet<String> hs = new HashSet<String>();
+                    		while(qrlIter.hasNext()){
+                    			 Integer resID = qrlIter.next();
+                    			 QueryResult res = qrl.getResult(resID);
+                    			 totalFiles +=1;
+                    			 totalSize +=res._fileSize;
+                    			 hs.add(res._IP.getHostAddress());
+                    		}
+
+                    		int totalHost = hs.size()+1;
+                    		String unit1 = " ";
+                    		if(totalFiles > 1000){
+                    			totalFiles = totalFiles /1000;
+                    			unit1 = "K";
+                    		}
+                    		if(totalFiles > 1000){
+                    			totalFiles = totalFiles /1000;
+                    			unit1 = "M";
+                    		}
+                    		if(totalFiles > 1000){
+                    			totalFiles = totalFiles /1000;
+                    			unit1 = "G";
+                    		}
+                    		if(totalFiles > 1000){
+                    			totalFiles = totalFiles /1000;
+                    			unit1 = "T";
+                    		}
+                    		String unit = "B";
+                    		if(totalSize > 1000){
+                    			totalSize = totalSize /1000;
+                    			unit = "KB";
+                    		}
+                    		if(totalSize > 1000){
+                    			totalSize = totalSize /1000;
+                    			unit = "MB";
+                    		}
+                    		if(totalSize > 1000){
+                    			totalSize = totalSize /1000;
+                    			unit = "G";
+                    		}
+                    		if(totalSize > 1000){
+                    			totalSize = totalSize /1000;
+                    			unit = "T";
+                    		}
+
                     		System.out.println("HOST STATS:");
                     		System.out.println("-----------");
-                    		
+                    		System.out.println("Hosts:"+totalHost+" Files:"+totalFiles+unit1+" Size:"+totalSize+unit);
+                    		//qrl.clearNull();
                     	}
                     	else if (command[1].equalsIgnoreCase("n"))
                     	{
@@ -140,8 +192,8 @@ public class Monitor {
                     	{
                     		System.out.println("Usage:info [c|d|h|n|q|s]");
                     	}
-                    	Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
-                    	showRes.start();
+                    	//Thread showRes = new Thread(new ShowQueryRes(_qrl,queryString,true));
+                    	//showRes.start();
                     }
                 	
                 }

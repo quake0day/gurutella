@@ -54,13 +54,25 @@ public class QueryResultList {
 		qrl.clear();
 		resTable = new Hashtable<Integer, QueryResult>();
 	}
-	
+
 	public synchronized void clear(int fileNO){
 		if(fileNO >= 1){
 		//fileNO = qrl.size() - fileNO;
 		int i = qrl.get(fileNO-1);
 		qrl.remove(fileNO-1);
 		resTable.remove(i);
+		}
+	}
+	public synchronized void clearNull(){
+		try{
+		for(int i  : qrl){
+			if(resTable.get(i).queryString == null){
+				resTable.remove(i);
+				qrl.remove(i);
+			}
+		}
+		}catch (Exception e){
+			
 		}
 	}
 	public synchronized int length(){
