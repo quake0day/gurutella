@@ -1,3 +1,9 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
 /**
  * 
  */
@@ -18,7 +24,7 @@ public class DownloadStorage {
 		//_data = new byte[];
 	}
 	
-	public void addData(byte[] data, int size)
+	public void addData(byte[] data, int size) // small file
 	{
 
 		byte[] cache = _data;
@@ -31,6 +37,25 @@ public class DownloadStorage {
 		}
 		_totalLength += size;
 	}
+	
+	public void addData(byte[] data, int size, String hashString, FileInfoList _fileList) throws 
+IOException
+	{
+		/*
+		FileOutputStream fin = new FileOutputStream(
+				_fileList.getAbsolutePath() + "//" 
+						+ hashString);
+						*/
+		
+		RandomAccessFile randomFile = new RandomAccessFile(_fileList.getAbsolutePath() + "//" +hashString, "rw");  
+		long fileLength = randomFile.length();  
+		randomFile.seek(fileLength); 
+		randomFile.write(data);
+		randomFile.close();  
+		_data = new byte[_totalLength + size];
+		_totalLength += size;
+	}
+	
 	
 	public int getDownloadSize()
 	{

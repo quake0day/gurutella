@@ -1,6 +1,7 @@
 import java.io.DataInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -119,26 +120,30 @@ public class Download extends Thread{
 						DownloadStorage storage = new DownloadStorage(_qR);
 						_dL.add2DownList(storage);
 						int dataLength = in.read(tempdata);
-						if(dataLength == size){
+						if(dataLength == size){ // small files
 							storage.addData(tempdata, dataLength);
+							FileOutputStream fin = new FileOutputStream(
+									_fileList.getAbsolutePath() + "//" 
+											+ _qR.getFileName());
+							
+							fin.write(storage.getByte());
+							fin.close();
 						}
 						else{
 							int cacheLength = dataLength;
+							String hashString = (_fileName+IPAdd).hashCode()+".tmp";
 							while(cacheLength < size)
 							{
-								storage.addData(tempdata, dataLength);
+								storage.addData(tempdata, dataLength,hashString,_fileList);
 								dataLength = in.read(tempdata);
 								cacheLength += dataLength;
 							}
+							File file = new File(_fileList.getAbsolutePath() + "//" +hashString);
+							file.renameTo(new File(_fileList.getAbsolutePath() + "//" +_qR.getFileName()));
 						}
-						System.out.println(_fileList.getAbsolutePath());
-						System.out.println(_qR.getFileName());
-						FileOutputStream fin = new FileOutputStream(
-								_fileList.getAbsolutePath() + "//" 
-										+ _qR.getFileName());
-						
-						fin.write(storage.getByte());
-						fin.close();
+						//System.out.println(_fileList.getAbsolutePath());
+						//System.out.println(_qR.getFileName());
+
 						storage.setEnd();
 					}
 					else
