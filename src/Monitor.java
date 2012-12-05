@@ -33,10 +33,11 @@ public class Monitor {
     private MonitorNetwork _mnl;
     private String queryString;
     private InetAddress IP;
+    private GUID _k;
     private DownloadList _downList;
 
     @SuppressWarnings("deprecation")
-	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP,QueryResultList qrl ) throws IOException, InterruptedException{
+	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP,QueryResultList qrl,GUID k ) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
@@ -45,6 +46,7 @@ public class Monitor {
         this._mnl = mnl; 
         this._routingTable = rt;
         this.IP = IP;
+        this._k = k;
         this._qrl = qrl;
         _downList = new DownloadList();
         //System.out.println("test");  
@@ -170,7 +172,7 @@ public class Monitor {
                                     //Thread connect = new Thread(new Connect(ipaddr,tcp,new echoer()));
                                     if(_client.size() < MyConstants.MAX_OUTGOING_CONNECTION_NUM){
                                     	/*InetAddress IP, FileInfoList fList, MonitorNetwork mnl*/
-                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,tcpPort2,_client,_routingTable,_nsl,_qrl,IP,_fileList,_mnl);
+                                        Thread connect = new Connect(targetIPAddress,targetTCPPort,tcpPort2,_client,_routingTable,_nsl,_qrl,IP,_fileList,_mnl,_k);
                                         connect.start();
                                     }
                                     else{

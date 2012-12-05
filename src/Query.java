@@ -29,6 +29,7 @@ public class Query extends Thread {
     PrintWriter outServer = null;
     DataOutputStream outToServer = null;
     private boolean isAbleToQuery = true;
+    private boolean indexAllFiles = false;
 
     public Query(String queryString, ConnectionInfoList client, MessageIDList idList){
         this.clients = client;
@@ -47,6 +48,16 @@ public class Query extends Thread {
         this._idList = idList;
             }
 
+    public Query(String queryString, ConnectionInfoList client, Socket forbiddenSocket,int TTL
+            , int Hops, MessageIDList idList, boolean indexAllFiles){
+        this.queryString = queryString;
+        this.clients = client;
+        this.forbiddenSocket = forbiddenSocket;
+        this.TTL = TTL;
+        this.Hops = Hops;
+        this._idList = idList;
+        this.indexAllFiles = indexAllFiles;
+            }
     public void run(){
         double j = 1;
         for(int i = 0; i < _idNum.length; i++)
@@ -97,11 +108,20 @@ public class Query extends Thread {
                 //System.arraycopy(src, srcPos, dest, destPos, length)
                 MessageContainer queryContainer = new MessageContainer();//use in this way
                 queryContainer.setID(_idNum);							//would be more readable
+               if(indexAllFiles == true){
+            	   byte[] payload_1 = {0x00,0x00,0x32,0x32,0x32,0x32,0x00};
+                   queryContainer.setPayloadLength(7);						//see comment in 
+                   queryContainer.setTTL(1);								//MessageContainer.java
+                   queryContainer.setHops(0);
+                   queryContainer.addPayLoad(payload_1);
+               }
+               else if(indexAllFiles == false){
                 queryContainer.setPayloadLength(payloadLength);						//see comment in 
                 queryContainer.setTTL(TTL);								//MessageContainer.java
                 queryContainer.setHops(Hops);
-                queryContainer.setType(3);
                 queryContainer.addPayLoad(payload);
+               }
+                queryContainer.setType(3);
 
                 query = queryContainer.convertToByte();						
                 while(iter.hasNext()){									

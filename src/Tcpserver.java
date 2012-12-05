@@ -24,9 +24,10 @@ public class Tcpserver extends Thread
     private QueryResultList _qrl;
     private int port;
     private int _downPort;
+    private GUID _k;
     private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
 
-    public Tcpserver (ServerSocket soc, int port, int dPort, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist,MonitorNetwork mnl,QueryResultList qrl,NetworkServerList nsl) throws IOException, InterruptedException
+    public Tcpserver (ServerSocket soc, int port, int dPort, ConnectionInfoList client,MessageIDList rt,InetAddress IP,FileInfoList filelist,MonitorNetwork mnl,QueryResultList qrl,NetworkServerList nsl,GUID k) throws IOException, InterruptedException
     {
         //set the max size of socket pool
         this.IP = IP;
@@ -38,6 +39,7 @@ public class Tcpserver extends Thread
         this._mnl = mnl;
         this.port = port;
         this._downPort = dPort;
+        this._k = k;
         socketArray = new Socket[MyConstants.MAX_THREAD_NUM];
         _serverSK = soc;
     }
@@ -55,7 +57,7 @@ public class Tcpserver extends Thread
             try {
                 listenSocket = _serverSK.accept();
                 threadPool.submit(new ServerHandler(listenSocket, clients,
-                            _routingTable, port, _downPort, IP, _fileList,_mnl,_qrl,_nsl));
+                            _routingTable, port, _downPort, IP, _fileList,_mnl,_qrl,_nsl,_k));
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();

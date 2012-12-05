@@ -30,6 +30,7 @@ public class ServerHandler extends Thread{
     		QueryResultList _qrl;
     		NetworkServerList _nsl;
     		InetAddress _IP;
+    		GUID _k;
     		int _port;
     		int _downPort;
     		int _tempClientIndex;
@@ -40,7 +41,7 @@ public class ServerHandler extends Thread{
 
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
-            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork mnl,QueryResultList qrl,NetworkServerList nsl)
+            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork mnl,QueryResultList qrl,NetworkServerList nsl,GUID k)
     {
         _cInfo = cInfo;
         _serverSocThread = serverSoc;
@@ -52,6 +53,7 @@ public class ServerHandler extends Thread{
         _mnl = mnl;
         _downPort = tcpDownload;
         _IP = IP;
+        _k = k;
         _tempClientIndex = _cInfo.size();
         //Thread downThread;
 		//downThread = new ServerUpload(_downPort, _fList);
@@ -239,6 +241,9 @@ public class ServerHandler extends Thread{
                                     //System.out.println("Query:"+nQueryString);
                                     //ByteBuffer bc = ByteBuffer.wrap(queryString);
                                     _mnl.saveQuery(nQueryString);
+                                    if((int) TTL == 1 && (int) Hops == 0 && nQueryString.equals("    ")){
+                                    	System.out.println("catch INDEX ALL QUERY!!");
+                                    }
                                     //String queryString = 
                                     if (hasSameMessageID == false){
                                         _idList.addRecord(new IDRecorder(mID, _serverSocThread));
@@ -258,7 +263,8 @@ public class ServerHandler extends Thread{
                                             queryHitContainer.setTTL((int)Hops+2);
                                             queryHitContainer.setHops(0);
                                             int Speed = 10000;
-                                            String serventID = "12j3l2j3ljlasjdfasdf";
+                                            //String serventID = "12j3l2j3ljlasjdfasdf";
+                                            String serventID = _k.get_GUID();
                                             //queryHitContainer.setPayloadLength(14);
                                             //int numberOfHits, int port, InetAddress IP, int Speed, String serventID
                                             QueryHitPayLoad queryPayLoad = new QueryHitPayLoad(_NumberOfHits,_downPort,_IP,Speed,qrs, serventID);
