@@ -134,8 +134,11 @@ public class Download extends Thread{
 							String hashString = (_fileName+IPAdd).hashCode()+".tmp";
 							while(cacheLength < size)
 							{
-								storage.addData(tempdata, dataLength,hashString,_fileList);
+								storage.addData(tempdata, size,hashString,_fileList);
 								dataLength = in.read(tempdata);
+								if(dataLength == -1){
+									break;
+								}
 								cacheLength += dataLength;
 							}
 							File file = new File(_fileList.getAbsolutePath() + "//" +hashString);

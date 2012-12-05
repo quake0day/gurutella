@@ -38,7 +38,7 @@ public class DownloadStorage {
 		_totalLength += size;
 	}
 	
-	public void addData(byte[] data, int size, String hashString, FileInfoList _fileList) throws 
+	public void addData(byte[] data, int FileTotalsize, String hashString, FileInfoList _fileList) throws 
 IOException
 	{
 		/*
@@ -46,14 +46,13 @@ IOException
 				_fileList.getAbsolutePath() + "//" 
 						+ hashString);
 						*/
-		
 		RandomAccessFile randomFile = new RandomAccessFile(_fileList.getAbsolutePath() + "//" +hashString, "rw");  
 		long fileLength = randomFile.length();  
 		randomFile.seek(fileLength); 
 		randomFile.write(data);
 		randomFile.close();  
-		_data = new byte[_totalLength + size];
-		_totalLength += size;
+		//_data = new byte[_totalLength + size];
+		_totalLength += data.length;
 	}
 	
 	
