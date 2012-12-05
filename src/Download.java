@@ -131,8 +131,10 @@ public class Download extends Thread{
 								cacheLength += dataLength;
 							}
 						}
+						System.out.println(_fileList.getAbsolutePath());
+						System.out.println(_qR.getFileName());
 						FileOutputStream fin = new FileOutputStream(
-								_fileList.getAbsolutePath() + "\\" 
+								_fileList.getAbsolutePath() + "//" 
 										+ _qR.getFileName());
 						
 						fin.write(storage.getByte());

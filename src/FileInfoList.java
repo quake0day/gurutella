@@ -37,6 +37,9 @@ public class FileInfoList {
     }
 
     public String getAbsolutePath(){
+    	if(absolutePath == null){
+    		return "./";
+    	}
         return absolutePath;
     }
 
