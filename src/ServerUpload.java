@@ -64,9 +64,9 @@ public class ServerUpload extends Thread{
 			in.read(tempIn);
 			
 			System.out.println("read data");
-			long t0 = new Date().getTime();
-			while ((new Date().getTime() - t0) < (10 * 60 * 1000))
-			{
+			//long t0 = new Date().getTime();
+			//while ((new Date().getTime() - t0) < (10 * 60 * 1000))
+			//{
 				
 				HTTPGetMessage gotMessage = new HTTPGetMessage(tempIn);
 				if (gotMessage.isGetMessage())
@@ -111,12 +111,16 @@ public class ServerUpload extends Thread{
 								out.write(tempbytes);
 								totalCount += byteread;
 							}
+
 						} catch (Exception e1) {
 							System.out.println("Wrong in reading uploading file!");
 						}
 					}
 				}
-			}
+			//}
+			//out.close();
+			//in.close();
+			//_uploadSoc.close();
 		} catch(Exception e2) {
 			e2.getStackTrace();
 		}
