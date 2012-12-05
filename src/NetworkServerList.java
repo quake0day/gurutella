@@ -20,6 +20,22 @@ public class NetworkServerList {
         // TODO Auto-generated constructor stub
         _networkServerList = new ArrayList<ServerInfo>();
     }
+    
+    public int size()
+    {
+    	return _networkServerList.size();
+    }
+    
+    public ServerInfo getServer(ConnectionInfoList cL)
+    {
+    	for(ServerInfo server: _networkServerList)
+    	{
+    		if(!cL.containsConn(server.getIP()))
+    			return server;
+    	}
+    	return null;
+    }
+    
     public synchronized void addServer(ServerInfo ser){
         //System.out.println(ser.getIP().getHostAddress());
         //System.out.println(ser.getPort());
@@ -34,5 +50,5 @@ public class NetworkServerList {
     public synchronized void clearAll(){
         _networkServerList.clear();
     }
-
+    
 }

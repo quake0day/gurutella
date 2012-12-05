@@ -21,6 +21,9 @@ public class QueryResultList {
 	private ArrayList<Integer> qrl;// list is some List of Strings
 	private String queryString;
 	private Hashtable<Integer, QueryResult> resTable;
+	int _singleQ = 0;
+	int _lastQ = 0;
+	
 	public QueryResultList() {
 		// TODO Auto-generated constructor stub
 		qrl = new ArrayList<Integer>();
@@ -40,6 +43,7 @@ public class QueryResultList {
 			qrl.remove(qrl.indexOf(e.ID));
 		}
 		qrl.add(e.ID);
+		_singleQ++;
 		resTable.put(e.ID, e);
 	}
 	public synchronized Iterator<Integer> getItertor(){
@@ -52,6 +56,7 @@ public class QueryResultList {
 	
 	public synchronized void clearAll(){
 		qrl.clear();
+		_singleQ = 0;
 		resTable = new Hashtable<Integer, QueryResult>();
 	}
 
@@ -60,6 +65,7 @@ public class QueryResultList {
 		//fileNO = qrl.size() - fileNO;
 		int i = qrl.get(fileNO-1);
 		qrl.remove(fileNO-1);
+		_singleQ--;
 		resTable.remove(i);
 		}
 	}
@@ -75,6 +81,16 @@ public class QueryResultList {
 			
 		}
 	}
+	public int getLastLength() //New added
+	{
+		return (_singleQ - _lastQ);
+	}
+	
+	public void updateToLastLength()	//New added
+	{
+		_lastQ = _singleQ;
+	}
+	
 	public synchronized int length(){
 		return qrl.size();
 	}
