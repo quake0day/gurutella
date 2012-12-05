@@ -96,7 +96,9 @@ public class ServerUpload extends Thread{
 						System.out.println("sending");
 						try {
 							int byteread = 0;
-							while(byteread != -1)
+							long totalCount = 0;
+							long fileLength = file.length();
+							while(totalCount < fileLength)
 							{
 								byte[] tempbytes = new byte[20000];
 								inFile = new FileInputStream(file);
@@ -107,6 +109,7 @@ public class ServerUpload extends Thread{
 									continue;
 								}
 								out.write(tempbytes);
+								totalCount += byteread;
 							}
 						} catch (Exception e1) {
 							System.out.println("Wrong in reading uploading file!");
