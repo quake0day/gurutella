@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -116,6 +117,9 @@ public class Monitor {
                     	}
                     	else if (command[1].equalsIgnoreCase("h"))
                     	{
+                    		//ConnectionInfoList client, Socket forbiddenSocket, MessageIDList idList, boolean indexAllFiles
+                            Thread query2 = new Thread(new Query(_client,rt,true));
+                            query2.start();
                     		System.out.println("HOST STATS:");
                     		System.out.println("-----------");
                     		

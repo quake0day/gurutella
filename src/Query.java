@@ -48,13 +48,12 @@ public class Query extends Thread {
         this._idList = idList;
             }
 
-    public Query(String queryString, ConnectionInfoList client, Socket forbiddenSocket,int TTL
-            , int Hops, MessageIDList idList, boolean indexAllFiles){
-        this.queryString = queryString;
+    public Query( ConnectionInfoList client, MessageIDList idList, boolean indexAllFiles){
+        this.queryString = "    ";
         this.clients = client;
-        this.forbiddenSocket = forbiddenSocket;
-        this.TTL = TTL;
-        this.Hops = Hops;
+        //this.forbiddenSocket = forbiddenSocket;
+       // this.TTL = TTL;
+        //this.Hops = Hops;
         this._idList = idList;
         this.indexAllFiles = indexAllFiles;
             }
