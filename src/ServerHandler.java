@@ -267,7 +267,7 @@ public class ServerHandler extends Thread{
                                         _idList.addRecord(new IDRecorder(mID, _serverSocThread));
 
                                         Query sendNext = new Query(nQueryString,_cInfo,_serverSocThread
-                                                ,(int)TTL-1,(int)Hops+1, _idList,mID);
+                                                ,(int)TTL-1,(int)Hops+1, _idList,mID, _iF);
                                         sendNext.start();
 
                                         // reply with Query Hit

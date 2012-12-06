@@ -129,14 +129,21 @@ public class Monitor {
                     	}
                     	else if (command[1].equalsIgnoreCase("d"))
                     	{
+                    		int i = 1;
                     		System.out.println("DOWNLOAD STATS:");
                     		System.out.println("---------------");
-                    		//_downList.
+                    		Iterator<DownloadStorage> iter = _downList.downIter();
+                    		while(iter.hasNext())
+                    		{
+                    			DownloadStorage down = iter.next();
+                    			//System.out.println(i + ")" + down.);
+                    			i++;
+                    		}
                     	}
                     	else if (command[1].equalsIgnoreCase("h"))
                     	{
                     		//ConnectionInfoList client, Socket forbiddenSocket, MessageIDList idList, boolean indexAllFiles
-                            Thread query2 = new Thread(new Query(_client,rt,true));
+                            Thread query2 = new Thread(new Query(_client,rt,true, info));
                             query2.start();
                             Thread.sleep(2000);
                     		Iterator<Integer> qrlIter = qrl.getItertor();
@@ -288,7 +295,7 @@ public class Monitor {
                         System.out.println("Searching Simpella Network for '"+queryString+"'");
                         _qrl.setQuery(queryString);
                         // send Query to all neighbors
-                        Thread query = new Thread(new Query(queryString, _client,rt));
+                        Thread query = new Thread(new Query(queryString, _client,rt, info));
                         query.start();
                         
                         System.out.println("Press Enter to Continue.");

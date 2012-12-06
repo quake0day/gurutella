@@ -34,15 +34,16 @@ public class Query extends Thread {
     private ConnectionInfo _cI;
     private InfoParameters _iF;
 
-    public Query(String queryString, ConnectionInfoList client, MessageIDList idList){
+    public Query(String queryString, ConnectionInfoList client, MessageIDList idList, InfoParameters info){
         this.clients = client;
         this.forbiddenSocket = null;
         this._idList = idList;
         this.queryString = queryString;
+        this._iF = info;
     }
 
     public Query(String queryString, ConnectionInfoList client, Socket forbiddenSocket,int TTL
-            , int Hops, MessageIDList idList, byte[] mID){
+            , int Hops, MessageIDList idList, byte[] mID, InfoParameters info){
         this.queryString = queryString;
         this.clients = client;
         this.forbiddenSocket = forbiddenSocket;
@@ -50,9 +51,10 @@ public class Query extends Thread {
         this.Hops = Hops;
         this._idList = idList;
         this.mID = mID;
+        this._iF = info;
             }
 
-    public Query( ConnectionInfoList client, MessageIDList idList, boolean indexAllFiles){
+    public Query( ConnectionInfoList client, MessageIDList idList, boolean indexAllFiles, InfoParameters info){
         this.queryString = "    ";
         this.clients = client;
         //this.forbiddenSocket = forbiddenSocket;
@@ -60,6 +62,7 @@ public class Query extends Thread {
         //this.Hops = Hops;
         this._idList = idList;
         this.indexAllFiles = indexAllFiles;
+        this._iF = info;
             }
     public void run(){
         double j = 1;

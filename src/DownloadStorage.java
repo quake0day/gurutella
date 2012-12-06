@@ -55,6 +55,10 @@ IOException
 		_totalLength += data.length;
 	}
 	
+	public String getIPInfo()
+	{
+		return _qR.getIP().toString();
+	}
 	
 	public int getDownloadSize()
 	{
