@@ -36,13 +36,17 @@ public class ServerHandler extends Thread{
     		int _tempClientIndex;
     		boolean _isAlive = true;
     		boolean queryAll = false;
+    		ConnectionInfo _cI;
+    		InfoParameters _iF;
+    		
     private ExecutorService threadPool = Executors.newFixedThreadPool(MyConstants.MAX_THREAD_NUM);
 
     		MonitorNetwork _mnl;
 
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
-            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork mnl,QueryResultList qrl,NetworkServerList nsl,GUID k)
+            int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork mnl
+            ,QueryResultList qrl,NetworkServerList nsl,GUID k)
     {
         _cInfo = cInfo;
         _serverSocThread = serverSoc;
@@ -92,8 +96,10 @@ public class ServerHandler extends Thread{
                 if(recResult.trim().equals("SIMPELLA CONNECT/0.6")){
                     if(_tempClientIndex >= 0 && _tempClientIndex < MyConstants.MAX_INCOMING_CONNECTION_NUM ){ // We can accpet
                         _out2Client.println(MyConstants.STATUS_200);
-                        _cInfo.addConnection(new ConnectionInfo(_port, _serverSocThread));
-                        new Update(_cInfo, _idList);
+                        _cI = new ConnectionInfo(_port, _serverSocThread);
+                        _iF.add(_cI);
+                        _cInfo.addConnection(_cI);
+                        new Update(_cInfo, _idList, _iF);
                         //update.start();
 
                         //Connection Established, start reading header
@@ -117,6 +123,10 @@ public class ServerHandler extends Thread{
                             byte[] payloadLen = new byte [4];
                             System.arraycopy(header,19,payloadLen,2,2);
                             int pLength = byte2int(payloadLen);
+                            
+                            _cI.addbI(23 + pLength);
+                            _cI.addPI();
+                            
                             byte[] data = new byte [pLength];
                             try {
                             	in2Server.read(data);
@@ -138,7 +148,7 @@ public class ServerHandler extends Thread{
                                         _idList.addRecord(new IDRecorder(mID, _serverSocThread));
 
                                         Update sendNext = new Update(_cInfo,_serverSocThread
-                                                ,(int)TTL-1,(int)Hops+1, _idList);
+                                                ,(int)TTL-1,(int)Hops+1, _idList, _iF);
                                         sendNext.start();
 
                                         // reply with PONG: REVISED
@@ -220,6 +230,7 @@ public class ServerHandler extends Thread{
                                 }
                                 else if (messageType == (byte)0x80){
                                     //System.out.println("QUERY MESSAGE");
+                                	_cI.addQN();
                                     boolean hasSameMessageID = false;
                                     hasSameMessageID = _idList.checkID(mID);
                                     //byte[] payload = new byte[4096];
@@ -255,6 +266,16 @@ public class ServerHandler extends Thread{
                                         sendNext.start();
 
                                         // reply with Query Hit
+                                        Iterator<ConnectionInfo> iter = _cInfo.iterator();
+                                        
+                                        ConnectionInfo cI = null;
+                                        while (iter.hasNext())
+                                        {
+                                        	cI = iter.next();
+                                        	if (cI.getSocket().equals(_serverSocThread))
+                                        		break;
+                                        }
+                                        _iF.add(cI);
                                         ArrayList<QueryResultSet> _qrs;
                                         if(queryAll == true){
                                         	_qrs = _fList.queryAllFiles();
@@ -267,6 +288,7 @@ public class ServerHandler extends Thread{
 
                                         Iterator<QueryResultSet> qrsIter = _qrs.iterator();
                                         while(qrsIter.hasNext()){ // create multiple query hit packet
+                                        
                                             QueryResultSet qrs = qrsIter.next();
                                             MessageContainer queryHitContainer = new MessageContainer(mID);//_port,_IP,_fList.getFileNum(),_fList.getFileSize());
                                             queryHitContainer.setType(4);	//QueryHit Message
@@ -285,6 +307,10 @@ public class ServerHandler extends Thread{
                                             queryHit = queryHitContainer.convertToByte();
                                             DataOutputStream outToServer = new DataOutputStream(_serverSocThread.getOutputStream());
                                             outToServer.write(queryHit);
+                                            
+                                            cI.addbO(queryHit.length);
+                                            cI.addPO();
+                                            cI.addQH();
                                             outToServer.flush();
                                             
                                             //threadPool.submit(new ServerUpload(new ServerSocket(_downPort), _fList));
@@ -293,6 +319,7 @@ public class ServerHandler extends Thread{
                                 }
                                 //////////QueryHit received(??)/////////
                                 else if (messageType == (byte)0x81){
+                                	_cI.addQH();
                                     //System.out.println("QUERY HIT MESSAGE");
                                     if(_idList.checkID(mID) == false) { 
                                         // I'm the one who send query initially
