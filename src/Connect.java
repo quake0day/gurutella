@@ -354,7 +354,7 @@ public class Connect extends Thread{
                                 _idList.addRecord(new IDRecorder(mID, newEstablishedSocket));
 
                                 Query sendNext = new Query(nQueryString,_cInfo,newEstablishedSocket
-                                        ,(int)TTL-1,(int)Hops+1, _idList);
+                                        ,(int)TTL-1,(int)Hops+1, _idList,mID);
                                 sendNext.start();
 
                                 // reply with Query Hit

@@ -24,6 +24,7 @@ public class Query extends Thread {
     private int TTL=7;
     private int Hops=0;
     private int[] _idNum = new int[14];	//ID number
+    private byte[] mID = null;
     private MessageIDList _idList;
     private String queryString;
     PrintWriter outServer = null;
@@ -39,13 +40,14 @@ public class Query extends Thread {
     }
 
     public Query(String queryString, ConnectionInfoList client, Socket forbiddenSocket,int TTL
-            , int Hops, MessageIDList idList){
+            , int Hops, MessageIDList idList, byte[] mID){
         this.queryString = queryString;
         this.clients = client;
         this.forbiddenSocket = forbiddenSocket;
         this.TTL = TTL;
         this.Hops = Hops;
         this._idList = idList;
+        this.mID = mID;
             }
 
     public Query( ConnectionInfoList client, MessageIDList idList, boolean indexAllFiles){
@@ -77,7 +79,12 @@ public class Query extends Thread {
         }
 
         else {
+        	if(mID == null){
             _idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
+        	}
+        	else{
+                _idList.addRecord(new IDRecorder(mID, forbiddenSocket));
+        	}
             byte[] query = null;
             Iterator<ConnectionInfo> iter =clients.iterator();
             //byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
@@ -105,8 +112,15 @@ public class Query extends Thread {
                 System.arraycopy(bQueryString,0,payload,2,bQueryString.length);
                 payload[payloadLength-1] = '\0';
                 //System.arraycopy(src, srcPos, dest, destPos, length)
-                MessageContainer queryContainer = new MessageContainer();//use in this way
+                MessageContainer queryContainer = null;
+                if(mID == null){
+                    queryContainer = new MessageContainer();//use in this way
                 queryContainer.setID(_idNum);							//would be more readable
+                }
+                else{
+                    queryContainer = new MessageContainer(mID);//use in this way
+
+                }
                if(indexAllFiles == true){
                    queryContainer.setTTL(1);								//MessageContainer.java
                    queryContainer.setHops(0);
