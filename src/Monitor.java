@@ -41,6 +41,7 @@ public class Monitor {
     private DownloadList _downList;
     
     private ConnectionMaintenance _connectionM;
+    private InfoParameters info;
 
     @SuppressWarnings("deprecation")
 	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl
@@ -62,7 +63,7 @@ public class Monitor {
                 new InputStreamReader(System.in));
         String userInput;
         _connectionM = new ConnectionMaintenance(IP, tcpPort2, this, _client, _routingTable
-        		, _nsl, _qrl, _fileList, _mnl, _k);
+        		, _nsl, _qrl, _fileList, _mnl, _k, info);
         Timer connectionTimer = new Timer(4000, _connectionM);
        // connectionTimer.start();
         
@@ -117,9 +118,11 @@ public class Monitor {
                     		{
                     			i++;
                     			ConnectionInfo c = iter.next();
+                    			
                     			System.out.println("(" + i + " " 
                     			+ c.getIP().toString().split("/")[1] + ":" + c.getConnPort()
-                    					+ "\t\t" );
+                    			+ "\t\t" + "Packs: " + c.getPO() + ":" + c.getPI() + "\t\t" 
+                    			+ "Bytes: " + c.getbO() + ":" + c.getbI());
                     		}
                     	}
                     	else if (command[1].equalsIgnoreCase("d"))
@@ -149,36 +152,36 @@ public class Monitor {
                     		String unit1 = " ";
                     		if(totalFiles > 1000){
                     			totalFiles = totalFiles /1000;
-                    			unit1 = "K";
+                    			unit1 = " K";
                     		}
                     		if(totalFiles > 1000){
                     			totalFiles = totalFiles /1000;
-                    			unit1 = "M";
+                    			unit1 = " M";
                     		}
                     		if(totalFiles > 1000){
                     			totalFiles = totalFiles /1000;
-                    			unit1 = "G";
+                    			unit1 = " G";
                     		}
                     		if(totalFiles > 1000){
                     			totalFiles = totalFiles /1000;
-                    			unit1 = "T";
+                    			unit1 = " T";
                     		}
-                    		String unit = "B";
+                    		String unit = " B";
                     		if(totalSize > 1000){
                     			totalSize = totalSize /1000;
-                    			unit = "KB";
-                    		}
-                    		if(totalSize > 1000){
-                    			totalSize = totalSize /1000;
-                    			unit = "MB";
+                    			unit = " KB";
                     		}
                     		if(totalSize > 1000){
                     			totalSize = totalSize /1000;
-                    			unit = "G";
+                    			unit = " MB";
                     		}
                     		if(totalSize > 1000){
                     			totalSize = totalSize /1000;
-                    			unit = "T";
+                    			unit = " G";
+                    		}
+                    		if(totalSize > 1000){
+                    			totalSize = totalSize /1000;
+                    			unit = " T";
                     		}
 
                     		System.out.println("HOST STATS:");
@@ -242,7 +245,7 @@ public class Monitor {
                                     	//,tcpPort2,_client,_routingTable,_nsl,_qrl,IP,_fileList,_mnl,_k);
                                         //connect.start();
                                     	createConn(targetIPAddress,targetTCPPort,tcpPort2,_client,_routingTable
-                                    			,_nsl,_qrl,IP,_fileList,_mnl,_k);
+                                    			,_nsl,_qrl,IP,_fileList,_mnl,_k, info);
                                     }
                                     else{
                                         System.out.println(MyConstants.STATUS_OUTGOING_REACHED_LIMIT);
@@ -258,7 +261,7 @@ public class Monitor {
                     nsl.clearAll();
 
                     // send PING to all neighbors
-                    Thread update = new Thread(new Update(_client, rt));
+                    Thread update = new Thread(new Update(_client, rt, info));
                     update.start();
                 }
                 /////////////////find command////////////////////   
@@ -531,11 +534,13 @@ public class Monitor {
         System.exit(1);
     }
     
-    public boolean createConn(String IP, String port1, int port2, ConnectionInfoList c, MessageIDList m, NetworkServerList n, QueryResultList q, InetAddress myIP,FileInfoList fileList,MonitorNetwork mnl, GUID k)
+    public boolean createConn(String IP, String port1, int port2, ConnectionInfoList c
+    		, MessageIDList m, NetworkServerList n, QueryResultList q, InetAddress myIP
+    		,FileInfoList fileList,MonitorNetwork mnl, GUID k, InfoParameters info)
     {
     	Thread connect;
 		try {
-			connect = new Connect(IP,port1,port2,c,m,n,q,myIP,fileList,mnl,k);
+			connect = new Connect(IP,port1,port2,c,m,n,q,myIP,fileList,mnl,k, info);
 			connect.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
