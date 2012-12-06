@@ -31,6 +31,8 @@ public class Query extends Thread {
     DataOutputStream outToServer = null;
     private boolean isAbleToQuery = true;
     private boolean indexAllFiles = false;
+    private ConnectionInfo _cI;
+    private InfoParameters _iF;
 
     public Query(String queryString, ConnectionInfoList client, MessageIDList idList){
         this.clients = client;
@@ -135,8 +137,10 @@ public class Query extends Thread {
 
 
                 query = queryContainer.convertToByte();						
-                while(iter.hasNext()){									
-                    Socket clientSocket = iter.next().getSocket();					
+                while(iter.hasNext()){			
+                	_cI = iter.next();
+                	_iF.add(_cI);
+                    Socket clientSocket = _cI.getSocket();					
                     if(!clientSocket.equals(forbiddenSocket)){
                         try {
                             outToServer = new DataOutputStream(clientSocket.getOutputStream());
@@ -150,6 +154,9 @@ public class Query extends Thread {
                         // send Ping
                         try {
                             outToServer.write(query);
+                            _cI.addbO(query.length);
+                            _cI.addPO();
+                            _cI.addQN();
                             /*
                             System.out.print("sent a QueryID: ");	//for test use
                             for (int i: _idNum)

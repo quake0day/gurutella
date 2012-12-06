@@ -20,12 +20,14 @@ public class ConnectionMaintenance implements ActionListener {
 			GUID _guID;
 			InetAddress _myIP;
 			int _downPort;
+			InfoParameters _iF;
 	
 	private Monitor _monitor;
 
 	public ConnectionMaintenance (InetAddress IP, int tcpDown, Monitor mo
 			, ConnectionInfoList cL, MessageIDList mID, NetworkServerList nL
-			, QueryResultList qrL, FileInfoList fIL, MonitorNetwork mN, GUID gID)
+			, QueryResultList qrL, FileInfoList fIL, MonitorNetwork mN, GUID gID
+			, InfoParameters ifo)
 	{
 		_myIP = IP;
 		_connectionL = cL;
@@ -39,6 +41,7 @@ public class ConnectionMaintenance implements ActionListener {
 		_monNetwork = mN;
 		_guID = gID;
 		_downPort = tcpDown;
+		_iF = ifo;
 	}
 	
 	public void actionPerformed(ActionEvent e)
@@ -56,7 +59,7 @@ public class ConnectionMaintenance implements ActionListener {
 					_monitor.createConn(sI.getIP().toString().split("/")[1]
 							, String.valueOf(sI.getPort()), _downPort, _connectionL
 							, _mID, _nwkList, _queryList, _myIP, _fileList, _monNetwork
-							, _guID);
+							, _guID, _iF);
 				}
 			}
 			else

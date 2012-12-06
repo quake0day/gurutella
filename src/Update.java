@@ -28,16 +28,25 @@ public class Update extends Thread {
     private MessageIDList _idList;
     PrintWriter outServer = null;
     DataOutputStream outToServer = null;
+
     boolean broadcastToOthers = false;
 
-    public Update(ConnectionInfoList client, MessageIDList idList){
+    
+    private InfoParameters _iF;
+
+
+    public Update(ConnectionInfoList client, MessageIDList idList, InfoParameters ifo){
         this.clients = client;
         this.forbiddenSocket = null;
         this._idList = idList;
+        this._iF = ifo;
     }
 
     public Update(ConnectionInfoList client, Socket forbiddenSocket,int TTL
-            , int Hops, MessageIDList idList,byte[] _idNum, boolean boardcastToOthers){
+
+            , int Hops, MessageIDList idList,byte[] _idNum, boolean boardcastToOthers, InfoParameters ifo){
+
+
         this.clients = client;
         this.forbiddenSocket = forbiddenSocket;
         this.TTL = TTL;
@@ -45,6 +54,8 @@ public class Update extends Thread {
         this._idList = idList;
         this.broadcastToOthers = boardcastToOthers;
         this._oldNum = _idNum;
+        this._iF = ifo;
+
             }
 
     public void run(){
@@ -100,8 +111,10 @@ public class Update extends Thread {
             pingContainer.addPayLoad(null);
 
             ping = pingContainer.convertToByte();						
-            while(iter.hasNext()){									
-                Socket clientSocket = iter.next().getSocket();					
+            while(iter.hasNext()){	
+            	ConnectionInfo cI = iter.next();
+            	_iF.add(cI);
+                Socket clientSocket = cI.getSocket();					
                 if(!clientSocket.equals(forbiddenSocket)){
                     try {
                         outToServer = new DataOutputStream(clientSocket.getOutputStream());
@@ -115,6 +128,8 @@ public class Update extends Thread {
                     // send Ping
                     try {
                         outToServer.write(ping);
+                        cI.addbO(ping.length);
+                        cI.addPO();
                         /*
                         System.out.print("sent a PingID: ");	//for test use
                         for (int i: _idNum)

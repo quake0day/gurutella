@@ -26,8 +26,15 @@ public class Connect extends Thread{
     private MonitorNetwork _mnl;
     private int _downPort;
     private GUID _k;
+    private int _bSize;
+    private InfoParameters _info;
+    private ConnectionInfo _conInfo;
+    private InfoParameters _iF;
 
-    public Connect (String targetIPAddressr, String tcp, int tcpDownload, ConnectionInfoList cInfo,MessageIDList idList,NetworkServerList nsl, QueryResultList qrl,InetAddress IP, FileInfoList fList, MonitorNetwork mnl, GUID k) throws IOException{
+    public Connect (String targetIPAddressr, String tcp, int tcpDownload
+    		, ConnectionInfoList cInfo,MessageIDList idList,NetworkServerList nsl
+    		, QueryResultList qrl,InetAddress IP, FileInfoList fList
+    		, MonitorNetwork mnl, GUID k, InfoParameters info) throws IOException{
         targetIPAddress = targetIPAddressr;
         tcpport = Integer.parseInt(tcp);
         this._cInfo = cInfo;
@@ -39,6 +46,7 @@ public class Connect extends Thread{
         this._downPort = tcpDownload;
         this._mnl = mnl;
         this._k = k;
+        this._info = info;
         /*    public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
             int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList, MonitorNetwork mnl)
     {
@@ -174,10 +182,11 @@ public class Connect extends Thread{
             if (recResult.trim().equals(MyConstants.STATUS_200_REC)){
                 // Print out <string>
                 //System.out.println(recResult.split("200 ")[1]);
-
-                _cInfo.addConnection(new ConnectionInfo(tcpport, newEstablishedSocket));
+            	_conInfo = new ConnectionInfo(tcpport, newEstablishedSocket);
+            	_iF.add(_conInfo);
+                _cInfo.addConnection(_conInfo);
                 System.out.println("Connection established!");
-                Thread update = new Update(_cInfo, _idList);
+                Thread update = new Update(_cInfo, _idList, _iF);
                 update.start();
                 //System.out.println(clients.size(0));
             }
@@ -199,6 +208,9 @@ public class Connect extends Thread{
                     byte[] payloadLen = new byte [4];
                     System.arraycopy(header,19,payloadLen,2,2);
                     int pLength = byte2int(payloadLen);
+                    _bSize = 23 + pLength;
+                    _conInfo.addbI(_bSize);
+                    _conInfo.addPI();
                     byte[] data = new byte [pLength];
                     try {
 						 stream.read(data);
@@ -208,6 +220,7 @@ public class Connect extends Thread{
 					}
                     if((int)(TTL+Hops) >=0 && (int)(TTL+Hops) <= 15) {
                         if(messageType == (byte)0x00){
+                        	
                             //System.out.println("toclient PING");
                             //System.out.println("toclient PING");
 
@@ -217,7 +230,8 @@ public class Connect extends Thread{
                                 _idList.addRecord(new IDRecorder(mID, newEstablishedSocket));
 
                                 Update sendNext = new Update(_cInfo,newEstablishedSocket
-                                        ,(int)TTL-1,(int)Hops+1, _idList,mID,true);
+                                        ,(int)TTL-1,(int)Hops+1, _idList,mID,true,_iF);
+
                                 sendNext.start();
 
                                 // reply with PONG: REVISED
@@ -310,6 +324,8 @@ public class Connect extends Thread{
                         else if(messageType == (byte)0x80){
                             //System.out.println("QUERY");
                             //System.out.println("QUERY MESSAGE");
+                        	_conInfo.addQN();
+                        	
                             boolean hasSameMessageID = false;
                             hasSameMessageID = _idList.checkID(mID);
                             byte[] payload = data;
@@ -326,7 +342,7 @@ public class Connect extends Thread{
 							*/
                             byte[] queryString = new byte [pLength-2];
                             //System.out.println("PayloadLength:"+pLength);
-
+                            
                             System.arraycopy(payload, 0, minimumSpeed, 0, 2);
                             System.arraycopy(payload, 2, queryString, 0, queryString.length);
                             //ByteBuffer bb = ByteBuffer.wrap(minimumSpeed);
@@ -423,7 +439,7 @@ public class Connect extends Thread{
                         else if(messageType == (byte)0x81){
                             //System.out.println("QUERYHIT");
                            // while(pLength+23 <= messageLength){ // means more than one packets in the queue
-
+                        		_conInfo.addQH();
                                 if(_idList.checkID(mID) == false) { 
                                     // I'm the one who send query initially
                                     //int payloadLength = messageLength-MyConstants.HEADER_LENGTH;
