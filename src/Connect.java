@@ -33,7 +33,7 @@ public class Connect extends Thread{
     public Connect (String targetIPAddressr, String tcp, int tcpDownload
     		, ConnectionInfoList cInfo,MessageIDList idList,NetworkServerList nsl
     		, QueryResultList qrl,InetAddress IP, FileInfoList fList
-    		, MonitorNetwork mnl, GUID k, InfoParameters info) throws IOException{
+    		, MonitorNetwork mnl, GUID k, InfoParameters info,ConnectionInfo _conInfo) throws IOException{
         targetIPAddress = targetIPAddressr;
         tcpport = Integer.parseInt(tcp);
         this._cInfo = cInfo;
@@ -208,8 +208,8 @@ public class Connect extends Thread{
                     System.arraycopy(header,19,payloadLen,2,2);
                     int pLength = byte2int(payloadLen);
                     _bSize = 23 + pLength;
-                    _conInfo.addbI(_bSize);
-                    _conInfo.addPI();
+                    //_conInfo.addbI(_bSize);
+                    //_conInfo.addPI();
                     byte[] data = new byte [pLength];
                     try {
 						 stream.read(data);

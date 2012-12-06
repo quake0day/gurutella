@@ -26,6 +26,7 @@ public class simpella /*extends Thread*/{
     public static MonitorNetwork _mnl;
     public static QueryResultList _qrl;
     public static InfoParameters _info;
+    public static ConnectionInfo _conInfo;
     public static GUID k;
     private static InetAddress IP = null;
 
@@ -64,6 +65,7 @@ public class simpella /*extends Thread*/{
         _networkServerList = new NetworkServerList();
         _mnl = new MonitorNetwork();
         _qrl = new QueryResultList();
+       // _conInfo = new ConnectionInfo();
         ServerSocket cmdServer = null;
         ServerSocket datServer = null;
         GUID k = new GUID();

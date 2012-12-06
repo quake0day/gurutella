@@ -40,13 +40,14 @@ public class Monitor {
     private GUID _k;
     private DownloadList _downList;
     private InfoParameters info;
+    private ConnectionInfo _conInfo;
     
     private ConnectionMaintenance _connectionM;
 
     @SuppressWarnings("deprecation")
 	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl
 			, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP
-			,QueryResultList qrl,GUID k, InfoParameters info ) throws IOException, InterruptedException{
+			,QueryResultList qrl,GUID k, InfoParameters info) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
@@ -59,6 +60,7 @@ public class Monitor {
         this._qrl = qrl;
         _downList = new DownloadList();
         this.info = info;
+        //this._conInfo = _conInfo;
         //System.out.println("test");  
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
@@ -560,7 +562,7 @@ public class Monitor {
     {
     	Thread connect;
 		try {
-			connect = new Connect(IP,port1,port2,c,m,n,q,myIP,fileList,mnl,k, info);
+			connect = new Connect(IP,port1,port2,c,m,n,q,myIP,fileList,mnl,k, info,_conInfo);
 			connect.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
