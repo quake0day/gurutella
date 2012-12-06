@@ -72,7 +72,7 @@ public class Connect extends Thread{
         if(targetIPAddress.toString().equals(MyConstants.localIPNum) 
                 || targetIPAddress.toString().equals(MyConstants.localHost) 
                 || targetIPAddress.toString().equals(localIPAddr)) {
-            isAbleToConnect = true; 
+            isAbleToConnect = false; 
                 }
         // judge hostname
         try {
@@ -86,7 +86,7 @@ public class Connect extends Thread{
         //  duplicate?
         while(iter.hasNext()){
             if(targetIPAddress.equals(iter.next().getIP().toString().split("/")[1])){
-                isAbleToConnect = true;
+                isAbleToConnect = false;
             }
         }
         if(isAbleToConnect){
