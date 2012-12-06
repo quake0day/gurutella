@@ -41,7 +41,7 @@ public class Monitor {
     private DownloadList _downList;
     
     private ConnectionMaintenance _connectionM;
-    private InfoParameters info;
+    private InfoParameters info = new InfoParameters(_client);
 
     @SuppressWarnings("deprecation")
 	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl

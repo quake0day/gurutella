@@ -10,7 +10,7 @@ import java.util.Iterator;
  *
  */
 public class InfoParameters {
-	private ArrayList<ConnectionInfo> _cIPL;
+	private ArrayList<ConnectionInfo> _cIPL = new ArrayList<ConnectionInfo> ();
 			ConnectionInfoList _cIL;
 			int _msgIn = 0;
 			int _msgOut = 0;
