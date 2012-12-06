@@ -29,6 +29,7 @@ public class RefreshResponseNum  implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		while(true){
+
 			response = qrl.getLastLength();
 			System.out.print(response+" response received.");
 			try {

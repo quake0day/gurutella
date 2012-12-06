@@ -113,21 +113,25 @@ public class Monitor {
                     		int i = 0;
                     		System.out.println("CONNECTION STATS:");
                     		System.out.println("-----------");
-                    		Iterator<ConnectionInfo> iter = _client.iterator();         
+                    		Iterator<ConnectionInfo> iter = _client.iterator(); 
                     		while (iter.hasNext())
                     		{
                     			i++;
                     			ConnectionInfo c = iter.next();
-                    			
+                    			UnitTrans uT1 = new UnitTrans(c.getbO());
+                    			UnitTrans uT2 = new UnitTrans(c.getbI());
                     			System.out.println("(" + i + " " 
                     			+ c.getIP().toString().split("/")[1] + ":" + c.getConnPort()
                     			+ "\t\t" + "Packs: " + c.getPO() + ":" + c.getPI() + "\t\t" 
-                    			+ "Bytes: " + c.getbO() + ":" + c.getbI());
+                    			+ "Bytes: " + uT1.num() + " " + uT1.unit() + ":" + uT2.num()
+                    			+ " " + uT2.unit());      
                     		}
                     	}
                     	else if (command[1].equalsIgnoreCase("d"))
                     	{
-                    		
+                    		System.out.println("DOWNLOAD STATS:");
+                    		System.out.println("---------------");
+                    		//_downList.
                     	}
                     	else if (command[1].equalsIgnoreCase("h"))
                     	{

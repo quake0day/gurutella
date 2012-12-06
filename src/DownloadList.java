@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 
@@ -52,5 +53,10 @@ public class DownloadList {
 			return null;
 		else
 			return retnList;
+	}
+	
+	public Iterator<DownloadStorage> downIter()
+	{
+		return _dS.iterator();
 	}
 }
