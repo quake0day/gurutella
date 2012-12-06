@@ -46,7 +46,7 @@ public class ServerHandler extends Thread{
 
     public ServerHandler(Socket serverSoc, ConnectionInfoList cInfo, MessageIDList idList,
             int tcpPort, int tcpDownload, InetAddress IP, FileInfoList fList,MonitorNetwork mnl
-            ,QueryResultList qrl,NetworkServerList nsl,GUID k)
+            ,QueryResultList qrl,NetworkServerList nsl,GUID k, InfoParameters info)
     {
         _cInfo = cInfo;
         _serverSocThread = serverSoc;
@@ -60,6 +60,7 @@ public class ServerHandler extends Thread{
         _IP = IP;
         _k = k;
         _tempClientIndex = _cInfo.size();
+        _iF = info;
         //Thread downThread;
 		//downThread = new ServerUpload(_downPort, _fList);
 		//downThread.start();
