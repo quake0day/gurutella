@@ -24,9 +24,11 @@ public class Update extends Thread {
     private int TTL=7;
     private int Hops=0;
     private int[] _idNum = new int[14];	//ID number
+    private byte[] _oldNum;
     private MessageIDList _idList;
     PrintWriter outServer = null;
     DataOutputStream outToServer = null;
+    boolean broadcastToOthers = false;
 
     public Update(ConnectionInfoList client, MessageIDList idList){
         this.clients = client;
@@ -35,12 +37,14 @@ public class Update extends Thread {
     }
 
     public Update(ConnectionInfoList client, Socket forbiddenSocket,int TTL
-            , int Hops, MessageIDList idList){
+            , int Hops, MessageIDList idList,byte[] _idNum, boolean boardcastToOthers){
         this.clients = client;
         this.forbiddenSocket = forbiddenSocket;
         this.TTL = TTL;
         this.Hops = Hops;
         this._idList = idList;
+        this.broadcastToOthers = boardcastToOthers;
+        this._oldNum = _idNum;
             }
 
     public void run(){
@@ -63,7 +67,6 @@ public class Update extends Thread {
         }
 
         else {
-            _idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
             byte[] ping = null;
             Iterator<ConnectionInfo> iter =clients.iterator();
             //byte[] id, byte type, byte ttl, byte hops, byte[] plength, byte[] payload
@@ -79,8 +82,17 @@ public class Update extends Thread {
             //hops = new Integer(Hops).byteValue(); Suggest to not use, SEE below
 
 
-            MessageContainer pingContainer = new MessageContainer();//use in this way
-            pingContainer.setID(_idNum);							//would be more readable
+            //use in this way
+            MessageContainer pingContainer = null;
+            if(broadcastToOthers == false){
+                _idList.addRecord(new IDRecorder(_idNum, forbiddenSocket));
+            	pingContainer = new MessageContainer();
+            	pingContainer.setID(_idNum);							//would be more readable
+            }else if(broadcastToOthers == true){
+                _idList.addRecord(new IDRecorder(_oldNum, forbiddenSocket));
+            	pingContainer = new MessageContainer(_oldNum);
+            	//pingContainer.setID(_oldNum);
+            }
             pingContainer.setPayloadLength(0);						//see comment in 
             pingContainer.setTTL(TTL);								//MessageContainer.java
             pingContainer.setHops(Hops);

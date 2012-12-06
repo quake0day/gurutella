@@ -35,15 +35,32 @@ public class MessageIDList {
         }
     }
     public IDRecorder getRecord(byte[] id){
-        int i= -1;
-        if (_InnerList.contains(id)){
-            i = _InnerList.indexOf(id);
+        int j= -1;
+        boolean isContained = false;
+        
+   	 for(int i = 0; i < _InnerList.size(); i++)
+     {
+         byte[] get = (byte[]) _InnerList.get(i);
+          
+         if(testEqual(get, id))
+         {
+        	 isContained = true;
+        	 j = i;
+         }
+          
+          
+     }
+   	 /*
+	 
+        if (isContained){
+            j = _InnerList.indexOf(id);
         }
         else
         {
             System.out.println("You're trying to get a Record which not exist!");
         }
-        return _IDList.get(i);
+        */
+        return _IDList.get(j);
     }
     public IDRecorder getRecord(int i)
     {
@@ -74,9 +91,46 @@ public class MessageIDList {
 
     public boolean checkID(byte[] id)	//Check if contains
     {
+    	 for(int i = 0; i < _InnerList.size(); i++)
+         {
+             byte[] get = (byte[]) _InnerList.get(i);
+              
+             if(testEqual(get, id))
+             {
+                return true;
+             }
+              
+              
+         }
+    	 return false;
+    	 /*
         if (_InnerList.contains(id))
             return true;
         else 
             return false;
+            */
+    }
+    
+    private static boolean testEqual(byte[] byte1, byte[] byte2)
+    {
+         
+        //java.util.Arrays.sort(byte1);
+        //java.util.Arrays.sort(byte2);
+         
+        if(byte1.length != byte2.length)
+        {
+            return false;
+        }
+ 
+        for(int i = 0; i < byte1.length; i++)
+        {
+            if(byte1[i] != byte2[i])
+            {
+                return false;
+            }
+        }
+         
+        return true;
+         
     }
 }

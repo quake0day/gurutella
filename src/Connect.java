@@ -217,7 +217,7 @@ public class Connect extends Thread{
                                 _idList.addRecord(new IDRecorder(mID, newEstablishedSocket));
 
                                 Update sendNext = new Update(_cInfo,newEstablishedSocket
-                                        ,(int)TTL-1,(int)Hops+1, _idList);
+                                        ,(int)TTL-1,(int)Hops+1, _idList,mID,true);
                                 sendNext.start();
 
                                 // reply with PONG: REVISED
@@ -294,9 +294,13 @@ public class Connect extends Thread{
                                 //System.out.println("I'm the one who send ping when I rec ping from others");
                                 IDRecorder idr = _idList.getRecord(mID);
                                 Socket preSoc = idr.getSocket();
+                                int Length = data.length;
+                                byte [] originalPacket = new byte[Length+23];
+                                System.arraycopy(header, 0, originalPacket, 0, 23);
+                                System.arraycopy(data,0,originalPacket,23,data.length);
                                 try {
                                     DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
-                                    outToServer.write(data); // send data to the prev node
+                                    outToServer.write(originalPacket); // send data to the prev node
                                 } catch (IOException e) {
                                     // TODO Auto-generated catch block
                                     e.printStackTrace();
@@ -480,9 +484,13 @@ public class Connect extends Thread{
                                     //System.out.println("I'm the one who send query when I rec query from others");
                                     IDRecorder idr = _idList.getRecord(mID);
                                     Socket preSoc = idr.getSocket();
+                                    int Length = data.length;
+                                    byte [] originalPacket = new byte[Length+23];
+                                    System.arraycopy(header, 0, originalPacket, 0, 23);
+                                    System.arraycopy(data,0,originalPacket,23,data.length);
                                     try {
                                         DataOutputStream outToServer = new DataOutputStream(preSoc.getOutputStream());
-                                        outToServer.write(data); // send data to the prev node
+                                        outToServer.write(originalPacket); // send data to the prev node
                                     } catch (IOException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
