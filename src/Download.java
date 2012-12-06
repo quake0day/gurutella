@@ -104,7 +104,7 @@ public class Download extends Thread{
 						System.arraycopy(line1, 0, line, 0, 32);
 						System.arraycopy(line2, 0, line, 32, i);
 						HTTPResponseMessage resp = new HTTPResponseMessage(line);
-						System.out.println(MyConstants.STATUS_200_DownLoadAble);
+						//System.out.println(MyConstants.STATUS_200_DownLoadAble);
 						size = resp.getSize();
 						
 						System.out.print("Downloading '" + _qR.getFileName() + "' ...");

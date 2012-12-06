@@ -70,7 +70,7 @@ public class simpella /*extends Thread*/{
         ServerSocket datServer = null;
         GUID k = new GUID();
         try {
-        	cmdServer = new ServerSocket(10025);
+        	cmdServer = new ServerSocket(tcpPort1);
         	datServer = new ServerSocket(tcpPort2);
         } catch (IOException e) {
             System.out.println("You're using a port that cannot Establish TCP connection, program halt...");
