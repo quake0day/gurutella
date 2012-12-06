@@ -25,6 +25,7 @@ public class simpella /*extends Thread*/{
     public static NetworkServerList _networkServerList;
     public static MonitorNetwork _mnl;
     public static QueryResultList _qrl;
+    public static InfoParameters _info;
     public static GUID k;
     private static InetAddress IP = null;
 
@@ -57,6 +58,7 @@ public class simpella /*extends Thread*/{
         showWelcomeInfo(tcpPort1,tcpPort2);
 
         _clients = new ConnectionInfoList();
+        _info = new InfoParameters(_clients);
         _fileList = new FileInfoList();
         _routingTable = new MessageIDList();
         _networkServerList = new NetworkServerList();
@@ -74,12 +76,12 @@ public class simpella /*extends Thread*/{
         }
         
         //TCPServer thread start
-        Tcpserver _tcpServer = new Tcpserver(cmdServer, 10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList,k);
+        Tcpserver _tcpServer = new Tcpserver(cmdServer, 10025, tcpPort2, _clients,_routingTable,IP,_fileList,_mnl,_qrl,_networkServerList,k, _info);
         _tcpServer.start();        
        // @SuppressWarnings("resource")
 		Thread testD = new ServerUpload(datServer, tcpPort2, _fileList);
 		testD.start();
-        new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl,k);
+        new Monitor(tcpPort1,tcpPort2,_clients, _fileList,_routingTable,_networkServerList,_mnl,IP,_qrl,k,_info);
 
         //threadPool.submit(new Tcpserver(10025,_clients));
         // download port

@@ -39,14 +39,14 @@ public class Monitor {
     private InetAddress IP;
     private GUID _k;
     private DownloadList _downList;
+    private InfoParameters info;
     
     private ConnectionMaintenance _connectionM;
-    private InfoParameters info = new InfoParameters(_client);
 
     @SuppressWarnings("deprecation")
 	public Monitor (int port1, int port2, ConnectionInfoList clients, FileInfoList fl
 			, MessageIDList rt, NetworkServerList nsl,MonitorNetwork mnl,InetAddress IP
-			,QueryResultList qrl,GUID k ) throws IOException, InterruptedException{
+			,QueryResultList qrl,GUID k, InfoParameters info ) throws IOException, InterruptedException{
         this.tcpPort1 = port1;
         this.tcpPort2 = port2;
         this._client = clients;
@@ -58,6 +58,7 @@ public class Monitor {
         this._k = k;
         this._qrl = qrl;
         _downList = new DownloadList();
+        this.info = info;
         //System.out.println("test");  
         BufferedReader stdIn = new BufferedReader(
                 new InputStreamReader(System.in));
@@ -136,7 +137,15 @@ public class Monitor {
                     		while(iter.hasNext())
                     		{
                     			DownloadStorage down = iter.next();
-                    			//System.out.println(i + ")" + down.);
+                    			double percen = 100.0 * (double) down.getDownloadSize() 
+                    					/ (double) down.getQuery().getFileSize();
+                    			UnitTrans uT1 = new UnitTrans(down.getDownloadSize());
+                    			UnitTrans uT2 = new UnitTrans(down.getQuery().getFileSize());
+                    			System.out.println(i + ") " + down.getQuery().getIP().toString().split("/")[1]
+                    					+ ":" + down.getQuery().getDownloadPort() + "\t\t" 
+                    					+ percen + "%" + "\t\t" + uT1.num() + " " + uT1.unit() + "/" + uT2.num()
+                    					+ " " + uT2.unit());
+                    			System.out.println();
                     			i++;
                     		}
                     	}
